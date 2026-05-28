@@ -276,7 +276,6 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  // Added cache buster to force Google to give us the latest version
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
@@ -305,10 +304,21 @@ async function loadAll(){
 async function doRefresh(){ destroyCharts(); S.cData={}; S.sData={}; await loadAll(); }
 
 /* ─── HELPERS ─── */
+// 💡 NEW ROBUST GETTER: This searches your columns even if there are spaces or capitalization differences
+function getVal(row, ...keys) {
+  const rKeys = Object.keys(row);
+  for (let k of keys) {
+    const kl = k.toLowerCase().trim();
+    const match = rKeys.find(rk => rk.toLowerCase().trim().includes(kl));
+    if (match && row[match] !== undefined) return row[match].toString().trim();
+  }
+  return '';
+}
+
 function cur(){ return S.mode==='church'?(S.cData[S.year]||[]):(S.sData[S.year]||[]); }
 
 function getSt(r){
-  const v=(r.Status||r.status||'').trim();
+  const v = getVal(r, 'status');
   if(/audit/i.test(v)) return 'Audited';
   if(/work.in.progress|wip/i.test(v)) return 'WIP';
   if(/pending/i.test(v)) return 'Pending';
@@ -316,12 +326,12 @@ function getSt(r){
 }
 
 function getBank(r){
-  return (r['Bank Record']||r['Bank record']||r['bank record']||'No data').trim()||'No data';
+  return getVal(r, 'bank record', 'bank') || 'No data';
 }
 
 function getFund(r){
-  const raw=(r['Closing Fund Balance']||r['closing fund balance']||'').toString();
-  const n=parseFloat(raw.replace(/[^0-9.-]/g,''));
+  const raw = getVal(r, 'closing fund balance', 'fund balance', 'fund', 'balance');
+  const n = parseFloat(raw.replace(/[^0-9.-]/g,''));
   return isNaN(n)?null:n;
 }
 
@@ -344,7 +354,9 @@ function bank(b){
   return `<span class="bb ${c}">${b}</span>`;
 }
 
-function uniq(rows,key){ return [...new Set(rows.map(r=>(r[key]||'').trim()).filter(Boolean))].sort(); }
+function uniq(rows,key){ 
+  return [...new Set(rows.map(r=>getVal(r, key)).filter(Boolean))].sort(); 
+}
 
 function stats(rows){
   const t=rows.length;
@@ -360,7 +372,7 @@ function stats(rows){
 function wilStats(rows){
   const m={};
   rows.forEach(r=>{
-    const w=(r.Wilayah||r.wilayah||'Unknown').trim();
+    const w=getVal(r, 'wilayah')||'Unknown';
     if(!m[w]) m[w]={t:0,a:0,w:0,p:0,fund:0};
     m[w].t++;
     const s=getSt(r);
@@ -375,7 +387,7 @@ function wilStats(rows){
 function daerStats(rows){
   const m={};
   rows.forEach(r=>{
-    const d=(r.Daerah||r.daerah||'Unknown').trim();
+    const d=getVal(r, 'daerah')||'Unknown';
     if(!m[d]) m[d]={t:0,a:0};
     m[d].t++;
     if(getSt(r)==='Audited') m[d].a++;
@@ -446,7 +458,7 @@ function renderChurch(m){
   <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
   <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
   <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'Daerah').length} Daerah</div></div>
+  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
 </div>
 
 <div class="g3">
@@ -516,7 +528,10 @@ ${churchTbl(rows)}
 function renderSchool(m){
   const rows=cur(), s=stats(rows), tr=trends();
   let filt=rows;
-  if(S.search){const q=S.search.toLowerCase();filt=filt.filter(r=>['School','School PIC','school','school pic'].some(k=>(r[k]||'').toLowerCase().includes(q)));}
+  if(S.search){
+    const q=S.search.toLowerCase();
+    filt=filt.filter(r=>['school','pic'].some(k=>getVal(r,k).toLowerCase().includes(q)));
+  }
   if(S.fSt) filt=filt.filter(r=>getSt(r)===S.fSt);
 
   m.innerHTML=`<div class="fade-in">
@@ -587,7 +602,7 @@ ${topFunds(rows)}
   ${filt.length?filt.map(r=>`
   <div class="scard">
     <div class="stop">
-      <div><div class="sname">${r.School||r.school||'Unknown'}</div><div class="spic">👤 ${r['School PIC']||r['school pic']||'—'}</div></div>
+      <div><div class="sname">${getVal(r,'school')||'Unknown'}</div><div class="spic">👤 ${getVal(r,'pic')||'—'}</div></div>
       ${pill(getSt(r))}
     </div>
     <div class="sdiv"></div>
@@ -605,9 +620,9 @@ ${topFunds(rows)}
 
 /* ─── TOP FUNDS ─── */
 function topFunds(rows){
-  const key=S.mode==='church'?(['Gereja','gereja']):(['School','school']);
+  const key=S.mode==='church'?'gereja':'school';
   const data=rows.map(r=>({
-    n:(r[key[0]]||r[key[1]]||'—').trim(),
+    n:getVal(r, key)||'—',
     f:getFund(r)
   })).filter(d=>d.f!==null&&d.f>0).sort((a,b)=>b.f-a.f).slice(0,8);
   if(!data.length) return '';
@@ -626,16 +641,22 @@ function topFunds(rows){
 
 /* ─── CHURCH TABLE ─── */
 function churchTbl(rows){
-  const wils=uniq(rows,'Wilayah');
+  const wils=uniq(rows,'wilayah');
   const COLS=['Wilayah','Daerah','Gereja','Type','Bank Record','Closing Fund Balance','Status'];
   let filt=rows;
-  if(S.search){const q=S.search.toLowerCase();filt=filt.filter(r=>['Wilayah','Daerah','Gereja','Type'].some(k=>(r[k]||'').toLowerCase().includes(q)));}
+  if(S.search){
+    const q=S.search.toLowerCase();
+    filt=filt.filter(r=>['wilayah','daerah','gereja','type'].some(k=>getVal(r,k).toLowerCase().includes(q)));
+  }
   if(S.fSt) filt=filt.filter(r=>getSt(r)===S.fSt);
-  if(S.fWil) filt=filt.filter(r=>(r.Wilayah||'').trim()===S.fWil);
+  if(S.fWil) filt=filt.filter(r=>getVal(r,'wilayah')===S.fWil);
   if(S.sc>=0){
     const k=COLS[S.sc];
+    let searchKey = k;
+    if (k === 'Closing Fund Balance') searchKey = 'fund';
+    if (k === 'Bank Record') searchKey = 'bank';
     filt=[...filt].sort((a,b)=>{
-      const av=(a[k]||'').toLowerCase(),bv=(b[k]||'').toLowerCase();
+      const av=getVal(a, searchKey).toLowerCase(),bv=getVal(b, searchKey).toLowerCase();
       return av<bv?-S.sd:av>bv?S.sd:0;
     });
   }
@@ -671,10 +692,10 @@ function churchTbl(rows){
     <thead><tr>${COLS.map((c,i)=>`<th onclick="srt(${i})">${c} ${sa(i)}</th>`).join('')}</tr></thead>
     <tbody>
     ${slice.length?slice.map(r=>`<tr>
-      <td style="color:var(--sky);font-weight:600">${r.Wilayah||'—'}</td>
-      <td>${r.Daerah||'—'}</td>
-      <td style="font-weight:700">${r.Gereja||'—'}</td>
-      <td style="color:var(--muted)">${r.Type||'—'}</td>
+      <td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td>
+      <td>${getVal(r,'daerah')||'—'}</td>
+      <td style="font-weight:700">${getVal(r,'gereja')||'—'}</td>
+      <td style="color:var(--muted)">${getVal(r,'type')||'—'}</td>
       <td>${bank(getBank(r))}</td>
       <td class="tfund">${fRM(getFund(r))}</td>
       <td>${pill(getSt(r))}</td>
@@ -741,8 +762,8 @@ function bWil(wil){
 }
 
 function bFund(rows){
-  const key=S.mode==='church'?'Gereja':'School';
-  const data=rows.map(r=>({n:(r[key]||r.Gereja||r.School||'—').trim(),f:getFund(r)}))
+  const key=S.mode==='church'?'gereja':'school';
+  const data=rows.map(r=>({n:getVal(r, key)||'—',f:getFund(r)}))
     .filter(d=>d.f!==null&&d.f>0).sort((a,b)=>b.f-a.f).slice(0,8);
   if(!data.length) return;
   mkChart('cFund',{type:'bar',data:{
@@ -758,7 +779,7 @@ function bFund(rows){
 }
 
 function bSchool(rows){
-  const names=rows.map(r=>(r.School||r.school||'—').trim());
+  const names=rows.map(r=>getVal(r, 'school')||'—');
   const sts=rows.map(r=>getSt(r));
   const stMap={Audited:100,WIP:50,Pending:0};
   const stCol={Audited:'rgba(16,185,129,.8)',WIP:'rgba(245,158,11,.8)',Pending:'rgba(239,68,68,.8)'};
@@ -772,7 +793,7 @@ function bSchool(rows){
     },
     plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex]}}}
   }});
-  const fdata=rows.map(r=>({n:(r.School||r.school||'—').trim(),f:getFund(r)||0}));
+  const fdata=rows.map(r=>({n:getVal(r, 'school')||'—',f:getFund(r)||0}));
   mkChart('cSchFd',{type:'bar',data:{
     labels:fdata.map(d=>d.n),
     datasets:[{label:'Fund',data:fdata.map(d=>d.f),backgroundColor:PAL.slice(0,fdata.length).map(c=>c+'bb'),borderColor:PAL.slice(0,fdata.length),borderWidth:1,borderRadius:5,borderSkipped:false}]
