@@ -276,7 +276,8 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
+  // Reinforced cache buster with SELECT * to force Google's CDN to re-evaluate the live sheet instantly
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&tq=${encodeURIComponent('SELECT *')}&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
 function fetchCSV(id, tab){
@@ -285,7 +286,10 @@ function fetchCSV(id, tab){
       download:true, header:true, skipEmptyLines:true,
       transformHeader:h=>h.trim(),
       transform:v=>v.trim(),
-      complete:r=>ok(r.data.filter(row=>Object.values(row).some(v=>v!==''))),
+      complete:r=>{
+        const validRows = r.data.filter(row=>Object.values(row).some(v=>v!==''));
+        ok(validRows);
+      },
       error:e=>fail(e),
     });
   });
@@ -304,7 +308,6 @@ async function loadAll(){
 async function doRefresh(){ destroyCharts(); S.cData={}; S.sData={}; await loadAll(); }
 
 /* ─── HELPERS ─── */
-// 💡 ROBUST GETTER: This searches your columns even if there are spaces or capitalization differences
 function getVal(row, ...keys) {
   const rKeys = Object.keys(row);
   for (let k of keys) {
@@ -381,7 +384,6 @@ function wilStats(rows){
     else m[w].p++;
     const f=getFund(r); if(f) m[w].fund+=f;
   });
-  // Changed sorting logic here to use numeric alphanumeric sort for sequential order
   return Object.entries(m).map(([n,d])=>({n,...d,pct:d.t?Math.round(d.a/d.t*100):0})).sort((a,b)=>a.n.localeCompare(b.n, undefined, {numeric: true, sensitivity: 'base'}));
 }
 
