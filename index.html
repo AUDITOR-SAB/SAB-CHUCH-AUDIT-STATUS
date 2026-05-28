@@ -276,8 +276,8 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  // Added &headers=1 to prevent Google from swallowing the first data row as a header
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
+  // Added &range=A:AZ to force Google to read the entire grid, bypassing any blank rows that might stop the fetch early
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=1&range=A:AZ&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
 function fetchCSV(id, tab){
