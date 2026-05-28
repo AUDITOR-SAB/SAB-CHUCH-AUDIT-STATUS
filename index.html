@@ -304,7 +304,7 @@ async function loadAll(){
 async function doRefresh(){ destroyCharts(); S.cData={}; S.sData={}; await loadAll(); }
 
 /* ─── HELPERS ─── */
-// 💡 NEW ROBUST GETTER: This searches your columns even if there are spaces or capitalization differences
+// 💡 ROBUST GETTER: This searches your columns even if there are spaces or capitalization differences
 function getVal(row, ...keys) {
   const rKeys = Object.keys(row);
   for (let k of keys) {
@@ -381,7 +381,8 @@ function wilStats(rows){
     else m[w].p++;
     const f=getFund(r); if(f) m[w].fund+=f;
   });
-  return Object.entries(m).map(([n,d])=>({n,...d,pct:d.t?Math.round(d.a/d.t*100):0})).sort((a,b)=>b.t-a.t);
+  // Changed sorting logic here to use numeric alphanumeric sort for sequential order
+  return Object.entries(m).map(([n,d])=>({n,...d,pct:d.t?Math.round(d.a/d.t*100):0})).sort((a,b)=>a.n.localeCompare(b.n, undefined, {numeric: true, sensitivity: 'base'}));
 }
 
 function daerStats(rows){
