@@ -1,1 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAB Mission Audit Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-4">
+                    <img src="SDA-LOGO.png" alt="SDA Logo" class="h-10 w-auto object-contain bg-slate-100 rounded-full p-1 border border-slate-200" onerror="this.src='https://via.placeholder.com/40?text=SDA'">
+                    <div>
+                        <h1 class="text-xl font-bold text-brand-900 leading-tight">SAB Mission Audit</h1>
+                        <p class="text-xs text-slate-500 font-medium">Tracking & Progress Dashboard</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="yearSelect" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2 cursor-pointer outline-none">
+                        <option value="2026">Year 2026</option>
+                        <option value="2025">Year 2025</option>
+                        <option value="2024">Year 2024</option>
+                        <option value="2023">Year 2023</option>
+                    </select>
+                    
+                    <div class="inline-flex rounded-lg shadow-sm" role="group">
+                        <button type="button" id="btn-church" onclick="setDashboardType('church')" class="px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600">
+                            Churches
+                        </button>
+                        <button type="button" id="btn-school" onclick="setDashboardType('school')" class="px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50">
+                            Schools
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div id="loader" class="flex flex-col items-center justify-center py-20">
+            <svg class="animate-spin h-8 w-8 text-brand-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-slate-500 font-medium">Syncing database...</p>
+        </div>
+
+        <div id="dashboard" class="hidden fade-in space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wide">Total Institutions</p>
+                    <h3 class="text-3xl font-bold text-slate-800 mt-1" id="metric-total">0</h3>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 border-l-4 border-l-emerald-500">
+                    <p class="text-sm font-medium text-emerald-600 uppercase tracking-wide">Audited</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-audited">0</h3>
+                        <span class="text-sm font-medium text-emerald-600 mb-1" id="metric-audited-percent">(0%)</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-5 border-l-4 border-l-amber-500">
+                    <p class="text-sm font-medium text-amber-600 uppercase tracking-wide">Work In Progress</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-wip">0</h3>
+                        <span class="text-sm font-medium text-amber-600 mb-1" id="metric-wip-percent">(0%)</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-rose-200 p-5 border-l-4 border-l-rose-500">
+                    <p class="text-sm font-medium text-rose-600 uppercase tracking-wide">Pending</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-pending">0</h3>
+                        <span class="text-sm font-medium text-rose-600 mb-1" id="metric-pending-percent">(0%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Overall Audit Status</h2>
+                    <div class="relative h-64 w-full flex justify-center">
+                        <canvas id="chart-overall"></canvas>
+                    </div>
+                </div>
+                
+                <div id="chart-wilayah-container" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 lg:col-span-2">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Audit Progress by Wilayah</h2>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chart-wilayah"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-slate-800" id="table-title">Church Audit Details</h2>
+                    <span class="text-xs font-medium bg-brand-100 text-brand-800 px-2 py-1 rounded-full" id="table-badge">Total: 0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-white border-b border-slate-200 text-slate-800">
+                            <tr id="table-headers">
+                                </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
+            &copy; <span id="currentYearText"></span> SAB Mission. Dashboard dynamically generated from Google Sheets.
+        </div>
+    </footer>
+
+    <script>
+        // --- Configuration ---
+        const SHEET_IDS = {
+            church: '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo',
+            school: '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU'
+        };
+
+        // --- State ---
+        let currentType = 'church'; // 'church' or 'school'
+        let dashboardData = [];
+        let chartInstances = {};
+
+        // --- DOM Elements ---
+        const yearSelect = document.getElementById('yearSelect');
+        const loader = document.getElementById('loader');
+        const dashboard = document.getElementById('dashboard');
+        
+        // --- Initialization ---
+        document.getElementById('currentYearText').textContent = new Date().getFullYear();
+        yearSelect.addEventListener('change', () => loadData());
+
+        // Initial Load
+        loadData();
+
+        // --- Core Functions ---
+        function setDashboardType(type) {
+            currentType = type;
+            
+            // UI Toggle Button Styling Update
+            const btnChurch = document.getElementById('btn-church');
+            const btnSchool = document.getElementById('btn-school');
+            
+            if(type === 'church') {
+                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
+                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
+            } else {
+                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
+                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
+            }
+
+            loadData();
+        }
+
+        async function loadData() {
+            const year = yearSelect.value;
+            const sheetId = SHEET_IDS[currentType];
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${year}`;
+
+            // Show Loader, Hide Dashboard
+            loader.classList.remove('hidden');
+            dashboard.classList.add('hidden');
+
+            try {
+                Papa.parse(url, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        // Filter out completely empty rows
+                        dashboardData = results.data.filter(row => {
+                            return Object.values(row).some(val => val !== "" && val !== undefined);
+                        });
+                        processDashboard();
+                    },
+                    error: function(err) {
+                        alert("Error fetching data. Please ensure your Google Sheet is shared as 'Anyone with the link can view' and the year tab exists.");
+                        console.error(err);
+                        loader.classList.add('hidden');
+                    }
+                });
+            } catch (error) {
+                console.error("Fetch failed", error);
+            }
+        }
+
+        function processDashboard() {
+            updateMetrics();
+            updateCharts();
+            renderTable();
+            
+            // Toggle visibility of specific widgets
+            const wilayahContainer = document.getElementById('chart-wilayah-container');
+            if(currentType === 'school') {
+                wilayahContainer.classList.add('hidden');
+                document.getElementById('table-title').textContent = "School Audit Details";
+            } else {
+                wilayahContainer.classList.remove('hidden');
+                document.getElementById('table-title').textContent = "Church Audit Details";
+            }
+
+            // Hide Loader, Show Dashboard
+            loader.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+        }
+
+        function getStatusStandardized(row) {
+            // Find key that contains 'status' ignoring case
+            const statusKey = Object.keys(row).find(k => k.toLowerCase().includes('status'));
+            if(!statusKey) return 'pending';
+            
+            const val = (row[statusKey] || '').toLowerCase().trim();
+            if(val.includes('audited') || val === 'done') return 'audited';
+            if(val.includes('work in progress') || val.includes('wip')) return 'wip';
+            return 'pending';
+        }
+
+        function updateMetrics() {
+            const total = dashboardData.length;
+            let audited = 0, wip = 0, pending = 0;
+
+            dashboardData.forEach(row => {
+                const status = getStatusStandardized(row);
+                if(status === 'audited') audited++;
+                else if(status === 'wip') wip++;
+                else pending++;
+            });
+
+            const calcPercent = (val) => total === 0 ? 0 : Math.round((val / total) * 100);
+
+            document.getElementById('metric-total').textContent = total;
+            document.getElementById('metric-audited').textContent = audited;
+            document.getElementById('metric-audited-percent').textContent = `(${calcPercent(audited)}%)`;
+            
+            document.getElementById('metric-wip').textContent = wip;
+            document.getElementById('metric-wip-percent').textContent = `(${calcPercent(wip)}%)`;
+            
+            document.getElementById('metric-pending').textContent = pending;
+            document.getElementById('metric-pending-percent').textContent = `(${calcPercent(pending)}%)`;
+            
+            document.getElementById('table-badge').textContent = `Total Records: ${total}`;
+        }
+
+        function updateCharts() {
+            // 1. Overall Status Donut Chart
+            let audited = 0, wip = 0, pending = 0;
+            dashboardData.forEach(row => {
+                const s = getStatusStandardized(row);
+                if(s === 'audited') audited++;
+                else if(s === 'wip') wip++;
+                else pending++;
+            });
+
+            if(chartInstances.overall) chartInstances.overall.destroy();
+            const ctxOverall = document.getElementById('chart-overall').getContext('2d');
+            chartInstances.overall = new Chart(ctxOverall, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Audited', 'Work In Progress', 'Pending'],
+                    datasets: [{
+                        data: [audited, wip, pending],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // 2. Wilayah Progress Bar Chart (Only for Church)
+            if (currentType === 'church') {
+                const wilayahKey = Object.keys(dashboardData[0] || {}).find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah';
+                
+                const wilayahData = {};
+                dashboardData.forEach(row => {
+                    const w = row[wilayahKey] || 'Unknown';
+                    const s = getStatusStandardized(row);
+                    if(!wilayahData[w]) wilayahData[w] = { audited: 0, wip: 0, pending: 0 };
+                    wilayahData[w][s]++;
+                });
+
+                const labels = Object.keys(wilayahData);
+                const dataAudited = labels.map(l => wilayahData[l].audited);
+                const dataWip = labels.map(l => wilayahData[l].wip);
+                const dataPending = labels.map(l => wilayahData[l].pending);
+
+                if(chartInstances.wilayah) chartInstances.wilayah.destroy();
+                const ctxWilayah = document.getElementById('chart-wilayah').getContext('2d');
+                chartInstances.wilayah = new Chart(ctxWilayah, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Audited', data: dataAudited, backgroundColor: '#10b981' },
+                            { label: 'WIP', data: dataWip, backgroundColor: '#f59e0b' },
+                            { label: 'Pending', data: dataPending, backgroundColor: '#f43f5e' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false } },
+                            y: { stacked: true, border: { dash: [4, 4] } }
+                        },
+                        plugins: {
+                            legend: { display: false } // legend is already on donut chart
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderTable() {
+            const thead = document.getElementById('table-headers');
+            const tbody = document.getElementById('table-body');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            if (dashboardData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="px-6 py-8 text-center text-slate-500">No data found for this year.</td></tr>`;
+                return;
+            }
+
+            // Define exact headers based on specification for clean UI
+            let displayHeaders = [];
+            let rowKeys = [];
+
+            if (currentType === 'church') {
+                displayHeaders = ['Wilayah', 'Daerah', 'Gereja', 'Type', 'Bank Record', 'Fund Bal. (RM)', 'Status'];
+                // Try to find the exact column keys from the CSV ignoring case
+                const keys = Object.keys(dashboardData[0]);
+                rowKeys = [
+                    keys.find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah',
+                    keys.find(k => k.toLowerCase().includes('daerah')) || 'Daerah',
+                    keys.find(k => k.toLowerCase().includes('gereja')) || 'Gereja',
+                    keys.find(k => k.toLowerCase().includes('type')) || 'Type',
+                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
+                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
+                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
+                ];
+            } else {
+                displayHeaders = ['School', 'Bank Record', 'Fund Bal. (RM)', 'School PIC', 'Status'];
+                const keys = Object.keys(dashboardData[0]);
+                rowKeys = [
+                    keys.find(k => k.toLowerCase().includes('school')) || 'School',
+                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
+                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
+                    keys.find(k => k.toLowerCase().includes('pic') || k.toLowerCase().includes('headmaster')) || 'School PIC',
+                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
+                ];
+            }
+
+            // Render Headers
+            displayHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.className = "px-5 py-3 font-semibold";
+                th.textContent = header;
+                thead.appendChild(th);
+            });
+
+            // Render Rows
+            dashboardData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+
+                rowKeys.forEach(key => {
+                    const td = document.createElement('td');
+                    td.className = "px-5 py-4 whitespace-nowrap";
+                    
+                    let cellValue = row[key] || '-';
+                    
+                    // Special formatting for status badges
+                    if (key.toLowerCase().includes('status')) {
+                        const s = getStatusStandardized(row);
+                        if (s === 'audited') {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Audited</span>`;
+                        } else if (s === 'wip') {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">W.I.P</span>`;
+                        } else {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">Pending</span>`;
+                        }
+                    } else if (key.toLowerCase().includes('fund') || key.toLowerCase().includes('balance')) {
+                        // formatting money
+                        td.className = "px-5 py-4 whitespace-nowrap font-medium text-slate-700";
+                        td.textContent = cellValue !== '-' ? `RM ${cellValue}` : '-';
+                    } else {
+                        td.textContent = cellValue;
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
