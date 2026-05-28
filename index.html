@@ -1,446 +1,1734 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAB Mission Audit Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAB Mission — Audit Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #0f2040;
+    --navy-light: #1a3060;
+    --blue: #1e5fc4;
+    --blue-bright: #2d7dff;
+    --sky: #4fa3f7;
+    --gold: #f0b429;
+    --gold-light: #fcd34d;
+    --mint: #10b981;
+    --coral: #f87171;
+    --amber: #fb923c;
+    --white: #ffffff;
+    --off-white: #f0f4ff;
+    --muted: #8fa3c8;
+    --border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.1);
+    --glass: rgba(14,32,64,0.7);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.3);
+    --shadow-lg: 0 24px 64px rgba(0,0,0,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BACKGROUND ─── */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(30,95,196,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(240,180,41,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 60% 30%, rgba(45,125,255,0.08) 0%, transparent 50%);
+    pointer-events:none;
+  }
+
+  /* Grid lines */
+  body::after {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events:none;
+  }
+
+  .page { position:relative; z-index:1; }
+
+  /* ─── HEADER ─── */
+  header {
+    position:sticky; top:0; z-index:100;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    gap: 16px;
+  }
+
+  .logo-area {
+    display:flex; align-items:center; gap:14px;
+    text-decoration:none; color:inherit;
+  }
+
+  .logo-img {
+    width:44px; height:44px;
+    border-radius:50%;
+    object-fit:contain;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding:4px;
+  }
+
+  .logo-text {
+    display:flex; flex-direction:column; gap:1px;
+  }
+
+  .logo-title {
+    font-size:15px; font-weight:700; letter-spacing:0.5px;
+    line-height:1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--sky) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .logo-sub {
+    font-size:10px; font-weight:400; color:var(--muted);
+    letter-spacing:1.5px; text-transform:uppercase;
+  }
+
+  /* Year Selector */
+  .year-selector {
+    display:flex; gap:6px; align-items:center;
+  }
+
+  .year-btn {
+    padding:6px 14px;
+    border-radius:20px;
+    border: 1px solid var(--card-border);
+    background: transparent;
+    color: var(--muted);
+    font-family:'Outfit',sans-serif;
+    font-size:13px; font-weight:500;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+
+  .year-btn:hover { color:var(--white); border-color:rgba(255,255,255,0.25); }
+  .year-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(30,95,196,0.5);
+  }
+
+  /* Toggle */
+  .mode-toggle {
+    display:flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    border-radius:12px;
+    padding:4px;
+    gap:2px;
+  }
+
+  .toggle-btn {
+    padding:8px 18px;
+    border-radius:9px;
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-family:'Outfit',sans-serif;
+    font-size:13px; font-weight:600;
+    cursor:pointer;
+    transition:all 0.25s;
+    display:flex; align-items:center; gap:7px;
+    white-space:nowrap;
+  }
+
+  .toggle-btn .icon { font-size:16px; }
+
+  .toggle-btn.active {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(30,95,196,0.4);
+  }
+
+  /* ─── MAIN ─── */
+  main {
+    max-width:1400px;
+    margin:0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ─── HERO STATS ─── */
+  .hero-section {
+    margin-bottom:32px;
+  }
+
+  .hero-title {
+    font-family:'DM Serif Display', serif;
+    font-size:clamp(28px,4vw,44px);
+    font-weight:400;
+    line-height:1.1;
+    margin-bottom:6px;
+  }
+
+  .hero-title span {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .hero-sub {
+    color:var(--muted); font-size:14px; font-weight:400;
+    margin-bottom:28px;
+  }
+
+  /* KPI Cards */
+  .kpi-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+  }
+
+  .kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor:default;
+  }
+
+  .kpi-card:hover {
+    transform:translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .kpi-card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0;
+    height:2px;
+    border-radius:2px 2px 0 0;
+  }
+
+  .kpi-card.green::before { background:linear-gradient(90deg,var(--mint),transparent); }
+  .kpi-card.amber::before { background:linear-gradient(90deg,var(--amber),transparent); }
+  .kpi-card.red::before   { background:linear-gradient(90deg,var(--coral),transparent); }
+  .kpi-card.blue::before  { background:linear-gradient(90deg,var(--blue-bright),transparent); }
+  .kpi-card.gold::before  { background:linear-gradient(90deg,var(--gold),transparent); }
+
+  .kpi-label {
+    font-size:11px; font-weight:600; text-transform:uppercase;
+    letter-spacing:1px; color:var(--muted); margin-bottom:10px;
+  }
+
+  .kpi-value {
+    font-size:36px; font-weight:800; line-height:1;
+    margin-bottom:4px;
+  }
+
+  .kpi-card.green .kpi-value { color:var(--mint); }
+  .kpi-card.amber .kpi-value { color:var(--amber); }
+  .kpi-card.red .kpi-value   { color:var(--coral); }
+  .kpi-card.blue .kpi-value  { color:var(--sky); }
+  .kpi-card.gold .kpi-value  { color:var(--gold); }
+
+  .kpi-meta { font-size:12px; color:var(--muted); }
+
+  /* Progress bar in KPI */
+  .kpi-progress {
+    margin-top:12px;
+    height:4px;
+    background:rgba(255,255,255,0.06);
+    border-radius:2px;
+    overflow:hidden;
+  }
+
+  .kpi-progress-fill {
+    height:100%;
+    border-radius:2px;
+    transition:width 1s ease;
+  }
+
+  .kpi-card.green .kpi-progress-fill { background:var(--mint); }
+  .kpi-card.amber .kpi-progress-fill { background:var(--amber); }
+  .kpi-card.gold  .kpi-progress-fill { background:var(--gold); }
+
+  /* ─── DASHBOARD LAYOUT ─── */
+  .dashboard-grid {
+    display:grid;
+    grid-template-columns: 1fr 340px;
+    gap:24px;
+    margin-bottom:24px;
+  }
+
+  @media(max-width:1024px) {
+    .dashboard-grid { grid-template-columns:1fr; }
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1.5px; color:var(--muted);
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+
+  .section-title::after {
+    content:''; flex:1; height:1px;
+    background: var(--border);
+  }
+
+  /* ─── CHART CARDS ─── */
+  .chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .chart-card-title {
+    font-size:14px; font-weight:600;
+    margin-bottom:4px;
+  }
+
+  .chart-card-sub {
+    font-size:12px; color:var(--muted);
+    margin-bottom:20px;
+  }
+
+  /* Big donut chart */
+  .donut-wrap {
+    display:flex; align-items:center; gap:28px;
+    flex-wrap:wrap;
+  }
+
+  .donut-svg-wrap {
+    position:relative;
+    flex-shrink:0;
+    width:160px; height:160px;
+  }
+
+  .donut-svg-wrap svg { width:100%; height:100%; }
+
+  .donut-center {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+  }
+
+  .donut-pct {
+    font-size:28px; font-weight:800;
+    line-height:1; color:var(--white);
+  }
+
+  .donut-pct-label {
+    font-size:10px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:1px;
+  }
+
+  /* Legend */
+  .legend { display:flex; flex-direction:column; gap:10px; }
+
+  .legend-item {
+    display:flex; align-items:center; gap:10px;
+    font-size:13px;
+  }
+
+  .legend-dot {
+    width:10px; height:10px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+
+  .legend-label { color:var(--muted); flex:1; }
+  .legend-count { font-weight:700; }
+  .legend-pct { font-size:11px; color:var(--muted); }
+
+  /* Horizontal bar chart */
+  .bar-chart { display:flex; flex-direction:column; gap:14px; }
+
+  .bar-row { display:flex; flex-direction:column; gap:6px; }
+
+  .bar-header {
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+
+  .bar-name {
+    font-size:13px; font-weight:500;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width:60%;
+  }
+
+  .bar-stats { font-size:11px; color:var(--muted); }
+
+  .bar-track {
+    height:8px;
+    background:rgba(255,255,255,0.06);
+    border-radius:4px;
+    overflow:hidden;
+    position:relative;
+  }
+
+  .bar-fill {
+    height:100%;
+    border-radius:4px;
+    transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1);
+    position:relative;
+  }
+
+  /* ─── SIDE PANEL ─── */
+  .side-panel { display:flex; flex-direction:column; gap:20px; }
+
+  /* Bank Record breakdown */
+  .bank-item {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+  }
+
+  .bank-item:last-child { border-bottom:none; }
+
+  .bank-badge {
+    padding:3px 10px; border-radius:20px;
+    font-size:11px; font-weight:600;
+  }
+
+  .badge-active   { background:rgba(16,185,129,0.15); color:var(--mint); }
+  .badge-dormant  { background:rgba(251,146,60,0.15); color:var(--amber); }
+  .badge-cash     { background:rgba(79,163,247,0.15); color:var(--sky); }
+  .badge-nodata   { background:rgba(248,113,113,0.15); color:var(--coral); }
+
+  /* ─── WILAYAH GRID ─── */
+  .wilayah-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:16px;
+    margin-top:8px;
+  }
+
+  .wilayah-card {
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-sm);
+    padding:16px 18px;
+    cursor:pointer;
+    transition:all 0.2s;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .wilayah-card:hover {
+    border-color:rgba(45,125,255,0.4);
+    background:rgba(45,125,255,0.07);
+    transform:translateY(-1px);
+  }
+
+  .wilayah-name {
+    font-size:14px; font-weight:600;
+    margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+
+  .wilayah-name .pin {
+    font-size:16px;
+  }
+
+  .wilayah-stats {
+    display:flex; gap:12px; margin-bottom:12px;
+  }
+
+  .wstat {
+    display:flex; flex-direction:column; gap:2px;
+  }
+
+  .wstat-val { font-size:18px; font-weight:700; }
+  .wstat-lbl { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+
+  .wilayah-bar-track {
+    height:5px;
+    background:rgba(255,255,255,0.06);
+    border-radius:3px;
+    overflow:hidden;
+  }
+
+  .wilayah-bar-fill {
+    height:100%;
+    border-radius:3px;
+    background: linear-gradient(90deg, var(--mint), var(--sky));
+    transition:width 1.2s ease;
+  }
+
+  .wilayah-pct {
+    font-size:11px; color:var(--muted);
+    margin-top:5px; text-align:right;
+  }
+
+  /* ─── DATA TABLE ─── */
+  .table-section { margin-top:8px; }
+
+  .table-controls {
+    display:flex; gap:12px; align-items:center;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+
+  .search-box {
+    flex:1; min-width:200px;
+    position:relative;
+  }
+
+  .search-box input {
+    width:100%;
+    padding:9px 12px 9px 36px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-sm);
+    color:var(--white);
+    font-family:'Outfit',sans-serif;
+    font-size:13px;
+    outline:none;
+    transition:border-color 0.2s;
+  }
+
+  .search-box input:focus { border-color:var(--blue-bright); }
+  .search-box input::placeholder { color:var(--muted); }
+
+  .search-icon {
+    position:absolute; left:12px; top:50%;
+    transform:translateY(-50%);
+    color:var(--muted); font-size:14px;
+    pointer-events:none;
+  }
+
+  .filter-select {
+    padding:9px 12px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-sm);
+    color:var(--white);
+    font-family:'Outfit',sans-serif;
+    font-size:13px;
+    outline:none;
+    cursor:pointer;
+  }
+
+  .filter-select option { background:var(--navy-mid); color:var(--white); }
+
+  .table-wrap {
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    overflow-x:auto;
+  }
+
+  table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+
+  thead th {
+    padding:12px 16px;
+    text-align:left;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+    color:var(--muted);
+    background:rgba(255,255,255,0.02);
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  thead th:hover { color:var(--white); }
+
+  tbody tr {
+    border-bottom:1px solid var(--border);
+    transition:background 0.15s;
+    cursor:default;
+  }
+
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:rgba(255,255,255,0.03); }
+
+  td {
+    padding:12px 16px;
+    color:var(--off-white);
+    white-space:nowrap;
+  }
+
+  /* status pills */
+  .status-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:20px;
+    font-size:11px; font-weight:600;
+    white-space:nowrap;
+  }
+
+  .status-pill::before {
+    content:''; width:6px; height:6px;
+    border-radius:50%;
+  }
+
+  .pill-audited {
+    background:rgba(16,185,129,0.15); color:var(--mint);
+  }
+  .pill-audited::before { background:var(--mint); box-shadow:0 0 6px var(--mint); }
+
+  .pill-wip {
+    background:rgba(251,146,60,0.15); color:var(--amber);
+  }
+  .pill-wip::before { background:var(--amber); animation:pulse-dot 1.5s infinite; }
+
+  .pill-pending {
+    background:rgba(248,113,113,0.15); color:var(--coral);
+  }
+  .pill-pending::before { background:var(--coral); }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(251,146,60,0.4); }
+    50%      { opacity:0.8; box-shadow:0 0 0 4px rgba(251,146,60,0); }
+  }
+
+  /* fund amount */
+  .fund-amount {
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ─── LOADING STATE ─── */
+  .loading-state {
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:80px 24px;
+    gap:16px;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .spinner {
+    width:40px; height:40px;
+    border:3px solid rgba(255,255,255,0.08);
+    border-top-color:var(--blue-bright);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ─── ERROR STATE ─── */
+  .error-state {
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:60px 24px;
+    gap:12px;
+    text-align:center;
+  }
+
+  .error-icon { font-size:40px; }
+  .error-msg { color:var(--coral); font-size:14px; font-weight:600; }
+  .error-sub { color:var(--muted); font-size:12px; max-width:400px; line-height:1.6; }
+
+  /* ─── EMPTY ─── */
+  .empty-row td {
+    text-align:center;
+    padding:40px;
+    color:var(--muted);
+    font-style:italic;
+  }
+
+  /* ─── SCHOOL CARDS ─── */
+  .school-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:16px;
+    margin-top:8px;
+  }
+
+  .school-card {
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:22px;
+    transition:all 0.2s;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .school-card:hover {
+    transform:translateY(-2px);
+    box-shadow:var(--shadow);
+    border-color:rgba(240,180,41,0.3);
+  }
+
+  .school-card::after {
+    content:'';
+    position:absolute;
+    top:0; right:0;
+    width:80px; height:80px;
+    background: radial-gradient(circle at top right, rgba(240,180,41,0.06), transparent 70%);
+    pointer-events:none;
+  }
+
+  .school-header {
+    display:flex; align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+  }
+
+  .school-name {
+    font-size:15px; font-weight:700;
+    line-height:1.3;
+  }
+
+  .school-pic {
+    font-size:12px; color:var(--muted);
+    margin-top:2px;
+  }
+
+  .school-divider {
+    height:1px; background:var(--border);
+    margin:14px 0;
+  }
+
+  .school-row {
+    display:flex; justify-content:space-between;
+    align-items:center; font-size:13px;
+    margin-bottom:8px;
+  }
+
+  .school-row:last-child { margin-bottom:0; }
+  .school-row-label { color:var(--muted); }
+
+  /* ─── PAGINATION ─── */
+  .pagination {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    color:var(--muted);
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .page-btns { display:flex; gap:6px; }
+
+  .page-btn {
+    padding:5px 12px;
+    border-radius:6px;
+    border:1px solid var(--card-border);
+    background:transparent;
+    color:var(--muted);
+    font-family:'Outfit',sans-serif;
+    font-size:12px;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+
+  .page-btn:hover { color:var(--white); border-color:rgba(255,255,255,0.2); }
+  .page-btn.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+  .page-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+  /* ─── LAST UPDATED ─── */
+  .last-updated {
+    font-size:11px; color:var(--muted);
+    text-align:right; margin-top:8px;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:768px) {
+    header { padding:0 16px; }
+    .header-inner { flex-wrap:wrap; height:auto; padding:12px 0; gap:10px; }
+    .year-selector { display:none; }
+    main { padding:20px 16px 60px; }
+    .kpi-grid { grid-template-columns:repeat(2,1fr); }
+    .donut-wrap { flex-direction:column; align-items:center; }
+    .wilayah-grid { grid-template-columns:1fr; }
+    td { padding:10px 12px; }
+  }
+
+  /* ─── FADE IN ANIMATION ─── */
+  .fade-in {
+    animation:fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Tooltip */
+  [data-tip] { position:relative; }
+  [data-tip]:hover::after {
+    content:attr(data-tip);
+    position:absolute; bottom:calc(100% + 6px); left:50%;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,0.8);
+    color:#fff; font-size:11px;
+    padding:4px 8px; border-radius:5px;
+    white-space:nowrap; z-index:999;
+    pointer-events:none;
+  }
+
+  /* No-print utility */
+  .refresh-btn {
+    padding:7px 14px;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--card-border);
+    background:transparent;
+    color:var(--muted);
+    font-family:'Outfit',sans-serif;
+    font-size:12px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition:all 0.2s;
+  }
+
+  .refresh-btn:hover { color:var(--white); border-color:rgba(255,255,255,0.25); }
+
+  /* Tab indicator underneath active mode */
+  .section-mode-label {
+    display:inline-flex; align-items:center; gap:8px;
+    background: rgba(240,180,41,0.1);
+    border:1px solid rgba(240,180,41,0.2);
+    color:var(--gold);
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:11px; font-weight:600;
+    letter-spacing:0.5px;
+    margin-bottom:24px;
+  }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body>
+<div class="page">
 
-    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-4">
-                    <img src="SDA-LOGO.png" alt="SDA Logo" class="h-10 w-auto object-contain bg-slate-100 rounded-full p-1 border border-slate-200" onerror="this.src='https://via.placeholder.com/40?text=SDA'">
-                    <div>
-                        <h1 class="text-xl font-bold text-brand-900 leading-tight">SAB Mission Audit</h1>
-                        <p class="text-xs text-slate-500 font-medium">Tracking & Progress Dashboard</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <select id="yearSelect" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2 cursor-pointer outline-none">
-                        <option value="2026">Year 2026</option>
-                        <option value="2025">Year 2025</option>
-                        <option value="2024">Year 2024</option>
-                        <option value="2023">Year 2023</option>
-                    </select>
-                    
-                    <div class="inline-flex rounded-lg shadow-sm" role="group">
-                        <button type="button" id="btn-church" onclick="setDashboardType('church')" class="px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600">
-                            Churches
-                        </button>
-                        <button type="button" id="btn-school" onclick="setDashboardType('school')" class="px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50">
-                            Schools
-                        </button>
-                    </div>
-                </div>
-            </div>
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <a class="logo-area" href="#">
+      <img src="SDA-LOGO.png" alt="SAB Logo" class="logo-img"
+           onerror="this.style.display='none'; this.nextSibling.style.display='flex'">
+      <div style="display:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1e5fc4,#2d7dff);align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">SAB</div>
+      <div class="logo-text">
+        <span class="logo-title">SAB Mission</span>
+        <span class="logo-sub">Audit Dashboard</span>
+      </div>
+    </a>
+
+    <div class="year-selector" id="yearSelector"></div>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
+        <span>↻</span> Refresh
+      </button>
+      <div class="mode-toggle">
+        <button class="toggle-btn active" id="btnChurch" onclick="setMode('church')">
+          <span class="icon">⛪</span> Church
+        </button>
+        <button class="toggle-btn" id="btnSchool" onclick="setMode('school')">
+          <span class="icon">🏫</span> School
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ─── MAIN ─── -->
+<main id="mainContent">
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <div>Loading data…</div>
+  </div>
+</main>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const CONFIG = {
+  church: {
+    sheetId: '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo',
+    tabs: { 2023:'2023', 2024:'2024', 2025:'2025', 2026:'2026' },
+    columns: ['Wilayah','Daerah','Gereja','Type','Bank Record','Closing Fund Balance','Status'],
+  },
+  school: {
+    sheetId: '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU',
+    tabs: { 2023:'2023', 2024:'2024', 2025:'2025', 2026:'2026' },
+    columns: ['School','Bank Record','Closing Fund Balance','Status','School PIC'],
+  }
+};
+
+const YEARS = [2023,2024,2025,2026];
+const STATUS_COLORS = {
+  'Audited':           { cls:'pill-audited',  color:'#10b981' },
+  'Work in progress':  { cls:'pill-wip',      color:'#fb923c' },
+  'Work In Progress':  { cls:'pill-wip',      color:'#fb923c' },
+  'WIP':               { cls:'pill-wip',      color:'#fb923c' },
+  'Pending':           { cls:'pill-pending',  color:'#f87171' },
+};
+const BANK_BADGE = {
+  'Active Account': 'badge-active',
+  'Dormant account': 'badge-dormant',
+  'Dormant Account': 'badge-dormant',
+  'Cash Only': 'badge-cash',
+  'No data': 'badge-nodata',
+  'No Data': 'badge-nodata',
+};
+const WILAYAH_COLORS = [
+  '#2d7dff','#10b981','#f0b429','#f87171','#a78bfa',
+  '#fb923c','#4fa3f7','#34d399','#fbbf24','#fc8181'
+];
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let state = {
+  mode: 'church',
+  year: 2025,
+  churchData: {},   // { 2023:[rows], 2024:[rows], ... }
+  schoolData: {},
+  searchQ: '',
+  filterStatus: '',
+  filterWilayah: '',
+  page: 1,
+  perPage: 20,
+  sortCol: -1,
+  sortDir: 1,
+  loading: false,
+  errors: {},
+};
+
+// ═══════════════════════════════════════════════════
+//  DATA FETCHING
+// ═══════════════════════════════════════════════════
+function gsheetUrl(sheetId, tabName) {
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+}
+
+async function fetchSheet(sheetId, tabName) {
+  const url = gsheetUrl(sheetId, tabName);
+  const resp = await fetch(url, { cache:'no-store' });
+  const text = await resp.text();
+  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
+  const cols = json.table.cols.map(c => c.label);
+  const rows = (json.table.rows || []).map(r => {
+    const obj = {};
+    cols.forEach((c,i) => {
+      const cell = r.c[i];
+      obj[c] = cell ? (cell.f || cell.v || '') : '';
+    });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v !== ''));
+  return rows;
+}
+
+async function loadAllData() {
+  state.loading = true;
+  renderMain();
+
+  // Load church
+  for(const yr of YEARS) {
+    try {
+      const tab = CONFIG.church.tabs[yr];
+      const rows = await fetchSheet(CONFIG.church.sheetId, tab);
+      state.churchData[yr] = rows;
+    } catch(e) {
+      state.churchData[yr] = [];
+      state.errors[`church-${yr}`] = e.message;
+    }
+  }
+
+  // Load school
+  for(const yr of YEARS) {
+    try {
+      const tab = CONFIG.school.tabs[yr];
+      const rows = await fetchSheet(CONFIG.school.sheetId, tab);
+      state.schoolData[yr] = rows;
+    } catch(e) {
+      state.schoolData[yr] = [];
+      state.errors[`school-${yr}`] = e.message;
+    }
+  }
+
+  state.loading = false;
+  renderMain();
+}
+
+async function refreshData() {
+  state.churchData = {};
+  state.schoolData = {};
+  state.errors = {};
+  await loadAllData();
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function currentData() {
+  if(state.mode === 'church') return state.churchData[state.year] || [];
+  return state.schoolData[state.year] || [];
+}
+
+function getStatus(r) {
+  const raw = (r['Status']||'').trim();
+  if(/audited/i.test(raw)) return 'Audited';
+  if(/work.in.progress|wip/i.test(raw)) return 'Work in progress';
+  if(/pending/i.test(raw)) return 'Pending';
+  return raw || 'Pending';
+}
+
+function getBankRecord(r) {
+  return (r['Bank Record'] || '').trim();
+}
+
+function getFund(r) {
+  const raw = (r['Closing Fund Balance']||'').toString().replace(/[^0-9.-]/g,'');
+  const n = parseFloat(raw);
+  return isNaN(n) ? null : n;
+}
+
+function fmtRM(n) {
+  if(n === null || n === undefined) return '—';
+  return 'RM ' + n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function statusPill(s) {
+  const sc = STATUS_COLORS[s] || STATUS_COLORS['Pending'];
+  return `<span class="status-pill ${sc.cls}">${s||'Pending'}</span>`;
+}
+
+function bankBadge(b) {
+  const cls = BANK_BADGE[b] || 'badge-nodata';
+  const label = b || 'No data';
+  return `<span class="bank-badge ${cls}">${label}</span>`;
+}
+
+function unique(arr, key) {
+  return [...new Set(arr.map(r=>r[key]||'').filter(Boolean))].sort();
+}
+
+// ═══════════════════════════════════════════════════
+//  COMPUTED STATS
+// ═══════════════════════════════════════════════════
+function computeStats(rows) {
+  const total = rows.length;
+  const audited = rows.filter(r => getStatus(r) === 'Audited').length;
+  const wip     = rows.filter(r => getStatus(r) === 'Work in progress').length;
+  const pending = rows.filter(r => getStatus(r) === 'Pending').length;
+  const pct = total ? Math.round(audited/total*100) : 0;
+
+  const bankBreak = {};
+  rows.forEach(r => {
+    const b = getBankRecord(r) || 'No data';
+    bankBreak[b] = (bankBreak[b]||0) + 1;
+  });
+
+  const totalFund = rows.reduce((acc,r) => {
+    const f = getFund(r); return acc + (f||0);
+  },0);
+
+  return { total, audited, wip, pending, pct, bankBreak, totalFund };
+}
+
+function computeWilayah(rows) {
+  const map = {};
+  rows.forEach(r => {
+    const w = (r['Wilayah']||'Unknown').trim();
+    if(!map[w]) map[w] = { total:0, audited:0, wip:0, pending:0, daerList:new Set() };
+    map[w].total++;
+    const s = getStatus(r);
+    if(s==='Audited') map[w].audited++;
+    else if(s==='Work in progress') map[w].wip++;
+    else map[w].pending++;
+    if(r['Daerah']) map[w].daerList.add(r['Daerah'].trim());
+  });
+  return Object.entries(map).map(([name,d])=>({
+    name,
+    total:d.total, audited:d.audited, wip:d.wip, pending:d.pending,
+    pct: d.total ? Math.round(d.audited/d.total*100) : 0,
+    daerahCount: d.daerList.size,
+  })).sort((a,b)=>b.total-a.total);
+}
+
+function computeDaerah(rows) {
+  const map = {};
+  rows.forEach(r => {
+    const d = (r['Daerah']||'Unknown').trim();
+    const w = (r['Wilayah']||'').trim();
+    if(!map[d]) map[d] = { total:0, audited:0, wilayah:w };
+    map[d].total++;
+    if(getStatus(r)==='Audited') map[d].audited++;
+  });
+  return Object.entries(map).map(([name,d])=>({
+    name, wilayah:d.wilayah, total:d.total, audited:d.audited,
+    pct: d.total ? Math.round(d.audited/d.total*100) : 0,
+  })).sort((a,b)=>b.total-a.total).slice(0,12);
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER YEAR SELECTOR
+// ═══════════════════════════════════════════════════
+function renderYearSelector() {
+  const el = document.getElementById('yearSelector');
+  if(!el) return;
+  el.innerHTML = YEARS.map(y=>
+    `<button class="year-btn${state.year===y?' active':''}" onclick="setYear(${y})">${y}</button>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  MAIN RENDER ROUTER
+// ═══════════════════════════════════════════════════
+function renderMain() {
+  renderYearSelector();
+  const el = document.getElementById('mainContent');
+  if(state.loading) {
+    el.innerHTML = `<div class="loading-state"><div class="spinner"></div><div>Loading dashboard data…</div></div>`;
+    return;
+  }
+
+  const rows = currentData();
+  if(state.mode==='church') renderChurch(el, rows);
+  else renderSchool(el, rows);
+}
+
+// ═══════════════════════════════════════════════════
+//  CHURCH RENDER
+// ═══════════════════════════════════════════════════
+function renderChurch(el, rows) {
+  const s = computeStats(rows);
+  const wilayahData = computeWilayah(rows);
+  const daerahData  = computeDaerah(rows);
+  const noData = rows.length === 0;
+
+  let errorBanner = '';
+  if(state.errors[`church-${state.year}`]) {
+    errorBanner = `
+    <div class="error-state">
+      <div class="error-icon">⚠️</div>
+      <div class="error-msg">Could not load church data for ${state.year}</div>
+      <div class="error-sub">Make sure the Google Sheet is publicly accessible (Anyone with link can view).<br>Tab name should match: "${CONFIG.church.tabs[state.year]}"<br><small style="opacity:.6">${state.errors[`church-${state.year}`]}</small></div>
+    </div>`;
+  }
+
+  el.innerHTML = `
+  <div class="fade-in">
+    ${errorBanner}
+    <div class="hero-section">
+      <div class="section-mode-label">⛪ Church Audit · ${state.year}</div>
+      <h1 class="hero-title">Church Audit <span>Progress</span></h1>
+      <p class="hero-sub">Tracking ${s.total} churches across SAB Mission for FY${state.year}</p>
+
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Churches</div>
+          <div class="kpi-value">${s.total}</div>
+          <div class="kpi-meta">Across all Wilayah</div>
         </div>
-    </nav>
+        <div class="kpi-card green">
+          <div class="kpi-label">Audited</div>
+          <div class="kpi-value">${s.audited}</div>
+          <div class="kpi-meta">${s.pct}% completion rate</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.pct}%"></div></div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Work in Progress</div>
+          <div class="kpi-value">${s.wip}</div>
+          <div class="kpi-meta">${s.total?Math.round(s.wip/s.total*100):0}% of total</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.total?Math.round(s.wip/s.total*100):0}%"></div></div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-value">${s.pending}</div>
+          <div class="kpi-meta">${s.total?Math.round(s.pending/s.total*100):0}% of total</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">Total Fund Balance</div>
+          <div class="kpi-value" style="font-size:22px;">${fmtRM(s.totalFund)}</div>
+          <div class="kpi-meta">Closing balance FY${state.year}</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.pct}%"></div></div>
+        </div>
+      </div>
+    </div>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        
-        <div id="loader" class="flex flex-col items-center justify-center py-20">
-            <svg class="animate-spin h-8 w-8 text-brand-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="text-slate-500 font-medium">Syncing database...</p>
+    <div class="dashboard-grid">
+      <!-- Charts left -->
+      <div>
+        <!-- Overall donut -->
+        <div class="section-title">Audit Completion Overview</div>
+        <div class="chart-card" style="margin-bottom:20px;">
+          <div class="chart-card-title">Overall Status Distribution</div>
+          <div class="chart-card-sub">Real-time breakdown of audit progress</div>
+          <div class="donut-wrap">
+            ${renderDonut(s)}
+            <div class="legend">
+              ${[
+                ['Audited', s.audited, '#10b981'],
+                ['Work in Progress', s.wip, '#fb923c'],
+                ['Pending', s.pending, '#f87171'],
+              ].map(([lbl,cnt,color])=>`
+              <div class="legend-item">
+                <div class="legend-dot" style="background:${color}"></div>
+                <span class="legend-label">${lbl}</span>
+                <span class="legend-count">${cnt}</span>
+                <span class="legend-pct">&nbsp;(${s.total?Math.round(cnt/s.total*100):0}%)</span>
+              </div>`).join('')}
+            </div>
+          </div>
         </div>
 
-        <div id="dashboard" class="hidden fade-in space-y-6">
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wide">Total Institutions</p>
-                    <h3 class="text-3xl font-bold text-slate-800 mt-1" id="metric-total">0</h3>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 border-l-4 border-l-emerald-500">
-                    <p class="text-sm font-medium text-emerald-600 uppercase tracking-wide">Audited</p>
-                    <div class="flex items-end gap-2 mt-1">
-                        <h3 class="text-3xl font-bold text-slate-800" id="metric-audited">0</h3>
-                        <span class="text-sm font-medium text-emerald-600 mb-1" id="metric-audited-percent">(0%)</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-5 border-l-4 border-l-amber-500">
-                    <p class="text-sm font-medium text-amber-600 uppercase tracking-wide">Work In Progress</p>
-                    <div class="flex items-end gap-2 mt-1">
-                        <h3 class="text-3xl font-bold text-slate-800" id="metric-wip">0</h3>
-                        <span class="text-sm font-medium text-amber-600 mb-1" id="metric-wip-percent">(0%)</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-rose-200 p-5 border-l-4 border-l-rose-500">
-                    <p class="text-sm font-medium text-rose-600 uppercase tracking-wide">Pending</p>
-                    <div class="flex items-end gap-2 mt-1">
-                        <h3 class="text-3xl font-bold text-slate-800" id="metric-pending">0</h3>
-                        <span class="text-sm font-medium text-rose-600 mb-1" id="metric-pending-percent">(0%)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Overall Audit Status</h2>
-                    <div class="relative h-64 w-full flex justify-center">
-                        <canvas id="chart-overall"></canvas>
-                    </div>
-                </div>
-                
-                <div id="chart-wilayah-container" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 lg:col-span-2">
-                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Audit Progress by Wilayah</h2>
-                    <div class="relative h-64 w-full">
-                        <canvas id="chart-wilayah"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                    <h2 class="text-lg font-semibold text-slate-800" id="table-title">Church Audit Details</h2>
-                    <span class="text-xs font-medium bg-brand-100 text-brand-800 px-2 py-1 rounded-full" id="table-badge">Total: 0</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-white border-b border-slate-200 text-slate-800">
-                            <tr id="table-headers">
-                                </tr>
-                        </thead>
-                        <tbody id="table-body" class="divide-y divide-slate-100">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
+        <!-- By Daerah bar -->
+        <div class="section-title">Progress by Daerah (Top 12)</div>
+        <div class="chart-card">
+          <div class="chart-card-title">Audit Progress by Daerah</div>
+          <div class="chart-card-sub">Showing top 12 daerah by total churches</div>
+          <div class="bar-chart">
+            ${daerahData.length===0
+              ? '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No data available</div>'
+              : daerahData.map((d,i)=>`
+            <div class="bar-row">
+              <div class="bar-header">
+                <span class="bar-name">${d.name}</span>
+                <span class="bar-stats">${d.audited}/${d.total} · ${d.pct}%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width:${d.pct}%;background:${WILAYAH_COLORS[i%WILAYAH_COLORS.length]}"></div>
+              </div>
+            </div>`).join('')}
+          </div>
         </div>
-    </main>
+      </div>
 
-    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
-            &copy; <span id="currentYearText"></span> SAB Mission. Dashboard dynamically generated from Google Sheets.
+      <!-- Side panel right -->
+      <div class="side-panel">
+        <!-- Bank Record breakdown -->
+        <div>
+          <div class="section-title">Bank Records</div>
+          <div class="chart-card">
+            <div class="chart-card-title">Bank Record Status</div>
+            <div class="chart-card-sub">Distribution across all churches</div>
+            <div>
+              ${Object.entries(s.bankBreak).map(([b,cnt])=>`
+              <div class="bank-item">
+                <span>${bankBadge(b)}</span>
+                <span style="font-weight:700">${cnt} <span style="color:var(--muted);font-weight:400;font-size:12px">(${s.total?Math.round(cnt/s.total*100):0}%)</span></span>
+              </div>`).join('') || '<div style="color:var(--muted);font-size:13px;padding:12px 0">No data</div>'}
+            </div>
+          </div>
         </div>
-    </footer>
 
-    <script>
-        // --- Configuration ---
-        const SHEET_IDS = {
-            church: '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo',
-            school: '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU'
-        };
+        <!-- Wilayah mini stats -->
+        <div>
+          <div class="section-title">By Wilayah</div>
+          <div class="chart-card">
+            <div class="chart-card-title">Wilayah Summary</div>
+            <div class="chart-card-sub">Completion rate per region</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              ${wilayahData.slice(0,6).map((w,i)=>`
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
+                  <span style="font-weight:600">${w.name}</span>
+                  <span style="color:var(--muted)">${w.audited}/${w.total}</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${w.pct}%;background:${WILAYAH_COLORS[i%WILAYAH_COLORS.length]}"></div>
+                </div>
+                <div style="font-size:10px;color:var(--muted);margin-top:3px;text-align:right">${w.pct}% audited</div>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        // --- State ---
-        let currentType = 'church'; // 'church' or 'school'
-        let dashboardData = [];
-        let chartInstances = {};
+    <!-- WILAYAH CARDS GRID -->
+    <div class="section-title" style="margin-top:8px">By Wilayah — Detail</div>
+    <div class="wilayah-grid">
+      ${wilayahData.map((w,i)=>`
+      <div class="wilayah-card" onclick="filterByWilayah('${w.name}')">
+        <div class="wilayah-name">
+          <span class="pin">📍</span>
+          ${w.name}
+        </div>
+        <div class="wilayah-stats">
+          <div class="wstat">
+            <span class="wstat-val" style="color:#10b981">${w.audited}</span>
+            <span class="wstat-lbl">Audited</span>
+          </div>
+          <div class="wstat">
+            <span class="wstat-val" style="color:#fb923c">${w.wip}</span>
+            <span class="wstat-lbl">WIP</span>
+          </div>
+          <div class="wstat">
+            <span class="wstat-val" style="color:#f87171">${w.pending}</span>
+            <span class="wstat-lbl">Pending</span>
+          </div>
+          <div class="wstat">
+            <span class="wstat-val" style="color:var(--sky)">${w.total}</span>
+            <span class="wstat-lbl">Total</span>
+          </div>
+        </div>
+        <div class="wilayah-bar-track">
+          <div class="wilayah-bar-fill" style="width:${w.pct}%"></div>
+        </div>
+        <div class="wilayah-pct">${w.pct}% complete</div>
+      </div>`).join('') || '<div style="color:var(--muted);font-size:13px;padding:20px">No data available</div>'}
+    </div>
 
-        // --- DOM Elements ---
-        const yearSelect = document.getElementById('yearSelect');
-        const loader = document.getElementById('loader');
-        const dashboard = document.getElementById('dashboard');
-        
-        // --- Initialization ---
-        document.getElementById('currentYearText').textContent = new Date().getFullYear();
-        yearSelect.addEventListener('change', () => loadData());
+    <!-- DATA TABLE -->
+    <div style="margin-top:32px">
+      <div class="section-title">Church Data Table</div>
+      ${renderChurchTable(rows)}
+    </div>
 
-        // Initial Load
-        loadData();
+    <div class="last-updated">Last refreshed: ${new Date().toLocaleString('en-MY')}</div>
+  </div>`;
 
-        // --- Core Functions ---
-        function setDashboardType(type) {
-            currentType = type;
-            
-            // UI Toggle Button Styling Update
-            const btnChurch = document.getElementById('btn-church');
-            const btnSchool = document.getElementById('btn-school');
-            
-            if(type === 'church') {
-                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
-                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
-            } else {
-                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
-                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
-            }
+  // Animate bars after render
+  setTimeout(()=>{
+    document.querySelectorAll('.bar-fill, .wilayah-bar-fill, .kpi-progress-fill').forEach(el=>{
+      const w = el.style.width;
+      el.style.width = '0';
+      requestAnimationFrame(()=>{ el.style.width = w; });
+    });
+    animateDonut();
+  },50);
+}
 
-            loadData();
-        }
+// ═══════════════════════════════════════════════════
+//  DONUT CHART
+// ═══════════════════════════════════════════════════
+function renderDonut(s) {
+  const size=160, cx=80, cy=80, r=58, stroke=18;
+  const circ = 2*Math.PI*r;
 
-        async function loadData() {
-            const year = yearSelect.value;
-            const sheetId = SHEET_IDS[currentType];
-            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${year}`;
+  const segments = [
+    { val:s.audited, color:'#10b981' },
+    { val:s.wip,     color:'#fb923c' },
+    { val:s.pending, color:'#f87171' },
+  ];
 
-            // Show Loader, Hide Dashboard
-            loader.classList.remove('hidden');
-            dashboard.classList.add('hidden');
+  let offset = 0;
+  const paths = segments.map(seg=>{
+    const frac = s.total ? seg.val/s.total : 0;
+    const len  = frac*circ;
+    const dash = `${len} ${circ-len}`;
+    const path = `<circle cx="${cx}" cy="${cy}" r="${r}"
+      fill="none" stroke="${seg.color}" stroke-width="${stroke}"
+      stroke-dasharray="${dash}" stroke-dashoffset="${-offset}"
+      stroke-linecap="butt"
+      class="donut-seg"
+      style="transform-origin:${cx}px ${cy}px;transition:stroke-dashoffset 1s ease,stroke-dasharray 1s ease"/>`;
+    offset += len;
+    return path;
+  }).join('');
 
-            try {
-                Papa.parse(url, {
-                    download: true,
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        // Filter out completely empty rows
-                        dashboardData = results.data.filter(row => {
-                            return Object.values(row).some(val => val !== "" && val !== undefined);
-                        });
-                        processDashboard();
-                    },
-                    error: function(err) {
-                        alert("Error fetching data. Please ensure your Google Sheet is shared as 'Anyone with the link can view' and the year tab exists.");
-                        console.error(err);
-                        loader.classList.add('hidden');
-                    }
-                });
-            } catch (error) {
-                console.error("Fetch failed", error);
-            }
-        }
+  return `
+  <div class="donut-svg-wrap">
+    <svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+        stroke="rgba(255,255,255,0.05)" stroke-width="${stroke}"/>
+      ${paths}
+    </svg>
+    <div class="donut-center">
+      <div class="donut-pct" id="donutPct">0%</div>
+      <div class="donut-pct-label">Audited</div>
+    </div>
+  </div>`;
+}
 
-        function processDashboard() {
-            updateMetrics();
-            updateCharts();
-            renderTable();
-            
-            // Toggle visibility of specific widgets
-            const wilayahContainer = document.getElementById('chart-wilayah-container');
-            if(currentType === 'school') {
-                wilayahContainer.classList.add('hidden');
-                document.getElementById('table-title').textContent = "School Audit Details";
-            } else {
-                wilayahContainer.classList.remove('hidden');
-                document.getElementById('table-title').textContent = "Church Audit Details";
-            }
+function animateDonut() {
+  const el = document.getElementById('donutPct');
+  if(!el) return;
+  const rows = currentData();
+  const s = computeStats(rows);
+  let cur=0;
+  const step = () => {
+    if(cur < s.pct) { cur++; el.textContent=cur+'%'; requestAnimationFrame(step); }
+    else el.textContent=s.pct+'%';
+  };
+  step();
+}
 
-            // Hide Loader, Show Dashboard
-            loader.classList.add('hidden');
-            dashboard.classList.remove('hidden');
-        }
+// ═══════════════════════════════════════════════════
+//  CHURCH TABLE
+// ═══════════════════════════════════════════════════
+function renderChurchTable(rows) {
+  const wilayahList = unique(rows, 'Wilayah');
 
-        function getStatusStandardized(row) {
-            // Find key that contains 'status' ignoring case
-            const statusKey = Object.keys(row).find(k => k.toLowerCase().includes('status'));
-            if(!statusKey) return 'pending';
-            
-            const val = (row[statusKey] || '').toLowerCase().trim();
-            if(val.includes('audited') || val === 'done') return 'audited';
-            if(val.includes('work in progress') || val.includes('wip')) return 'wip';
-            return 'pending';
-        }
+  // build filter select options for Wilayah
+  const wilayahOpts = ['<option value="">All Wilayah</option>',
+    ...wilayahList.map(w=>`<option value="${w}"${state.filterWilayah===w?' selected':''}>${w}</option>`)
+  ].join('');
 
-        function updateMetrics() {
-            const total = dashboardData.length;
-            let audited = 0, wip = 0, pending = 0;
+  // Filter
+  let filtered = rows;
+  if(state.searchQ) {
+    const q = state.searchQ.toLowerCase();
+    filtered = filtered.filter(r =>
+      ['Wilayah','Daerah','Gereja','Type'].some(c => (r[c]||'').toLowerCase().includes(q))
+    );
+  }
+  if(state.filterStatus) filtered = filtered.filter(r => getStatus(r)===state.filterStatus);
+  if(state.filterWilayah) filtered = filtered.filter(r => (r['Wilayah']||'')=== state.filterWilayah);
 
-            dashboardData.forEach(row => {
-                const status = getStatusStandardized(row);
-                if(status === 'audited') audited++;
-                else if(status === 'wip') wip++;
-                else pending++;
-            });
+  // Sort
+  const cols = ['Wilayah','Daerah','Gereja','Type','Bank Record','Closing Fund Balance','Status'];
+  if(state.sortCol >= 0) {
+    const key = cols[state.sortCol];
+    filtered = [...filtered].sort((a,b)=>{
+      const av = (a[key]||'').toString().toLowerCase();
+      const bv = (b[key]||'').toString().toLowerCase();
+      return av < bv ? -state.sortDir : av > bv ? state.sortDir : 0;
+    });
+  }
 
-            const calcPercent = (val) => total === 0 ? 0 : Math.round((val / total) * 100);
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total/state.perPage));
+  const pg = Math.min(state.page, pages);
+  const pageRows = filtered.slice((pg-1)*state.perPage, pg*state.perPage);
 
-            document.getElementById('metric-total').textContent = total;
-            document.getElementById('metric-audited').textContent = audited;
-            document.getElementById('metric-audited-percent').textContent = `(${calcPercent(audited)}%)`;
-            
-            document.getElementById('metric-wip').textContent = wip;
-            document.getElementById('metric-wip-percent').textContent = `(${calcPercent(wip)}%)`;
-            
-            document.getElementById('metric-pending').textContent = pending;
-            document.getElementById('metric-pending-percent').textContent = `(${calcPercent(pending)}%)`;
-            
-            document.getElementById('table-badge').textContent = `Total Records: ${total}`;
-        }
+  const sortArrow = i => state.sortCol===i ? (state.sortDir===1?'↑':'↓') : '';
 
-        function updateCharts() {
-            // 1. Overall Status Donut Chart
-            let audited = 0, wip = 0, pending = 0;
-            dashboardData.forEach(row => {
-                const s = getStatusStandardized(row);
-                if(s === 'audited') audited++;
-                else if(s === 'wip') wip++;
-                else pending++;
-            });
+  const rows_html = pageRows.length === 0
+    ? `<tr class="empty-row"><td colspan="7">No records found</td></tr>`
+    : pageRows.map(r=>{
+        const fund = getFund(r);
+        return `<tr>
+          <td><span style="font-weight:500;color:var(--sky)">${r['Wilayah']||'—'}</span></td>
+          <td>${r['Daerah']||'—'}</td>
+          <td style="font-weight:600">${r['Gereja']||'—'}</td>
+          <td style="color:var(--muted)">${r['Type']||'—'}</td>
+          <td>${bankBadge(getBankRecord(r))}</td>
+          <td class="fund-amount">${fmtRM(fund)}</td>
+          <td>${statusPill(getStatus(r))}</td>
+        </tr>`;
+      }).join('');
 
-            if(chartInstances.overall) chartInstances.overall.destroy();
-            const ctxOverall = document.getElementById('chart-overall').getContext('2d');
-            chartInstances.overall = new Chart(ctxOverall, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Audited', 'Work In Progress', 'Pending'],
-                    datasets: [{
-                        data: [audited, wip, pending],
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    },
-                    cutout: '70%'
-                }
-            });
+  const pageNums = [];
+  for(let i=1;i<=pages;i++) {
+    if(pages<=7||i===1||i===pages||Math.abs(i-pg)<=1) pageNums.push(i);
+    else if(Math.abs(i-pg)===2) pageNums.push('…');
+  }
+  const uniquePageNums = [...new Set(pageNums)];
 
-            // 2. Wilayah Progress Bar Chart (Only for Church)
-            if (currentType === 'church') {
-                const wilayahKey = Object.keys(dashboardData[0] || {}).find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah';
-                
-                const wilayahData = {};
-                dashboardData.forEach(row => {
-                    const w = row[wilayahKey] || 'Unknown';
-                    const s = getStatusStandardized(row);
-                    if(!wilayahData[w]) wilayahData[w] = { audited: 0, wip: 0, pending: 0 };
-                    wilayahData[w][s]++;
-                });
+  return `
+  <div class="table-section">
+    <div class="table-controls">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search church, daerah, wilayah…"
+          value="${state.searchQ}"
+          oninput="state.searchQ=this.value;state.page=1;renderMain()">
+      </div>
+      <select class="filter-select" onchange="state.filterWilayah=this.value;state.page=1;renderMain()">
+        ${wilayahOpts}
+      </select>
+      <select class="filter-select" onchange="state.filterStatus=this.value;state.page=1;renderMain()">
+        <option value="">All Status</option>
+        <option value="Audited"${state.filterStatus==='Audited'?' selected':''}>Audited</option>
+        <option value="Work in progress"${state.filterStatus==='Work in progress'?' selected':''}>Work in Progress</option>
+        <option value="Pending"${state.filterStatus==='Pending'?' selected':''}>Pending</option>
+      </select>
+      <span style="font-size:12px;color:var(--muted);white-space:nowrap">${total} record${total!==1?'s':''}</span>
+    </div>
 
-                const labels = Object.keys(wilayahData);
-                const dataAudited = labels.map(l => wilayahData[l].audited);
-                const dataWip = labels.map(l => wilayahData[l].wip);
-                const dataPending = labels.map(l => wilayahData[l].pending);
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            ${cols.map((c,i)=>`<th onclick="sortTable(${i})">${c} ${sortArrow(i)}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>${rows_html}</tbody>
+      </table>
+      ${pages > 1 ? `
+      <div class="pagination">
+        <span>${(pg-1)*state.perPage+1}–${Math.min(pg*state.perPage,total)} of ${total}</span>
+        <div class="page-btns">
+          <button class="page-btn" onclick="state.page=Math.max(1,state.page-1);renderMain()" ${pg===1?'disabled':''}>‹</button>
+          ${uniquePageNums.map(n=> n==='…'
+            ? `<button class="page-btn" disabled>…</button>`
+            : `<button class="page-btn ${n===pg?'active':''}" onclick="state.page=${n};renderMain()">${n}</button>`
+          ).join('')}
+          <button class="page-btn" onclick="state.page=Math.min(${pages},state.page+1);renderMain()" ${pg===pages?'disabled':''}>›</button>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
 
-                if(chartInstances.wilayah) chartInstances.wilayah.destroy();
-                const ctxWilayah = document.getElementById('chart-wilayah').getContext('2d');
-                chartInstances.wilayah = new Chart(ctxWilayah, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: 'Audited', data: dataAudited, backgroundColor: '#10b981' },
-                            { label: 'WIP', data: dataWip, backgroundColor: '#f59e0b' },
-                            { label: 'Pending', data: dataPending, backgroundColor: '#f43f5e' }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: { stacked: true, grid: { display: false } },
-                            y: { stacked: true, border: { dash: [4, 4] } }
-                        },
-                        plugins: {
-                            legend: { display: false } // legend is already on donut chart
-                        }
-                    }
-                });
-            }
-        }
+// ═══════════════════════════════════════════════════
+//  SCHOOL RENDER
+// ═══════════════════════════════════════════════════
+function renderSchool(el, rows) {
+  const s = computeStats(rows);
 
-        function renderTable() {
-            const thead = document.getElementById('table-headers');
-            const tbody = document.getElementById('table-body');
-            thead.innerHTML = '';
-            tbody.innerHTML = '';
+  let errorBanner = '';
+  if(state.errors[`school-${state.year}`]) {
+    errorBanner = `
+    <div class="error-state">
+      <div class="error-icon">⚠️</div>
+      <div class="error-msg">Could not load school data for ${state.year}</div>
+      <div class="error-sub">Make sure the Google Sheet is publicly accessible (Anyone with link can view).<br>Tab name should match: "${CONFIG.school.tabs[state.year]}"<br><small style="opacity:.6">${state.errors[`school-${state.year}`]}</small></div>
+    </div>`;
+  }
 
-            if (dashboardData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="px-6 py-8 text-center text-slate-500">No data found for this year.</td></tr>`;
-                return;
-            }
+  // Filter
+  let filtered = rows;
+  if(state.searchQ) {
+    const q = state.searchQ.toLowerCase();
+    filtered = filtered.filter(r =>
+      ['School','School PIC'].some(c=>(r[c]||'').toLowerCase().includes(q))
+    );
+  }
+  if(state.filterStatus) filtered = filtered.filter(r=>getStatus(r)===state.filterStatus);
 
-            // Define exact headers based on specification for clean UI
-            let displayHeaders = [];
-            let rowKeys = [];
+  el.innerHTML = `
+  <div class="fade-in">
+    ${errorBanner}
+    <div class="hero-section">
+      <div class="section-mode-label">🏫 School Audit · ${state.year}</div>
+      <h1 class="hero-title">School Audit <span>Progress</span></h1>
+      <p class="hero-sub">Tracking ${s.total} SAB Mission schools for FY${state.year}</p>
 
-            if (currentType === 'church') {
-                displayHeaders = ['Wilayah', 'Daerah', 'Gereja', 'Type', 'Bank Record', 'Fund Bal. (RM)', 'Status'];
-                // Try to find the exact column keys from the CSV ignoring case
-                const keys = Object.keys(dashboardData[0]);
-                rowKeys = [
-                    keys.find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah',
-                    keys.find(k => k.toLowerCase().includes('daerah')) || 'Daerah',
-                    keys.find(k => k.toLowerCase().includes('gereja')) || 'Gereja',
-                    keys.find(k => k.toLowerCase().includes('type')) || 'Type',
-                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
-                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
-                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
-                ];
-            } else {
-                displayHeaders = ['School', 'Bank Record', 'Fund Bal. (RM)', 'School PIC', 'Status'];
-                const keys = Object.keys(dashboardData[0]);
-                rowKeys = [
-                    keys.find(k => k.toLowerCase().includes('school')) || 'School',
-                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
-                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
-                    keys.find(k => k.toLowerCase().includes('pic') || k.toLowerCase().includes('headmaster')) || 'School PIC',
-                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
-                ];
-            }
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Schools</div>
+          <div class="kpi-value">${s.total}</div>
+          <div class="kpi-meta">Under SAB Mission</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Audited</div>
+          <div class="kpi-value">${s.audited}</div>
+          <div class="kpi-meta">${s.pct}% completion</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.pct}%"></div></div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Work in Progress</div>
+          <div class="kpi-value">${s.wip}</div>
+          <div class="kpi-meta">${s.total?Math.round(s.wip/s.total*100):0}% of total</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.total?Math.round(s.wip/s.total*100):0}%"></div></div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-value">${s.pending}</div>
+          <div class="kpi-meta">${s.total?Math.round(s.pending/s.total*100):0}% of total</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">Total Fund Balance</div>
+          <div class="kpi-value" style="font-size:22px;">${fmtRM(s.totalFund)}</div>
+          <div class="kpi-meta">Closing balance FY${state.year}</div>
+          <div class="kpi-progress"><div class="kpi-progress-fill" style="width:${s.pct}%"></div></div>
+        </div>
+      </div>
+    </div>
 
-            // Render Headers
-            displayHeaders.forEach(header => {
-                const th = document.createElement('th');
-                th.className = "px-5 py-3 font-semibold";
-                th.textContent = header;
-                thead.appendChild(th);
-            });
+    <div class="dashboard-grid">
+      <div>
+        <!-- Donut -->
+        <div class="section-title">Audit Completion Overview</div>
+        <div class="chart-card" style="margin-bottom:20px;">
+          <div class="chart-card-title">Overall Status Distribution</div>
+          <div class="chart-card-sub">School audit progress for ${state.year}</div>
+          <div class="donut-wrap">
+            ${renderDonut(s)}
+            <div class="legend">
+              ${[
+                ['Audited', s.audited, '#10b981'],
+                ['Work in Progress', s.wip, '#fb923c'],
+                ['Pending', s.pending, '#f87171'],
+              ].map(([lbl,cnt,color])=>`
+              <div class="legend-item">
+                <div class="legend-dot" style="background:${color}"></div>
+                <span class="legend-label">${lbl}</span>
+                <span class="legend-count">${cnt}</span>
+                <span class="legend-pct">&nbsp;(${s.total?Math.round(cnt/s.total*100):0}%)</span>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
 
-            // Render Rows
-            dashboardData.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
+        <!-- School status bars -->
+        <div class="section-title">School Progress</div>
+        <div class="chart-card">
+          <div class="chart-card-title">Individual School Status</div>
+          <div class="chart-card-sub">Fund balance and audit status per school</div>
+          <div class="bar-chart">
+            ${rows.length===0
+              ? '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No data available</div>'
+              : rows.map((r,i)=>{
+                  const s2 = getStatus(r);
+                  const pct = s2==='Audited'?100:s2==='Work in progress'?50:0;
+                  const col = s2==='Audited'?'#10b981':s2==='Work in progress'?'#fb923c':'#f87171';
+                  return `
+                  <div class="bar-row">
+                    <div class="bar-header">
+                      <span class="bar-name">${r['School']||'Unknown'}</span>
+                      <span class="bar-stats">${statusPill(s2)}</span>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-fill" style="width:${pct}%;background:${col}"></div>
+                    </div>
+                  </div>`;
+                }).join('')}
+          </div>
+        </div>
+      </div>
 
-                rowKeys.forEach(key => {
-                    const td = document.createElement('td');
-                    td.className = "px-5 py-4 whitespace-nowrap";
-                    
-                    let cellValue = row[key] || '-';
-                    
-                    // Special formatting for status badges
-                    if (key.toLowerCase().includes('status')) {
-                        const s = getStatusStandardized(row);
-                        if (s === 'audited') {
-                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Audited</span>`;
-                        } else if (s === 'wip') {
-                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">W.I.P</span>`;
-                        } else {
-                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">Pending</span>`;
-                        }
-                    } else if (key.toLowerCase().includes('fund') || key.toLowerCase().includes('balance')) {
-                        // formatting money
-                        td.className = "px-5 py-4 whitespace-nowrap font-medium text-slate-700";
-                        td.textContent = cellValue !== '-' ? `RM ${cellValue}` : '-';
-                    } else {
-                        td.textContent = cellValue;
-                    }
-                    
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-        }
-    </script>
+      <div class="side-panel">
+        <div>
+          <div class="section-title">Bank Records</div>
+          <div class="chart-card">
+            <div class="chart-card-title">Bank Record Status</div>
+            <div class="chart-card-sub">Distribution across all schools</div>
+            <div>
+              ${Object.entries(s.bankBreak).map(([b,cnt])=>`
+              <div class="bank-item">
+                <span>${bankBadge(b)}</span>
+                <span style="font-weight:700">${cnt} <span style="color:var(--muted);font-weight:400;font-size:12px">(${s.total?Math.round(cnt/s.total*100):0}%)</span></span>
+              </div>`).join('') || '<div style="color:var(--muted);font-size:13px;padding:12px 0">No data</div>'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHOOL CARDS -->
+    <div class="section-title" style="margin-top:8px">School Detail Cards</div>
+    <div class="table-controls" style="margin-bottom:16px">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search school, PIC…"
+          value="${state.searchQ}"
+          oninput="state.searchQ=this.value;state.page=1;renderMain()">
+      </div>
+      <select class="filter-select" onchange="state.filterStatus=this.value;state.page=1;renderMain()">
+        <option value="">All Status</option>
+        <option value="Audited"${state.filterStatus==='Audited'?' selected':''}>Audited</option>
+        <option value="Work in progress"${state.filterStatus==='Work in progress'?' selected':''}>Work in Progress</option>
+        <option value="Pending"${state.filterStatus==='Pending'?' selected':''}>Pending</option>
+      </select>
+    </div>
+    <div class="school-grid">
+      ${filtered.length===0
+        ? '<div style="color:var(--muted);font-size:13px;padding:20px">No schools found</div>'
+        : filtered.map((r,i)=>{
+            const st = getStatus(r);
+            const sc = STATUS_COLORS[st] || STATUS_COLORS['Pending'];
+            const fund = getFund(r);
+            return `
+            <div class="school-card">
+              <div class="school-header">
+                <div>
+                  <div class="school-name">${r['School']||'Unknown School'}</div>
+                  <div class="school-pic">👤 ${r['School PIC']||'—'}</div>
+                </div>
+                ${statusPill(st)}
+              </div>
+              <div class="school-divider"></div>
+              <div class="school-row">
+                <span class="school-row-label">Bank Record</span>
+                ${bankBadge(getBankRecord(r))}
+              </div>
+              <div class="school-row">
+                <span class="school-row-label">Closing Fund Balance</span>
+                <span class="fund-amount" style="color:var(--gold)">${fmtRM(fund)}</span>
+              </div>
+            </div>`;
+          }).join('')}
+    </div>
+
+    <div class="last-updated">Last refreshed: ${new Date().toLocaleString('en-MY')}</div>
+  </div>`;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.bar-fill,.kpi-progress-fill').forEach(el=>{
+      const w=el.style.width; el.style.width='0';
+      requestAnimationFrame(()=>{ el.style.width=w; });
+    });
+    animateDonut();
+  },50);
+}
+
+// ═══════════════════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════════════════
+function setMode(mode) {
+  state.mode = mode;
+  state.searchQ = '';
+  state.filterStatus = '';
+  state.filterWilayah = '';
+  state.page = 1;
+  document.getElementById('btnChurch').classList.toggle('active', mode==='church');
+  document.getElementById('btnSchool').classList.toggle('active', mode==='school');
+  renderMain();
+}
+
+function setYear(yr) {
+  state.year = yr;
+  state.page = 1;
+  state.searchQ = '';
+  state.filterStatus = '';
+  state.filterWilayah = '';
+  renderMain();
+}
+
+function sortTable(col) {
+  if(state.sortCol===col) state.sortDir *= -1;
+  else { state.sortCol=col; state.sortDir=1; }
+  renderMain();
+}
+
+function filterByWilayah(w) {
+  state.filterWilayah = state.filterWilayah===w ? '' : w;
+  state.page=1;
+  // Scroll to table
+  setTimeout(()=>{
+    const t = document.querySelector('.table-section');
+    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  },100);
+  renderMain();
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+renderYearSelector();
+loadAllData();
+</script>
 </body>
 </html>
