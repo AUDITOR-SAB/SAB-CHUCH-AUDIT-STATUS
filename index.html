@@ -276,7 +276,8 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
+  // Added cache buster to force Google to give us the latest version
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
 function fetchCSV(id, tab){
