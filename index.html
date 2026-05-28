@@ -276,8 +276,8 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  // Reinforced cache buster with SELECT * to force Google's CDN to re-evaluate the live sheet instantly
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&tq=${encodeURIComponent('SELECT *')}&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
+  // Added &headers=1 to prevent Google from swallowing the first data row as a header
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
 function fetchCSV(id, tab){
