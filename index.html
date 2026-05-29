@@ -276,24 +276,31 @@ const S = {
 
 /* ─── FETCH via PapaParse CSV export ─── */
 function csvUrl(id, tab){
-  // 💡 BULLETPROOF FIX: We set headers=0 so Google absolutely CANNOT guess or combine header rows
+  // We set headers=0 so Google absolutely CANNOT guess or combine header rows
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
 function fetchCSV(id, tab){
   return new Promise((ok,fail)=>{
     Papa.parse(csvUrl(id,tab),{
-      // We tell PapaParse NOT to look for a header row either. We will do it manually.
       download:true, header:false, skipEmptyLines:true,
       complete:r=>{
         const rows = r.data;
         let hIdx = -1;
         
-        // 1. Manually scan the first 5 rows to find the ACTUAL header row
+        // 1. SCORING SYSTEM: Find the actual header row by requiring multiple column name matches
         for(let i=0; i<Math.min(rows.length, 5); i++){
           const str = rows[i].join(' ').toLowerCase();
-          // If the row contains any of our key columns, it is the true header row
-          if(str.includes('wilayah') || str.includes('daerah') || str.includes('status') || str.includes('school') || str.includes('gereja')){
+          let score = 0;
+          
+          if(str.includes('wilayah')) score++;
+          if(str.includes('daerah')) score++;
+          if(str.includes('gereja') || str.includes('school')) score++;
+          if(str.includes('status')) score++;
+          if(str.includes('bank')) score++;
+          
+          // Require at least 3 keyword matches. This prevents big title rows (which only have 1 keyword) from being selected.
+          if(score >= 3){
             hIdx = i;
             break;
           }
