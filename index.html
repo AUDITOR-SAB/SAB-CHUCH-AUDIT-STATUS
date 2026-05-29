@@ -1,881 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAB Mission — Audit Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-:root{
-  --bg:#07111f;--bg2:#0c1a2e;--bg3:#0f2040;
-  --panel:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --blue:#1d6bf3;--blue2:#3b82f6;--sky:#60a5fa;--cyan:#22d3ee;
-  --green:#10b981;--amber:#f59e0b;--red:#ef4444;--gold:#f0b429;
-  --purple:#8b5cf6;--pink:#ec4899;
-  --white:#fff;--off:#e2eaff;--muted:#6b82a8;--muted2:#3d5070;
-  --r:14px;--r2:10px;--sh:0 8px 32px rgba(0,0,0,.35);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 900px 600px at -10% -10%,rgba(29,107,243,.12) 0%,transparent 70%),
-  radial-gradient(ellipse 700px 500px at 110% 110%,rgba(240,180,41,.07) 0%,transparent 70%),
-  radial-gradient(ellipse 500px 400px at 55% 50%,rgba(34,211,238,.04) 0%,transparent 60%)}
-body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:56px 56px}
-.page{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* HEADER */
-header{position:sticky;top:0;z-index:200;background:rgba(7,17,31,.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
-.hdr{max-width:1500px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;gap:16px}
-.logo{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;flex-shrink:0}
-.logo-img{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(29,107,243,.3),rgba(34,211,238,.2));border:1px solid rgba(255,255,255,.15);object-fit:contain;padding:5px}
-.logo-fallback{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
-.logo-name{font-size:14px;font-weight:800;background:linear-gradient(120deg,#fff,var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-tagline{font-size:10px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
-.hdr-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
-.yr-btn{padding:5px 13px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.yr-btn:hover{color:var(--white);border-color:var(--border2)}
-.yr-btn.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 14px rgba(29,107,243,.45)}
-.hdr-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.mode-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);padding:3px;gap:2px}
-.mode-btn{padding:7px 16px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:6px}
-.mode-btn.on{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 3px 12px rgba(29,107,243,.4)}
-.mode-btn.son{background:linear-gradient(135deg,var(--gold),#d97706);color:#fff;box-shadow:0 3px 12px rgba(240,180,41,.4)}
-.icon-btn{padding:7px 12px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
-.icon-btn:hover{color:var(--white);border-color:var(--border2)}
-
-/* MAIN */
-main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
-
-/* STATES */
-.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:14px;text-align:center}
-.spin{width:38px;height:38px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* PAGE HEADER */
-.page-header{margin-bottom:28px}
-.mode-label{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
-.lbl-c{background:rgba(29,107,243,.12);border:1px solid rgba(29,107,243,.25);color:var(--sky)}
-.lbl-s{background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.25);color:var(--gold)}
-.page-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,42px);font-weight:700;line-height:1.1;margin-bottom:6px}
-.page-title em{font-style:italic;font-weight:400}
-.ac-blue{background:linear-gradient(120deg,var(--sky),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.ac-gold{background:linear-gradient(120deg,var(--gold),#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.page-sub{color:var(--muted);font-size:13px}
-
-/* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px}
-.kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default}
-.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh)}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
-.kpi.cb::before{background:linear-gradient(90deg,var(--blue2),transparent)}
-.kpi.cg::before{background:linear-gradient(90deg,var(--green),transparent)}
-.kpi.ca::before{background:linear-gradient(90deg,var(--amber),transparent)}
-.kpi.cr::before{background:linear-gradient(90deg,var(--red),transparent)}
-.kpi.co::before{background:linear-gradient(90deg,var(--gold),transparent)}
-.kpi.cp::before{background:linear-gradient(90deg,var(--purple),transparent)}
-.kpi-ic{font-size:20px;margin-bottom:8px}
-.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
-.kpi-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:3px}
-.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}
-.kpi-meta{font-size:11px;color:var(--muted)}
-.kpi-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:11px;overflow:hidden}
-.kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
-.kpi.cg .kpi-bar-fill{background:var(--green)}.kpi.ca .kpi-bar-fill{background:var(--amber)}.kpi.co .kpi-bar-fill{background:var(--gold)}
-
-/* GRIDS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px}
-.glh{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px}
-
-/* CARD */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;position:relative;overflow:hidden}
-.card-t{font-size:14px;font-weight:700;margin-bottom:3px}
-.card-s{font-size:11px;color:var(--muted);margin-bottom:18px}
-
-/* SEC TITLE */
-.sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.sec::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* DONUT */
-.donut-area{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.donut-box{position:relative;width:160px;height:160px;flex-shrink:0}
-.donut-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
-.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.d-pct{font-size:28px;font-weight:800;line-height:1}
-.d-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-.legend{display:flex;flex-direction:column;gap:9px;flex:1;min-width:130px}
-.li{display:flex;align-items:center;gap:9px;font-size:12px}
-.ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.ll{color:var(--muted);flex:1}
-.lv{font-weight:700}
-.lp{font-size:11px;color:var(--muted2)}
-
-/* BAR LIST */
-.bar-list{display:flex;flex-direction:column;gap:13px}
-.brow{display:flex;flex-direction:column;gap:5px}
-.bhdr{display:flex;justify-content:space-between;align-items:baseline}
-.bname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%}
-.bstat{font-size:11px;color:var(--muted)}
-.btrack{height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
-.bfill{height:100%;border-radius:4px;transition:width 1.3s cubic-bezier(.34,1.56,.64,1)}
-
-/* STATUS PILLS */
-.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
-.pill::before{content:'';width:6px;height:6px;border-radius:50%}
-.pa{background:rgba(16,185,129,.13);color:#34d399}.pa::before{background:#10b981;box-shadow:0 0 5px #10b981}
-.pw{background:rgba(245,158,11,.13);color:#fbbf24}.pw::before{background:#f59e0b;animation:blink 1.6s infinite}
-.pp{background:rgba(239,68,68,.13);color:#fca5a5}.pp::before{background:#ef4444}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* BANK BADGES */
-.bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.ba{background:rgba(16,185,129,.12);color:#34d399}.bd{background:rgba(245,158,11,.12);color:#fbbf24}
-.bc{background:rgba(96,165,250,.12);color:#93c5fd}.bn{background:rgba(239,68,68,.1);color:#fca5a5}
-
-/* WILAYAH CARDS */
-.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:24px}
-.wcard{background:var(--panel);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all .2s}
-.wcard:hover,.wcard.act{border-color:rgba(59,130,246,.45);background:rgba(59,130,246,.06);transform:translateY(-1px)}
-.wcard.act{box-shadow:0 0 0 1px rgba(59,130,246,.3)}
-.wname{font-size:13px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:7px}
-.wstats{display:flex;gap:14px;margin-bottom:10px}
-.ws{display:flex;flex-direction:column;gap:1px}
-.wsv{font-size:17px;font-weight:800;line-height:1}
-.wsl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.wprog{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
-.wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width 1.2s ease}
-.wpct{font-size:10px;color:var(--muted);text-align:right;margin-top:4px}
-
-/* BANK ROWS */
-.bkrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
-.bkrow:last-child{border-bottom:none}
-.bkct{font-weight:800}
-
-/* TABLE */
-.tbl-ctrl{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.srch{flex:1;min-width:180px;position:relative}
-.srch input{width:100%;padding:8px 12px 8px 34px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;outline:none;transition:border-color .2s}
-.srch input:focus{border-color:var(--blue2)}
-.srch input::placeholder{color:var(--muted)}
-.sic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
-.flt{padding:8px 11px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
-.flt option{background:#0c1a2e}
-.twrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{padding:11px 14px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
-thead th:hover{color:var(--white)}
-tbody tr{border-bottom:1px solid var(--border);transition:background .14s}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:rgba(255,255,255,.025)}
-td{padding:11px 14px;color:var(--off);white-space:nowrap}
-.tfund{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold)}
-
-/* PAGINATION */
-.pgn{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);flex-wrap:wrap;gap:8px}
-.pbtns{display:flex;gap:4px}
-.pbtn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;cursor:pointer;transition:all .15s}
-.pbtn:hover{color:var(--white);border-color:var(--border2)}
-.pbtn.on{background:var(--blue);border-color:var(--blue);color:#fff}
-.pbtn:disabled{opacity:.3;cursor:not-allowed}
-
-/* SCHOOL CARDS */
-.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-bottom:24px}
-.scard{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:all .2s;position:relative;overflow:hidden}
-.scard::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(240,180,41,.07),transparent 70%);pointer-events:none}
-.scard:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:rgba(240,180,41,.25)}
-.stop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-.sname{font-size:14px;font-weight:800;line-height:1.3}
-.spic{font-size:11px;color:var(--muted);margin-top:3px}
-.sdiv{height:1px;background:var(--border);margin:12px 0}
-.srow{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:7px}
-.srow:last-child{margin-bottom:0}
-.slbl{color:var(--muted)}
-
-/* FUND LEADERS */
-.frow{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);font-size:12px;margin-bottom:6px}
-.fnum{color:var(--muted);font-size:11px;font-weight:800;width:18px;flex-shrink:0}
-.fname{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fval{font-weight:800;color:var(--gold);white-space:nowrap}
-
-/* CHART */
-.cw{position:relative;width:100%}
-.cw canvas{display:block;width:100%!important}
-
-/* FOOTER */
-footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-top:1px solid var(--border)}
-
-/* ANIM */
-.fade-in{animation:fi .45s ease both}
-@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* RESPONSIVE */
-@media(max-width:1100px){.g2,.g3,.glh{grid-template-columns:1fr}}
-@media(max-width:768px){
-  .hdr{padding:0 16px;height:auto;flex-wrap:wrap;padding:12px 16px;gap:10px}
-  .hdr-mid{display:none}
-  main{padding:20px 14px 60px}
-  .kpi-row{grid-template-columns:repeat(2,1fr)}
-  td{padding:9px 10px}
-}
-@media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}.sgrid{grid-template-columns:1fr}.wgrid{grid-template-columns:1fr 1fr}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAB Mission Audit Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-<div class="page">
-<header>
-  <div class="hdr">
-    <a class="logo" href="#">
-      <img src="SDA-LOGO.png" alt="SAB" class="logo-img" onerror="this.style.display='none';document.getElementById('lf').style.display='flex'">
-      <div id="lf" class="logo-fallback" style="display:none">SAB</div>
-      <div style="display:flex;flex-direction:column;gap:1px">
-        <span class="logo-name">SAB Mission</span>
-        <span class="logo-tagline">Audit Dashboard</span>
-      </div>
-    </a>
-    <div class="hdr-mid" id="yrSel"></div>
-    <div class="hdr-right">
-      <button class="icon-btn" onclick="doRefresh()">↻ Refresh</button>
-      <div class="mode-toggle">
-        <button class="mode-btn on" id="btnC" onclick="setMode('church')">⛪ Church</button>
-        <button class="mode-btn" id="btnS" onclick="setMode('school')">🏫 School</button>
-      </div>
-    </div>
-  </div>
-</header>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-<main id="main">
-  <div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>
-</main>
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-4">
+                    <img src="SDA-LOGO.png" alt="SDA Logo" class="h-10 w-auto object-contain bg-slate-100 rounded-full p-1 border border-slate-200" onerror="this.src='https://via.placeholder.com/40?text=SDA'">
+                    <div>
+                        <h1 class="text-xl font-bold text-brand-900 leading-tight">SAB Mission Audit</h1>
+                        <p class="text-xs text-slate-500 font-medium">Tracking & Progress Dashboard</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="yearSelect" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2 cursor-pointer outline-none">
+                        <option value="2026">Year 2026</option>
+                        <option value="2025">Year 2025</option>
+                        <option value="2024">Year 2024</option>
+                        <option value="2023">Year 2023</option>
+                    </select>
+                    
+                    <div class="inline-flex rounded-lg shadow-sm" role="group">
+                        <button type="button" id="btn-church" onclick="setDashboardType('church')" class="px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600">
+                            Churches
+                        </button>
+                        <button type="button" id="btn-school" onclick="setDashboardType('school')" class="px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50">
+                            Schools
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<footer id="ft" style="display:none">
-  SAB Mission Audit Dashboard &nbsp;·&nbsp; Last updated: <span id="ftT"></span>
-</footer>
-</div>
-
-<script>
-/* ─── CONFIG ─── */
-const CHURCH_ID = '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo';
-const SCHOOL_ID = '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU';
-const YEARS = [2023,2024,2025,2026];
-const PAL = ['#3b82f6','#10b981','#f0b429','#ef4444','#8b5cf6','#ec4899','#22d3ee','#f97316','#a3e635','#fb7185','#06b6d4','#84cc16'];
-
-/* ─── STATE ─── */
-const S = {
-  mode:'church', year:2025,
-  cData:{}, sData:{},
-  search:'', fSt:'', fWil:'',
-  page:1, perPage:25, sc:-1, sd:1,
-  charts:{},
-};
-
-/* ─── FETCH via PapaParse CSV export ─── */
-function csvUrl(id, tab){
-  // 💡 BULLETPROOF FIX: We set headers=0 so Google absolutely CANNOT guess or combine header rows
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
-}
-
-function fetchCSV(id, tab){
-  return new Promise((ok,fail)=>{
-    Papa.parse(csvUrl(id,tab),{
-      // We tell PapaParse NOT to look for a header row either. We will do it manually.
-      download:true, header:false, skipEmptyLines:true,
-      complete:r=>{
-        const rows = r.data;
-        let hIdx = -1;
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
-        // 1. Manually scan the first 5 rows to find the ACTUAL header row
-        for(let i=0; i<Math.min(rows.length, 5); i++){
-          const str = rows[i].join(' ').toLowerCase();
-          // If the row contains any of our key columns, it is the true header row
-          if(str.includes('wilayah') || str.includes('daerah') || str.includes('status') || str.includes('school') || str.includes('gereja')){
-            hIdx = i;
-            break;
-          }
+        <div id="loader" class="flex flex-col items-center justify-center py-20">
+            <svg class="animate-spin h-8 w-8 text-brand-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-slate-500 font-medium">Syncing database...</p>
+        </div>
+
+        <div id="dashboard" class="hidden fade-in space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wide">Total Institutions</p>
+                    <h3 class="text-3xl font-bold text-slate-800 mt-1" id="metric-total">0</h3>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5 border-l-4 border-l-emerald-500">
+                    <p class="text-sm font-medium text-emerald-600 uppercase tracking-wide">Audited</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-audited">0</h3>
+                        <span class="text-sm font-medium text-emerald-600 mb-1" id="metric-audited-percent">(0%)</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-5 border-l-4 border-l-amber-500">
+                    <p class="text-sm font-medium text-amber-600 uppercase tracking-wide">Work In Progress</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-wip">0</h3>
+                        <span class="text-sm font-medium text-amber-600 mb-1" id="metric-wip-percent">(0%)</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-rose-200 p-5 border-l-4 border-l-rose-500">
+                    <p class="text-sm font-medium text-rose-600 uppercase tracking-wide">Pending</p>
+                    <div class="flex items-end gap-2 mt-1">
+                        <h3 class="text-3xl font-bold text-slate-800" id="metric-pending">0</h3>
+                        <span class="text-sm font-medium text-rose-600 mb-1" id="metric-pending-percent">(0%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Overall Audit Status</h2>
+                    <div class="relative h-64 w-full flex justify-center">
+                        <canvas id="chart-overall"></canvas>
+                    </div>
+                </div>
+                
+                <div id="chart-wilayah-container" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 lg:col-span-2">
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4">Audit Progress by Wilayah</h2>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chart-wilayah"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-slate-800" id="table-title">Church Audit Details</h2>
+                    <span class="text-xs font-medium bg-brand-100 text-brand-800 px-2 py-1 rounded-full" id="table-badge">Total: 0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-white border-b border-slate-200 text-slate-800">
+                            <tr id="table-headers">
+                                </tr>
+                        </thead>
+                        <tbody id="table-body" class="divide-y divide-slate-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
+            &copy; <span id="currentYearText"></span> SAB Mission. Dashboard dynamically generated from Google Sheets.
+        </div>
+    </footer>
+
+    <script>
+        // --- Configuration ---
+        const SHEET_IDS = {
+            church: '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo',
+            school: '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU'
+        };
+
+        // --- State ---
+        let currentType = 'church'; // 'church' or 'school'
+        let dashboardData = [];
+        let chartInstances = {};
+
+        // --- DOM Elements ---
+        const yearSelect = document.getElementById('yearSelect');
+        const loader = document.getElementById('loader');
+        const dashboard = document.getElementById('dashboard');
+        
+        // --- Initialization ---
+        document.getElementById('currentYearText').textContent = new Date().getFullYear();
+        yearSelect.addEventListener('change', () => loadData());
+
+        // Initial Load
+        loadData();
+
+        // --- Core Functions ---
+        function setDashboardType(type) {
+            currentType = type;
+            
+            // UI Toggle Button Styling Update
+            const btnChurch = document.getElementById('btn-church');
+            const btnSchool = document.getElementById('btn-school');
+            
+            if(type === 'church') {
+                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
+                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
+            } else {
+                btnSchool.className = "px-4 py-2 text-sm font-medium rounded-r-lg border transition-colors focus:z-10 focus:ring-2 bg-brand-600 text-white border-brand-600";
+                btnChurch.className = "px-4 py-2 text-sm font-medium rounded-l-lg border transition-colors focus:z-10 focus:ring-2 bg-white text-slate-700 border-slate-200 hover:bg-slate-50";
+            }
+
+            loadData();
         }
-        
-        if(hIdx === -1){ ok([]); return; } // Failsafe if sheet is totally empty
-        
-        // 2. Extract the actual headers, lowercased and trimmed
-        const headers = rows[hIdx].map(h => h ? h.toString().toLowerCase().trim() : '');
-        const formattedData = [];
-        
-        // 3. Force EVERYTHING below the header row to be treated as pure data
-        for(let i=hIdx+1; i<rows.length; i++){
-          const rRow = rows[i];
-          // Skip completely empty rows
-          if(!rRow.some(v => v !== null && v !== '')) continue;
-          
-          const obj = {};
-          headers.forEach((h, j)=>{
-            if(h) obj[h] = rRow[j] ? rRow[j].toString().trim() : '';
-          });
-          formattedData.push(obj);
+
+        async function loadData() {
+            const year = yearSelect.value;
+            const sheetId = SHEET_IDS[currentType];
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${year}`;
+
+            // Show Loader, Hide Dashboard
+            loader.classList.remove('hidden');
+            dashboard.classList.add('hidden');
+
+            try {
+                Papa.parse(url, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        // Filter out completely empty rows
+                        dashboardData = results.data.filter(row => {
+                            return Object.values(row).some(val => val !== "" && val !== undefined);
+                        });
+                        processDashboard();
+                    },
+                    error: function(err) {
+                        alert("Error fetching data. Please ensure your Google Sheet is shared as 'Anyone with the link can view' and the year tab exists.");
+                        console.error(err);
+                        loader.classList.add('hidden');
+                    }
+                });
+            } catch (error) {
+                console.error("Fetch failed", error);
+            }
         }
-        
-        ok(formattedData);
-      },
-      error:e=>fail(e),
-    });
-  });
-}
 
-async function loadAll(){
-  document.getElementById('main').innerHTML='<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
-  const tabs = {'2023':'2023','2024':'2024','2025':'2025','2026':'2026'};
-  for(const yr of YEARS){
-    try{ S.cData[yr]=await fetchCSV(CHURCH_ID,tabs[yr]); }catch(e){ S.cData[yr]=[]; }
-    try{ S.sData[yr]=await fetchCSV(SCHOOL_ID,tabs[yr]); }catch(e){ S.sData[yr]=[]; }
-  }
-  renderAll();
-}
+        function processDashboard() {
+            updateMetrics();
+            updateCharts();
+            renderTable();
+            
+            // Toggle visibility of specific widgets
+            const wilayahContainer = document.getElementById('chart-wilayah-container');
+            if(currentType === 'school') {
+                wilayahContainer.classList.add('hidden');
+                document.getElementById('table-title').textContent = "School Audit Details";
+            } else {
+                wilayahContainer.classList.remove('hidden');
+                document.getElementById('table-title').textContent = "Church Audit Details";
+            }
 
-async function doRefresh(){ destroyCharts(); S.cData={}; S.sData={}; await loadAll(); }
+            // Hide Loader, Show Dashboard
+            loader.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+        }
 
-/* ─── HELPERS ─── */
-function getVal(row, ...keys) {
-  const rKeys = Object.keys(row);
-  for (let k of keys) {
-    const kl = k.toLowerCase().trim();
-    const match = rKeys.find(rk => rk.toLowerCase().trim().includes(kl));
-    if (match && row[match] !== undefined) return row[match].toString().trim();
-  }
-  return '';
-}
+        function getStatusStandardized(row) {
+            // Find key that contains 'status' ignoring case
+            const statusKey = Object.keys(row).find(k => k.toLowerCase().includes('status'));
+            if(!statusKey) return 'pending';
+            
+            const val = (row[statusKey] || '').toLowerCase().trim();
+            if(val.includes('audited') || val === 'done') return 'audited';
+            if(val.includes('work in progress') || val.includes('wip')) return 'wip';
+            return 'pending';
+        }
 
-function cur(){ return S.mode==='church'?(S.cData[S.year]||[]):(S.sData[S.year]||[]); }
+        function updateMetrics() {
+            const total = dashboardData.length;
+            let audited = 0, wip = 0, pending = 0;
 
-function getSt(r){
-  const v = getVal(r, 'status');
-  if(/audit/i.test(v)) return 'Audited';
-  if(/work.in.progress|wip/i.test(v)) return 'WIP';
-  if(/pending/i.test(v)) return 'Pending';
-  return v||'Pending';
-}
+            dashboardData.forEach(row => {
+                const status = getStatusStandardized(row);
+                if(status === 'audited') audited++;
+                else if(status === 'wip') wip++;
+                else pending++;
+            });
 
-function getBank(r){
-  return getVal(r, 'bank record', 'bank') || 'No data';
-}
+            const calcPercent = (val) => total === 0 ? 0 : Math.round((val / total) * 100);
 
-function getFund(r){
-  const raw = getVal(r, 'closing fund balance', 'fund balance', 'fund', 'balance');
-  const n = parseFloat(raw.replace(/[^0-9.-]/g,''));
-  return isNaN(n)?null:n;
-}
+            document.getElementById('metric-total').textContent = total;
+            document.getElementById('metric-audited').textContent = audited;
+            document.getElementById('metric-audited-percent').textContent = `(${calcPercent(audited)}%)`;
+            
+            document.getElementById('metric-wip').textContent = wip;
+            document.getElementById('metric-wip-percent').textContent = `(${calcPercent(wip)}%)`;
+            
+            document.getElementById('metric-pending').textContent = pending;
+            document.getElementById('metric-pending-percent').textContent = `(${calcPercent(pending)}%)`;
+            
+            document.getElementById('table-badge').textContent = `Total Records: ${total}`;
+        }
 
-function fRM(n){
-  if(n===null||n===undefined||n===0) return n===0?'RM 0.00':'—';
-  return 'RM '+n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+        function updateCharts() {
+            // 1. Overall Status Donut Chart
+            let audited = 0, wip = 0, pending = 0;
+            dashboardData.forEach(row => {
+                const s = getStatusStandardized(row);
+                if(s === 'audited') audited++;
+                else if(s === 'wip') wip++;
+                else pending++;
+            });
 
-function pill(s){
-  const m={Audited:'pa',WIP:'pw',Pending:'pp'};
-  const lbl=s==='WIP'?'Work in Progress':s;
-  return `<span class="pill ${m[s]||'pp'}">${lbl}</span>`;
-}
+            if(chartInstances.overall) chartInstances.overall.destroy();
+            const ctxOverall = document.getElementById('chart-overall').getContext('2d');
+            chartInstances.overall = new Chart(ctxOverall, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Audited', 'Work In Progress', 'Pending'],
+                    datasets: [{
+                        data: [audited, wip, pending],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '70%'
+                }
+            });
 
-function bank(b){
-  let c='bn';
-  if(/active/i.test(b)) c='ba';
-  else if(/dormant/i.test(b)) c='bd';
-  else if(/cash/i.test(b)) c='bc';
-  return `<span class="bb ${c}">${b}</span>`;
-}
+            // 2. Wilayah Progress Bar Chart (Only for Church)
+            if (currentType === 'church') {
+                const wilayahKey = Object.keys(dashboardData[0] || {}).find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah';
+                
+                const wilayahData = {};
+                dashboardData.forEach(row => {
+                    const w = row[wilayahKey] || 'Unknown';
+                    const s = getStatusStandardized(row);
+                    if(!wilayahData[w]) wilayahData[w] = { audited: 0, wip: 0, pending: 0 };
+                    wilayahData[w][s]++;
+                });
 
-function uniq(rows,key){ 
-  return [...new Set(rows.map(r=>getVal(r, key)).filter(Boolean))].sort(); 
-}
+                const labels = Object.keys(wilayahData);
+                const dataAudited = labels.map(l => wilayahData[l].audited);
+                const dataWip = labels.map(l => wilayahData[l].wip);
+                const dataPending = labels.map(l => wilayahData[l].pending);
 
-function stats(rows){
-  const t=rows.length;
-  const a=rows.filter(r=>getSt(r)==='Audited').length;
-  const w=rows.filter(r=>getSt(r)==='WIP').length;
-  const p=rows.filter(r=>getSt(r)==='Pending').length;
-  const bk={};
-  rows.forEach(r=>{ const b=getBank(r); bk[b]=(bk[b]||0)+1; });
-  const fund=rows.reduce((acc,r)=>acc+(getFund(r)||0),0);
-  return{t,a,w,p,pct:t?Math.round(a/t*100):0,bk,fund};
-}
+                if(chartInstances.wilayah) chartInstances.wilayah.destroy();
+                const ctxWilayah = document.getElementById('chart-wilayah').getContext('2d');
+                chartInstances.wilayah = new Chart(ctxWilayah, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Audited', data: dataAudited, backgroundColor: '#10b981' },
+                            { label: 'WIP', data: dataWip, backgroundColor: '#f59e0b' },
+                            { label: 'Pending', data: dataPending, backgroundColor: '#f43f5e' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false } },
+                            y: { stacked: true, border: { dash: [4, 4] } }
+                        },
+                        plugins: {
+                            legend: { display: false } // legend is already on donut chart
+                        }
+                    }
+                });
+            }
+        }
 
-function wilStats(rows){
-  const m={};
-  rows.forEach(r=>{
-    const w=getVal(r, 'wilayah')||'Unknown';
-    if(!m[w]) m[w]={t:0,a:0,w:0,p:0,fund:0};
-    m[w].t++;
-    const s=getSt(r);
-    if(s==='Audited') m[w].a++;
-    else if(s==='WIP') m[w].w++;
-    else m[w].p++;
-    const f=getFund(r); if(f) m[w].fund+=f;
-  });
-  return Object.entries(m).map(([n,d])=>({n,...d,pct:d.t?Math.round(d.a/d.t*100):0})).sort((a,b)=>a.n.localeCompare(b.n, undefined, {numeric: true, sensitivity: 'base'}));
-}
+        function renderTable() {
+            const thead = document.getElementById('table-headers');
+            const tbody = document.getElementById('table-body');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
 
-function daerStats(rows){
-  const m={};
-  rows.forEach(r=>{
-    const d=getVal(r, 'daerah')||'Unknown';
-    if(!m[d]) m[d]={t:0,a:0};
-    m[d].t++;
-    if(getSt(r)==='Audited') m[d].a++;
-  });
-  return Object.entries(m).map(([n,d])=>({n,...d,pct:d.t?Math.round(d.a/d.t*100):0})).sort((a,b)=>b.t-a.t).slice(0,15);
-}
+            if (dashboardData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="px-6 py-8 text-center text-slate-500">No data found for this year.</td></tr>`;
+                return;
+            }
 
-function trends(){
-  return YEARS.map(yr=>{
-    const rows=S.mode==='church'?(S.cData[yr]||[]):(S.sData[yr]||[]);
-    const s=stats(rows);
-    return{yr,t:s.t,a:s.a,pct:s.pct};
-  });
-}
+            // Define exact headers based on specification for clean UI
+            let displayHeaders = [];
+            let rowKeys = [];
 
-/* ─── CHARTS ─── */
-function destroyCharts(){
-  Object.values(S.charts).forEach(c=>{try{c.destroy()}catch(e){}});
-  S.charts={};
-}
+            if (currentType === 'church') {
+                displayHeaders = ['Wilayah', 'Daerah', 'Gereja', 'Type', 'Bank Record', 'Fund Bal. (RM)', 'Status'];
+                // Try to find the exact column keys from the CSV ignoring case
+                const keys = Object.keys(dashboardData[0]);
+                rowKeys = [
+                    keys.find(k => k.toLowerCase().includes('wilayah')) || 'Wilayah',
+                    keys.find(k => k.toLowerCase().includes('daerah')) || 'Daerah',
+                    keys.find(k => k.toLowerCase().includes('gereja')) || 'Gereja',
+                    keys.find(k => k.toLowerCase().includes('type')) || 'Type',
+                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
+                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
+                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
+                ];
+            } else {
+                displayHeaders = ['School', 'Bank Record', 'Fund Bal. (RM)', 'School PIC', 'Status'];
+                const keys = Object.keys(dashboardData[0]);
+                rowKeys = [
+                    keys.find(k => k.toLowerCase().includes('school')) || 'School',
+                    keys.find(k => k.toLowerCase().includes('bank')) || 'Bank Record',
+                    keys.find(k => k.toLowerCase().includes('fund') || k.toLowerCase().includes('balance')) || 'Closing Fund Balance',
+                    keys.find(k => k.toLowerCase().includes('pic') || k.toLowerCase().includes('headmaster')) || 'School PIC',
+                    keys.find(k => k.toLowerCase().includes('status')) || 'Status'
+                ];
+            }
 
-function mkChart(id,cfg){
-  const el=document.getElementById(id);
-  if(!el) return;
-  try{
-    if(S.charts[id]) S.charts[id].destroy();
-    S.charts[id]=new Chart(el.getContext('2d'),cfg);
-  }catch(e){}
-}
+            // Render Headers
+            displayHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.className = "px-5 py-3 font-semibold";
+                th.textContent = header;
+                thead.appendChild(th);
+            });
 
-Chart.defaults.color='#6b82a8';
-Chart.defaults.borderColor='rgba(255,255,255,0.06)';
-Chart.defaults.font.family="'Plus Jakarta Sans',sans-serif";
+            // Render Rows
+            dashboardData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
 
-const TT={backgroundColor:'rgba(7,17,31,.92)',borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,titleColor:'#e2eaff',bodyColor:'#6b82a8'};
-
-/* ─── RENDER YEAR SEL ─── */
-function renderYrs(){
-  document.getElementById('yrSel').innerHTML=
-    YEARS.map(y=>`<button class="yr-btn${S.year===y?' on':''}" onclick="setYear(${y})">${y}</button>`).join('');
-}
-
-/* ─── MAIN RENDER ─── */
-function renderAll(){
-  destroyCharts();
-  renderYrs();
-  const m=document.getElementById('main');
-  S.mode==='church'?renderChurch(m):renderSchool(m);
-  const ft=document.getElementById('ft');
-  ft.style.display='';
-  document.getElementById('ftT').textContent=new Date().toLocaleString('en-MY');
-}
-
-/* ═══ CHURCH ═══ */
-function renderChurch(m){
-  const rows=cur(), s=stats(rows), wil=wilStats(rows), dae=daerStats(rows), tr=trends();
-
-  m.innerHTML=`<div class="fade-in">
-<div class="page-header">
-  <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
-  <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
-  <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}</p>
-</div>
-
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
-</div>
-
-<div class="g3">
-  <div class="card">
-    <div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div>
-    <div class="donut-area">
-      <div class="donut-box"><canvas id="cDnt"></canvas>
-        <div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div>
-      </div>
-      <div class="legend">
-        ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
-        <div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp"> (${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % vs total churches</div>
-    <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches FY${S.year}</div>
-    ${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('')||'<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded. Check sheet is public.</div>'}
-  </div>
-</div>
-
-<div class="glh">
-  <div class="card">
-    <div class="card-t">Progress by Daerah</div><div class="card-s">Click Wilayah cards below to filter</div>
-    <div class="bar-list">
-      ${dae.length?dae.map((d,i)=>`<div class="brow"><div class="bhdr"><span class="bname">${d.n}</span><span class="bstat">${d.a}/${d.t} · ${d.pct}%</span></div><div class="btrack"><div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join(''):'<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">No data for this year</div>'}
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-t">Wilayah Stacked Status</div><div class="card-s">Audited · WIP · Pending per region</div>
-    <div class="cw" style="height:260px"><canvas id="cWil"></canvas></div>
-  </div>
-</div>
-
-<div class="sec">Wilayah Cards</div>
-<div class="wgrid">
-  ${wil.map((w,i)=>`<div class="wcard${S.fWil===w.n?' act':''}" onclick="fwil('${escQ(w.n)}')">
-    <div class="wname">📍 ${w.n}</div>
-    <div class="wstats">
-      <div class="ws"><span class="wsv" style="color:#10b981">${w.a}</span><span class="wsl">Audited</span></div>
-      <div class="ws"><span class="wsv" style="color:#f59e0b">${w.w}</span><span class="wsl">WIP</span></div>
-      <div class="ws"><span class="wsv" style="color:#ef4444">${w.p}</span><span class="wsl">Pending</span></div>
-      <div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div>
-    </div>
-    <div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div>
-    <div class="wpct">${w.pct}% · ${fRM(w.fund)}</div>
-  </div>`).join('')||'<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}
-</div>
-
-${topFunds(rows)}
-
-<div class="sec" style="margin-top:4px">Church Records</div>
-${churchTbl(rows)}
-</div>`;
-
-  setTimeout(()=>{
-    animB(); aniPct('dPct',s.pct);
-    bDonut(s); bTrend(tr); bWil(wil); bFund(rows);
-  },60);
-}
-
-/* ═══ SCHOOL ═══ */
-function renderSchool(m){
-  const rows=cur(), s=stats(rows), tr=trends();
-  let filt=rows;
-  if(S.search){
-    const q=S.search.toLowerCase();
-    filt=filt.filter(r=>['school','pic'].some(k=>getVal(r,k).toLowerCase().includes(q)));
-  }
-  if(S.fSt) filt=filt.filter(r=>getSt(r)===S.fSt);
-
-  m.innerHTML=`<div class="fade-in">
-<div class="page-header">
-  <div class="mode-label lbl-s">🏫 School Audit · ${S.year}</div>
-  <h1 class="page-title">SAB Mission <em>School</em> <span class="ac-gold">Audit</span></h1>
-  <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
-</div>
-
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-</div>
-
-<div class="g3">
-  <div class="card">
-    <div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div>
-    <div class="donut-area">
-      <div class="donut-box"><canvas id="cDnt"></canvas>
-        <div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div>
-      </div>
-      <div class="legend">
-        ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
-        <div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp"> (${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % across years</div>
-    <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools FY${S.year}</div>
-    ${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('')||'<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}
-  </div>
-</div>
-
-${topFunds(rows)}
-
-<div class="g2" style="margin-top:4px">
-  <div class="card">
-    <div class="card-t">Individual School Progress</div><div class="card-s">Audit status per school</div>
-    <div class="cw" style="height:220px"><canvas id="cSchSt"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Fund Balance Comparison</div><div class="card-s">Closing fund balance per school</div>
-    <div class="cw" style="height:220px"><canvas id="cSchFd"></canvas></div>
-  </div>
-</div>
-
-<div class="sec" style="margin-top:4px">School Overview</div>
-<div class="tbl-ctrl">
-  <div class="srch"><span class="sic">🔍</span>
-    <input type="text" placeholder="Search school or PIC…" value="${S.search}" oninput="S.search=this.value;renderAll()">
-  </div>
-  <select class="flt" onchange="S.fSt=this.value;renderAll()">
-    <option value="">All Status</option>
-    <option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option>
-    <option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option>
-    <option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
-  </select>
-  <span style="font-size:11px;color:var(--muted)">${filt.length} school${filt.length!==1?'s':''}</span>
-</div>
-<div class="sgrid">
-  ${filt.length?filt.map(r=>`
-  <div class="scard">
-    <div class="stop">
-      <div><div class="sname">${getVal(r,'school')||'Unknown'}</div><div class="spic">👤 ${getVal(r,'pic')||'—'}</div></div>
-      ${pill(getSt(r))}
-    </div>
-    <div class="sdiv"></div>
-    <div class="srow"><span class="slbl">Bank Record</span>${bank(getBank(r))}</div>
-    <div class="srow"><span class="slbl">Closing Fund</span><span style="font-weight:800;color:var(--gold)">${fRM(getFund(r))}</span></div>
-  </div>`).join(''):'<div style="color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1">No schools found</div>'}
-</div>
-</div>`;
-
-  setTimeout(()=>{
-    animB(); aniPct('dPct',s.pct);
-    bDonut(s); bTrend(tr); bFund(rows); bSchool(rows);
-  },60);
-}
-
-/* ─── TOP FUNDS ─── */
-function topFunds(rows){
-  const key=S.mode==='church'?'gereja':'school';
-  const data=rows.map(r=>({
-    n:getVal(r, key)||'—',
-    f:getFund(r)
-  })).filter(d=>d.f!==null&&d.f>0).sort((a,b)=>b.f-a.f).slice(0,8);
-  if(!data.length) return '';
-  return `
-<div class="g2" style="margin-top:4px">
-  <div class="card">
-    <div class="card-t">Top Fund Balances</div><div class="card-s">Highest closing balances FY${S.year}</div>
-    <div class="cw" style="height:200px"><canvas id="cFund"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Fund Balance Leaders</div><div class="card-s">Top 8 by closing balance</div>
-    ${data.map((d,i)=>`<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval">${fRM(d.f)}</span></div>`).join('')}
-  </div>
-</div>`;
-}
-
-/* ─── CHURCH TABLE ─── */
-function churchTbl(rows){
-  const wils=uniq(rows,'wilayah');
-  const COLS=['Wilayah','Daerah','Gereja','Type','Bank Record','Closing Fund Balance','Status'];
-  let filt=rows;
-  if(S.search){
-    const q=S.search.toLowerCase();
-    filt=filt.filter(r=>['wilayah','daerah','gereja','type'].some(k=>getVal(r,k).toLowerCase().includes(q)));
-  }
-  if(S.fSt) filt=filt.filter(r=>getSt(r)===S.fSt);
-  if(S.fWil) filt=filt.filter(r=>getVal(r,'wilayah')===S.fWil);
-  if(S.sc>=0){
-    const k=COLS[S.sc];
-    let searchKey = k;
-    if (k === 'Closing Fund Balance') searchKey = 'fund';
-    if (k === 'Bank Record') searchKey = 'bank';
-    filt=[...filt].sort((a,b)=>{
-      const av=getVal(a, searchKey).toLowerCase(),bv=getVal(b, searchKey).toLowerCase();
-      return av<bv?-S.sd:av>bv?S.sd:0;
-    });
-  }
-  const tot=filt.length, pages=Math.max(1,Math.ceil(tot/S.perPage)), pg=Math.min(S.page,pages);
-  const slice=filt.slice((pg-1)*S.perPage,pg*S.perPage);
-  const sa=i=>S.sc===i?(S.sd===1?'↑':'↓'):'';
-
-  const pNums=[]; const used=new Set();
-  for(let i=1;i<=pages;i++){
-    if(pages<=7||i===1||i===pages||Math.abs(i-pg)<=1){pNums.push(i);used.add(i);}
-    else if(Math.abs(i-pg)===2&&!used.has('…')){pNums.push('…');used.add('…');}
-  }
-
-  return `
-<div class="tbl-ctrl">
-  <div class="srch"><span class="sic">🔍</span>
-    <input type="text" placeholder="Search church, daerah, wilayah…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()">
-  </div>
-  <select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()">
-    <option value="">All Wilayah</option>
-    ${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}
-  </select>
-  <select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()">
-    <option value="">All Status</option>
-    <option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option>
-    <option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option>
-    <option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
-  </select>
-  <span style="font-size:11px;color:var(--muted)">${tot} record${tot!==1?'s':''}</span>
-</div>
-<div class="twrap">
-  <table>
-    <thead><tr>${COLS.map((c,i)=>`<th onclick="srt(${i})">${c} ${sa(i)}</th>`).join('')}</tr></thead>
-    <tbody>
-    ${slice.length?slice.map(r=>`<tr>
-      <td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td>
-      <td>${getVal(r,'daerah')||'—'}</td>
-      <td style="font-weight:700">${getVal(r,'gereja')||'—'}</td>
-      <td style="color:var(--muted)">${getVal(r,'type')||'—'}</td>
-      <td>${bank(getBank(r))}</td>
-      <td class="tfund">${fRM(getFund(r))}</td>
-      <td>${pill(getSt(r))}</td>
-    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}
-    </tbody>
-  </table>
-  ${pages>1?`<div class="pgn">
-    <span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span>
-    <div class="pbtns">
-      <button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>
-      ${pNums.map(n=>n==='…'?`<button class="pbtn" disabled>…</button>`:`<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}
-      <button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button>
-    </div>
-  </div>`:''}
-</div>`;
-}
-
-/* ─── CHART BUILDERS ─── */
-function bDonut(s){
-  mkChart('cDnt',{type:'doughnut',data:{
-    labels:['Audited','WIP','Pending'],
-    datasets:[{data:[s.a||0.001,s.w||0.001,s.p||0.001],backgroundColor:['#10b981','#f59e0b','#ef4444'],borderWidth:0,hoverOffset:4}]
-  },options:{responsive:true,maintainAspectRatio:false,cutout:'70%',
-    animation:{duration:900,easing:'easeInOutQuart'},
-    plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw}`}}}
-  }});
-}
-
-function bTrend(tr){
-  mkChart('cTrend',{type:'line',data:{
-    labels:tr.map(t=>t.yr),
-    datasets:[
-      {label:'Audited %',data:tr.map(t=>t.pct),borderColor:'#10b981',backgroundColor:'rgba(16,185,129,.1)',fill:true,tension:.4,pointBackgroundColor:'#10b981',pointRadius:4,pointHoverRadius:6,borderWidth:2},
-      {label:'Total',data:tr.map(t=>t.t),borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.06)',fill:true,tension:.4,yAxisID:'y2',pointBackgroundColor:'#3b82f6',pointRadius:3,borderWidth:2,borderDash:[4,3]}
-    ]
-  },options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},
-    animation:{duration:800},
-    scales:{
-      y:{min:0,max:100,ticks:{color:'#6b82a8',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'}},
-      y2:{position:'right',min:0,ticks:{color:'#6b82a8',font:{size:10}},grid:{display:false}},
-      x:{ticks:{color:'#6b82a8',font:{size:10}},grid:{display:false}}
-    },
-    plugins:{legend:{position:'bottom',labels:{color:'#6b82a8',font:{size:10},boxWidth:10,padding:10}},tooltip:TT}
-  }});
-}
-
-function bWil(wil){
-  if(!wil.length) return;
-  const top=wil.slice(0,10);
-  mkChart('cWil',{type:'bar',data:{
-    labels:top.map(w=>w.n),
-    datasets:[
-      {label:'Audited',data:top.map(w=>w.a),backgroundColor:'rgba(16,185,129,.8)',stack:'s'},
-      {label:'WIP',data:top.map(w=>w.w),backgroundColor:'rgba(245,158,11,.8)',stack:'s'},
-      {label:'Pending',data:top.map(w=>w.p),backgroundColor:'rgba(239,68,68,.8)',stack:'s'},
-    ]
-  },options:{responsive:true,maintainAspectRatio:false,animation:{duration:800},
-    scales:{
-      x:{stacked:true,ticks:{color:'#6b82a8',font:{size:9},maxRotation:40},grid:{display:false}},
-      y:{stacked:true,ticks:{color:'#6b82a8',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}
-    },
-    plugins:{legend:{position:'bottom',labels:{color:'#6b82a8',font:{size:10},boxWidth:10,padding:8}},tooltip:{...TT,stacked:true}}
-  }});
-}
-
-function bFund(rows){
-  const key=S.mode==='church'?'gereja':'school';
-  const data=rows.map(r=>({n:getVal(r, key)||'—',f:getFund(r)}))
-    .filter(d=>d.f!==null&&d.f>0).sort((a,b)=>b.f-a.f).slice(0,8);
-  if(!data.length) return;
-  mkChart('cFund',{type:'bar',data:{
-    labels:data.map(d=>d.n),
-    datasets:[{label:'Fund Balance',data:data.map(d=>d.f),backgroundColor:data.map((_,i)=>PAL[i%PAL.length]+'bb'),borderColor:data.map((_,i)=>PAL[i%PAL.length]),borderWidth:1,borderRadius:4}]
-  },options:{responsive:true,maintainAspectRatio:false,animation:{duration:800},
-    scales:{
-      x:{ticks:{color:'#6b82a8',font:{size:9},maxRotation:40},grid:{display:false}},
-      y:{ticks:{color:'#6b82a8',font:{size:9},callback:v=>'RM'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'}}
-    },
-    plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2})}}}
-  }});
-}
-
-function bSchool(rows){
-  const names=rows.map(r=>getVal(r, 'school')||'—');
-  const sts=rows.map(r=>getSt(r));
-  const stMap={Audited:100,WIP:50,Pending:0};
-  const stCol={Audited:'rgba(16,185,129,.8)',WIP:'rgba(245,158,11,.8)',Pending:'rgba(239,68,68,.8)'};
-  mkChart('cSchSt',{type:'bar',data:{
-    labels:names,
-    datasets:[{label:'Progress',data:sts.map(s=>stMap[s]??0),backgroundColor:sts.map(s=>stCol[s]||'rgba(239,68,68,.8)'),borderRadius:5,borderSkipped:false}]
-  },options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:{duration:800},
-    scales:{
-      x:{min:0,max:100,ticks:{color:'#6b82a8',font:{size:9},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'}},
-      y:{ticks:{color:'#6b82a8',font:{size:10}},grid:{display:false}}
-    },
-    plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex]}}}
-  }});
-  const fdata=rows.map(r=>({n:getVal(r, 'school')||'—',f:getFund(r)||0}));
-  mkChart('cSchFd',{type:'bar',data:{
-    labels:fdata.map(d=>d.n),
-    datasets:[{label:'Fund',data:fdata.map(d=>d.f),backgroundColor:PAL.slice(0,fdata.length).map(c=>c+'bb'),borderColor:PAL.slice(0,fdata.length),borderWidth:1,borderRadius:5,borderSkipped:false}]
-  },options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:{duration:800},
-    scales:{
-      x:{ticks:{color:'#6b82a8',font:{size:9},callback:v=>'RM'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'}},
-      y:{ticks:{color:'#6b82a8',font:{size:10}},grid:{display:false}}
-    },
-    plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2})}}}
-  }});
-}
-
-/* ─── ANIMATE ─── */
-function animB(){
-  document.querySelectorAll('.bfill,.wfill,.kpi-bar-fill').forEach(el=>{
-    const w=el.style.width; el.style.width='0';
-    requestAnimationFrame(()=>setTimeout(()=>{ el.style.width=w; },20));
-  });
-}
-
-function aniPct(id,target){
-  const el=document.getElementById(id);
-  if(!el) return;
-  let c=0;
-  const step=()=>{ if(c<target){c++;el.textContent=c+'%';requestAnimationFrame(step);}else el.textContent=target+'%'; };
-  step();
-}
-
-/* ─── CONTROLS ─── */
-function setMode(m){
-  S.mode=m; S.search=''; S.fSt=''; S.fWil=''; S.page=1;
-  document.getElementById('btnC').className='mode-btn'+(m==='church'?' on':'');
-  document.getElementById('btnS').className='mode-btn'+(m==='school'?' son':'');
-  renderAll();
-}
-
-function setYear(y){ S.year=y; S.page=1; S.search=''; S.fSt=''; S.fWil=''; renderAll(); }
-function srt(col){ if(S.sc===col) S.sd*=-1; else{S.sc=col;S.sd=1;} renderAll(); }
-
-function fwil(w){
-  S.fWil=S.fWil===w?'':w; S.page=1; renderAll();
-  setTimeout(()=>{ const t=document.querySelector('.twrap'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); },120);
-}
-
-function escQ(s){ return s.replace(/'/g,"\\'"); }
-
-/* ─── BOOT ─── */
-renderYrs();
-loadAll();
-</script>
+                rowKeys.forEach(key => {
+                    const td = document.createElement('td');
+                    td.className = "px-5 py-4 whitespace-nowrap";
+                    
+                    let cellValue = row[key] || '-';
+                    
+                    // Special formatting for status badges
+                    if (key.toLowerCase().includes('status')) {
+                        const s = getStatusStandardized(row);
+                        if (s === 'audited') {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Audited</span>`;
+                        } else if (s === 'wip') {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">W.I.P</span>`;
+                        } else {
+                            td.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">Pending</span>`;
+                        }
+                    } else if (key.toLowerCase().includes('fund') || key.toLowerCase().includes('balance')) {
+                        // formatting money
+                        td.className = "px-5 py-4 whitespace-nowrap font-medium text-slate-700";
+                        td.textContent = cellValue !== '-' ? `RM ${cellValue}` : '-';
+                    } else {
+                        td.textContent = cellValue;
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
 </body>
 </html>
