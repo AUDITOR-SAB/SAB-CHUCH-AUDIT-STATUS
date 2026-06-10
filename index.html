@@ -370,24 +370,54 @@ function fetchCSV(id, tab) {
           data.push(obj);
         }
 
-        /* ── 4. KEY FIX: Wilayah numeric → "Wilayah N" label ──
+        /* ── 4. WILAYAH: forward-fill merged cells + numeric→name ──
          *
-         * If every non-empty Wilayah value is purely numeric,
-         * we convert it to "Wilayah 1", "Wilayah 2" etc. so
-         * the cards group correctly instead of showing "Unknown".
+         * Google Sheets exports MERGED cells as: value only in the
+         * FIRST row of the merged group, then EMPTY STRING for every
+         * subsequent row.  That means ~90% of rows have wilayah = ""
+         * and all fall through to 'Unknown'.
          *
-         * If the sheet later gains a real name column, this
-         * branch is simply skipped.
+         * Fix — two passes:
+         *   Pass A: forward-fill — carry the last seen non-empty
+         *           wilayah value down into every empty cell below it.
+         *   Pass B: if all values are purely numeric (1, 2 … 10)
+         *           prefix "Wilayah " so cards show "Wilayah 1" etc.
          */
         const wilKey = headers.find(h => h.includes('wilayah'));
         if (wilKey) {
-          const vals = data.map(r => (r[wilKey] || '').trim()).filter(Boolean);
-          const allNumeric = vals.length > 0 && vals.every(v => /^\d+$/.test(v));
+          /* Pass A — forward-fill empty wilayah cells */
+          let lastWil = '';
+          data.forEach(r => {
+            const v = (r[wilKey] || '').trim();
+            if (v !== '') {
+              lastWil = v;
+            } else {
+              r[wilKey] = lastWil;
+            }
+          });
+
+          /* Pass B — if values are numeric, prefix "Wilayah " */
+          const nonEmpty = data.map(r => (r[wilKey] || '').trim()).filter(Boolean);
+          const allNumeric = nonEmpty.length > 0 && nonEmpty.every(v => /^\d+$/.test(v));
           if (allNumeric) {
             data.forEach(r => {
               if (r[wilKey]) r[wilKey] = 'Wilayah ' + r[wilKey];
             });
           }
+        }
+
+        /* ── 5. DAERAH: forward-fill merged cells (same pattern) ── */
+        const daerKey = headers.find(h => h.includes('daerah'));
+        if (daerKey) {
+          let lastDaer = '';
+          data.forEach(r => {
+            const v = (r[daerKey] || '').trim();
+            if (v !== '') {
+              lastDaer = v;
+            } else {
+              r[daerKey] = lastDaer;
+            }
+          });
         }
 
         ok(data);
