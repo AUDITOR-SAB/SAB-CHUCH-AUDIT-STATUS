@@ -141,10 +141,10 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ── REPORT COLLECTION BADGES ── */
-.rc{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.rc-col{background:rgba(34,211,238,.12);color:#67e8f9}
-.rc-na{background:rgba(107,130,168,.1);color:#6b82a8}
-.rc-pend{background:rgba(239,68,68,.1);color:#fca5a5}
+.rc{padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.rc-col{background:rgba(34,211,238,.12);color:#67e8f9;border:1px solid rgba(34,211,238,.2)}
+.rc-na{background:rgba(107,130,168,.1);color:#6b82a8;border:1px solid rgba(107,130,168,.2)}
+.rc-pend{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
 
 /* ── BANK BADGES ── */
 .bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
@@ -246,7 +246,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 <body>
 <div class="page">
 
-<!-- ── HEADER ── -->
 <header>
   <div class="hdr">
     <a class="logo" href="#">
@@ -271,7 +270,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
   </div>
 </header>
 
-<!-- ── MAIN ── -->
 <main id="main">
   <div class="center-state">
     <div class="spin"></div>
@@ -315,25 +313,6 @@ function csvUrl(id, tab) {
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
 }
 
-/*
- * Key fix #1 — HEADER DETECTION
- * ──────────────────────────────
- * We search row-by-row for the one whose cells match the most
- * expected column keywords. We require ≥3 keyword hits so that
- * a title row containing only "SAB Mission 2025" can never win.
- *
- * Key fix #2 — WILAYAH NUMBER→NAME LOOKUP
- * ─────────────────────────────────────────
- * The sheet stores Wilayah as a *number* (1, 2, 3…) in column A,
- * but the actual *name* lives as a merged/title cell earlier in
- * the same sheet — OR it is simply the numeric ID used as-is.
- *
- * Strategy: after parsing, if every Wilayah value is numeric we
- * look for a separate lookup: check whether there is a column
- * whose header contains "wilayah" AND whose value is non-numeric
- * in the same row. If that also doesn't exist, we keep the number
- * but prefix "Wilayah " so cards read "Wilayah 1", "Wilayah 2"…
- */
 function fetchCSV(id, tab) {
   return new Promise((ok, fail) => {
     Papa.parse(csvUrl(id, tab), {
@@ -345,7 +324,8 @@ function fetchCSV(id, tab) {
         if (!rows.length) { ok([]); return; }
 
         /* ── 1. Find header row ── */
-        const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic'];
+        /* Added 'audit' to catch 2023's header row */
+        const KEYWORDS = ['wilayah','daerah','gereja','school','status','audit','bank','fund','balance','type','collection','pic'];
         let hIdx = -1, bestScore = 0;
         for (let i = 0; i < Math.min(rows.length, 8); i++) {
           const str = rows[i].map(c => (c||'').toString().toLowerCase()).join(' ');
@@ -370,19 +350,7 @@ function fetchCSV(id, tab) {
           data.push(obj);
         }
 
-        /* ── 4. WILAYAH: forward-fill merged cells + numeric→name ──
-         *
-         * Google Sheets exports MERGED cells as: value only in the
-         * FIRST row of the merged group, then EMPTY STRING for every
-         * subsequent row.  That means ~90% of rows have wilayah = ""
-         * and all fall through to 'Unknown'.
-         *
-         * Fix — two passes:
-         *   Pass A: forward-fill — carry the last seen non-empty
-         *           wilayah value down into every empty cell below it.
-         *   Pass B: if all values are purely numeric (1, 2 … 10)
-         *           prefix "Wilayah " so cards show "Wilayah 1" etc.
-         */
+        /* ── 4. WILAYAH: forward-fill merged cells + numeric→name ── */
         const wilKey = headers.find(h => h.includes('wilayah'));
         if (wilKey) {
           /* Pass A — forward-fill empty wilayah cells */
@@ -470,7 +438,7 @@ function cur() {
 }
 
 function getSt(r) {
-  const v = getVal(r, 'status');
+  const v = getVal(r, 'status', 'audit'); // added 'audit' to check 2023 tab properly
   if (/audit/i.test(v))                     return 'Audited';
   if (/work.in.progress|wip/i.test(v))      return 'WIP';
   if (/pending/i.test(v))                   return 'Pending';
@@ -482,7 +450,6 @@ function getBank(r) {
 }
 
 function getRC(r) {
-  /* Report Collection column — header may be "report collection" or just "collection" */
   return getVal(r, 'report collection', 'collection') || '';
 }
 
@@ -538,11 +505,7 @@ function stats(rows) {
   return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p };
 }
 
-/* ── WILAYAH STATS ──
- * KEY FIX: uses getVal(r,'wilayah') which now returns
- * "Wilayah 1", "Wilayah 2" etc. after the numeric fix in fetchCSV.
- * Sorted naturally so "Wilayah 1" < "Wilayah 2" < … < "Wilayah 10".
- */
+/* ── WILAYAH STATS ── */
 function wilStats(rows) {
   const m = {};
   rows.forEach(r => {
@@ -645,7 +608,6 @@ function renderChurch(m) {
   const rows = cur();
   const s    = stats(rows);
   const wil  = wilStats(rows);
-  /* KEY FIX: pass S.fWil to daerStats so bars update when a card is clicked */
   const dae  = daerStats(rows, S.fWil || null);
   const tr   = trends();
 
@@ -657,7 +619,6 @@ function renderChurch(m) {
   <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong>${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
 </div>
 
-<!-- KPI ROW -->
 <div class="kpi-row">
   <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
   <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
@@ -668,9 +629,7 @@ function renderChurch(m) {
   <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
 </div>
 
-<!-- CHARTS ROW 1 -->
 <div class="g3">
-  <!-- Donut -->
   <div class="card">
     <div class="card-t">Audit Status Overview</div>
     <div class="card-s">FY${S.year} distribution</div>
@@ -694,14 +653,12 @@ function renderChurch(m) {
     </div>
   </div>
 
-  <!-- Trend -->
   <div class="card">
     <div class="card-t">Year-over-Year Trend</div>
     <div class="card-s">Completion % vs total churches</div>
     <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
   </div>
 
-  <!-- Bank -->
   <div class="card">
     <div class="card-t">Bank Record Breakdown</div>
     <div class="card-s">All churches FY${S.year}</div>
@@ -713,7 +670,6 @@ function renderChurch(m) {
   </div>
 </div>
 
-<!-- CHARTS ROW 2: Daerah bars + Wilayah stacked chart -->
 <div class="glh">
   <div class="card">
     <div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div>
@@ -741,7 +697,6 @@ function renderChurch(m) {
   </div>
 </div>
 
-<!-- WILAYAH CARDS -->
 <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)">&nbsp;— click to filter Daerah & table</span></div>
 <div class="wgrid">
   ${wil.length
@@ -760,10 +715,8 @@ function renderChurch(m) {
     : '<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}
 </div>
 
-<!-- TOP FUNDS -->
 ${topFunds(rows)}
 
-<!-- TABLE -->
 <div class="sec" style="margin-top:4px">Church Records</div>
 ${churchTbl(rows)}
 
@@ -802,7 +755,6 @@ function renderSchool(m) {
   <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
 </div>
 
-<!-- KPI ROW -->
 <div class="kpi-row">
   <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
   <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
@@ -812,7 +764,6 @@ function renderSchool(m) {
   <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
 </div>
 
-<!-- CHARTS -->
 <div class="g3">
   <div class="card">
     <div class="card-t">Audit Status Overview</div>
@@ -948,7 +899,7 @@ function topFunds(rows) {
 ══════════════════════════════════════════════════ */
 function churchTbl(rows) {
   const wils = uniq(rows, 'wilayah');
-  const COLS = ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Report Collection','Status'];
+  const COLS = ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Status','Report Collection'];
 
   let filt = rows;
   if (S.search) {
@@ -963,7 +914,7 @@ function churchTbl(rows) {
   if (S.sc >= 0) {
     const keyMap = {
       0:'wilayah',1:'daerah',2:'gereja',3:'type',
-      4:'bank',5:'fund',6:'collection',7:'status',
+      4:'bank',5:'fund',6:'status',7:'collection',
     };
     const k = keyMap[S.sc] || '';
     filt = [...filt].sort((a, b) => {
@@ -1025,8 +976,8 @@ function churchTbl(rows) {
           <td style="color:var(--muted)">${getVal(r,'type')||'—'}</td>
           <td>${bank(getBank(r))}</td>
           <td class="tfund">${fRM(getFund(r))}</td>
-          <td>${rcBadge(getRC(r))}</td>
           <td>${pill(getSt(r))}</td>
+          <td>${rcBadge(getRC(r))}</td>
         </tr>`).join('')
       : '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}
     </tbody>
@@ -1274,14 +1225,10 @@ function srt(col) {
   renderAll();
 }
 
-/*
- * KEY FIX: fwil now re-renders the full dashboard so the
- * Daerah bar list also updates to show only the selected Wilayah.
- */
 function fwil(w) {
   S.fWil = S.fWil === w ? '' : w;
   S.page = 1;
-  renderAll();          /* full re-render keeps Daerah chart in sync */
+  renderAll();
   if (w) {
     setTimeout(() => {
       const t = document.querySelector('.bar-list');
