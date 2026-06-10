@@ -79,10 +79,11 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .kpi.cr::before{background:linear-gradient(90deg,var(--red),transparent)}
 .kpi.co::before{background:linear-gradient(90deg,var(--gold),transparent)}
 .kpi.cp::before{background:linear-gradient(90deg,var(--purple),transparent)}
+.kpi.ck::before{background:linear-gradient(90deg,var(--pink),transparent)}
 .kpi-ic{font-size:20px;margin-bottom:8px}
 .kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
 .kpi-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:3px}
-.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}
+.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}
 .kpi-meta{font-size:11px;color:var(--muted)}
 .kpi-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:11px;overflow:hidden}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
@@ -403,10 +404,12 @@ function stats(rows){
   const a=rows.filter(r=>getSt(r)==='Audited').length;
   const w=rows.filter(r=>getSt(r)==='WIP').length;
   const p=rows.filter(r=>getSt(r)==='Pending').length;
+  const col_c=rows.filter(r=>/collected/i.test(getVal(r, 'report collection', 'collection'))).length;
+  const col_p=rows.filter(r=>/pending/i.test(getVal(r, 'report collection', 'collection'))).length;
   const bk={};
   rows.forEach(r=>{ const b=getBank(r); bk[b]=(bk[b]||0)+1; });
   const fund=rows.reduce((acc,r)=>acc+(getFund(r)||0),0);
-  return{t,a,w,p,pct:t?Math.round(a/t*100):0,bk,fund};
+  return{t,a,w,p,pct:t?Math.round(a/t*100):0,bk,fund,col_c,col_p};
 }
 
 function wilStats(rows){
@@ -499,6 +502,7 @@ function renderChurch(m){
   <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
   <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
   <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
+  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.col_c}</div><div class="kpi-meta">${s.col_p} Pending Pickup</div></div>
 </div>
 
 <div class="g3">
@@ -587,6 +591,7 @@ function renderSchool(m){
   <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
   <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
   <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.col_c}</div><div class="kpi-meta">${s.col_p} Pending Pickup</div></div>
 </div>
 
 <div class="g3">
