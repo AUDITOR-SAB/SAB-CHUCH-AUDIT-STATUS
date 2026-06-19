@@ -6,6 +6,7 @@
 <title>SAB Mission — Audit Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#07111f;--bg2:#0c1a2e;--bg3:#0f2040;
@@ -55,6 +56,8 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:14px;text-align:center}
 .spin{width:40px;height:40px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.debug-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px 18px;font-size:11px;color:#fca5a5;max-width:800px;line-height:1.8;text-align:left;margin-top:12px;overflow-x:auto}
+.debug-box b{color:#f87171}
 
 /* ── PAGE HEADER ── */
 .page-header{margin-bottom:28px}
@@ -89,55 +92,79 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
 .kpi.cg .kpi-bar-fill{background:var(--green)}.kpi.ca .kpi-bar-fill{background:var(--amber)}.kpi.co .kpi-bar-fill{background:var(--gold)}
 
-/* ── FOOTER ── */
-footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-top:1px solid var(--border)}
+/* ── STATUS PILLS ── */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill::before{content:'';width:6px;height:6px;border-radius:50%}
+.pa{background:rgba(16,185,129,.13);color:#34d399}.pa::before{background:#10b981;box-shadow:0 0 5px #10b981}
+.pw{background:rgba(245,158,11,.13);color:#fbbf24}.pw::before{background:#f59e0b;animation:blink 1.6s infinite}
+.pp{background:rgba(239,68,68,.13);color:#fca5a5}.pp::before{background:#ef4444}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ── ANIMATIONS ── */
+/* ── BANK BADGES ── */
+.bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.ba{background:rgba(16,185,129,.12);color:#34d399}
+.bd{background:rgba(245,158,11,.12);color:#fbbf24}
+.bc{background:rgba(96,165,250,.12);color:#93c5fd}
+.bn{background:rgba(239,68,68,.1);color:#fca5a5}
+
+/* ── OTHER COMPONENTS ── */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;position:relative;overflow:hidden}
+.card-t{font-size:14px;font-weight:700;margin-bottom:3px}
+.card-s{font-size:11px;color:var(--muted);margin-bottom:18px}
+.sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+.donut-area{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.donut-box{position:relative;width:160px;height:160px;flex-shrink:0}
+.donut-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.d-pct{font-size:28px;font-weight:800;line-height:1}
+.d-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.legend{display:flex;flex-direction:column;gap:9px;flex:1;min-width:130px}
+.li{display:flex;align-items:center;gap:9px;font-size:12px}
+.ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ll{color:var(--muted);flex:1}
+.lv{font-weight:700}
+.lp{font-size:11px;color:var(--muted2)}
+.bkrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.bkrow:last-child{border-bottom:none}
+.bkct{font-weight:800}
+
+.cw{position:relative;width:100%}
+.cw canvas{display:block;width:100%!important}
+footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-top:1px solid var(--border)}
 .fade-in{animation:fi .45s ease both}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .hdr{padding:0 16px;height:auto;flex-wrap:wrap;padding:12px 16px;gap:10px}
-  .hdr-mid{display:none}
-  main{padding:20px 14px 60px}
-  .kpi-row{grid-template-columns:repeat(2,1fr)}
-}
+@media(max-width:1100px){.g3{grid-template-columns:1fr}}
+@media(max-width:768px){.hdr{padding:0 16px;height:auto;flex-wrap:wrap;padding:12px 16px;gap:10px}.hdr-mid{display:none}main{padding:20px 14px 60px}.kpi-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="page">
-
 <header>
   <div class="hdr">
     <a class="logo" href="#">
-      <img src="SDA-LOGO.png" alt="SAB" class="logo-img"
-           onerror="this.style.display='none';document.getElementById('lf').style.display='flex'">
+      <img src="SDA-LOGO.png" alt="SAB" class="logo-img" onerror="this.style.display='none';document.getElementById('lf').style.display='flex'">
       <div id="lf" class="logo-fallback" style="display:none">SAB</div>
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="logo-name">SAB Mission</span>
         <span class="logo-tagline">Audit Dashboard</span>
       </div>
     </a>
-
     <div class="hdr-mid" id="yrSel"></div>
-
     <div class="hdr-right">
       <button class="icon-btn" onclick="doRefresh()">↻ Refresh</button>
       <div class="mode-toggle">
         <button class="mode-btn on" id="btnC" onclick="setMode('church')">⛪ Church</button>
-        <button class="mode-btn"    id="btnS" onclick="setMode('school')">🏫 School</button>
+        <button class="mode-btn" id="btnS" onclick="setMode('school')">🏫 School</button>
       </div>
     </div>
   </div>
 </header>
 
 <main id="main">
-  <div class="center-state">
-    <div class="spin"></div>
-    <div>Loading data from Google Sheets…</div>
-  </div>
+  <div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>
 </main>
 
 <footer id="ft" style="display:none">
@@ -152,63 +179,41 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 const CHURCH_ID = '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo';
 const SCHOOL_ID = '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU';
 const YEARS = [2023, 2024, 2025, 2026];
+const PAL = ['#3b82f6','#10b981','#f0b429','#ef4444','#8b5cf6','#ec4899','#22d3ee','#f97316','#a3e635','#fb7185','#06b6d4','#84cc16'];
+const S = { mode:'church', year:2025, cData:{}, sData:{}, charts:{}, debug:[] };
 
-/* ══════════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════════ */
-const S = {
-  mode: 'church', 
-  year: 2025,
-  cData: {}, 
-  sData: {}
-};
-
-/* ══════════════════════════════════════════════════
-   DATA FETCHING
-══════════════════════════════════════════════════ */
-function csvUrl(id, tab) {
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`;
-}
+function csvUrl(id, tab) { return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(tab)}&cb=${Date.now()}`; }
 
 function fetchCSV(id, tab) {
   return new Promise((ok, fail) => {
     Papa.parse(csvUrl(id, tab), {
-      download: true,
-      header: false,
-      skipEmptyLines: true,
+      download: true, header: false, skipEmptyLines: true,
       complete: r => {
         const rows = r.data;
-        if (!rows.length) { ok([]); return; }
-
-        /* ── 1. Find header row ── */
         const KEYWORDS = ['wilayah','daerah','gereja','school','status','audit','bank','fund','balance','type','collection','pic'];
         let hIdx = -1, bestScore = 0;
+        
         for (let i = 0; i < Math.min(rows.length, 15); i++) {
-          const str = rows[i].map(c => (c||'').toString().toLowerCase()).join(' ');
+          const rowStr = rows[i].map(c => (c||'').toString().toLowerCase()).join(' ');
           let score = 0;
-          KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
+          KEYWORDS.forEach(kw => { if (rowStr.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-        if (hIdx === -1 || bestScore < 2) { ok([]); return; }
-
-        /* ── 2. Normalise column headers ── */
-        const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
+        
+        if (hIdx === -1) { ok([]); return; }
+        const headers = rows[hIdx].map(h => (h||'').toString().toLowerCase().trim());
         const data = [];
-
-        /* ── 3. Forward-Fill variables ── */
+        
         let lastWil = '', lastDaer = '';
-
-        /* ── 4. Build data objects ── */
         for (let i = hIdx + 1; i < rows.length; i++) {
           const row = rows[i];
           if (!row.some(v => v !== null && v.trim() !== '')) continue;
-          
           const obj = {};
           headers.forEach((h, j) => {
             if (h) obj[h] = (row[j] != null ? row[j].toString().trim() : '');
           });
-
-          /* Fill merged cells */
+          
+          /* Force Forward-Fill Logic */
           const wKey = headers.find(h => h.includes('wilayah'));
           const dKey = headers.find(h => h.includes('daerah'));
           
@@ -220,10 +225,9 @@ function fetchCSV(id, tab) {
             if (obj[dKey] !== '') lastDaer = obj[dKey];
             else obj[dKey] = lastDaer;
           }
-
+          
           data.push(obj);
         }
-
         ok(data);
       },
       error: e => fail(e),
@@ -231,10 +235,17 @@ function fetchCSV(id, tab) {
   });
 }
 
-async function loadAll() {
-  document.getElementById('main').innerHTML =
-    '<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
+function getVal(row, ...keys) {
+  const rKeys = Object.keys(row);
+  for (const k of keys) {
+    const match = rKeys.find(rk => rk.toLowerCase().includes(k.toLowerCase()));
+    if (match !== undefined) return row[match];
+  }
+  return '';
+}
 
+async function loadAll() {
+  document.getElementById('main').innerHTML = '<div class="center-state"><div class="spin"></div><div>Loading…</div></div>';
   for (const yr of YEARS) {
     try { S.cData[yr] = await fetchCSV(CHURCH_ID, yr.toString()); } catch(e) { S.cData[yr] = []; }
     try { S.sData[yr] = await fetchCSV(SCHOOL_ID, yr.toString()); } catch(e) { S.sData[yr] = []; }
@@ -242,176 +253,211 @@ async function loadAll() {
   renderAll();
 }
 
-async function doRefresh() {
-  S.cData = {}; S.sData = {};
-  await loadAll();
-}
+async function doRefresh() { destroyCharts(); await loadAll(); }
+function cur() { return S.mode === 'church' ? (S.cData[S.year] || []) : (S.sData[S.year] || []); }
+function getSt(r) { const v = getVal(r,'status','audit'); return (/audit/i.test(v)?'Audited':/wip/i.test(v)?'WIP':/pending/i.test(v)?'Pending':v||'Pending'); }
+function getRC(r) { return getVal(r,'report collection','collection') || ''; }
+function getFund(r) { const n = parseFloat(getVal(r,'fund','balance','bal').replace(/[^0-9.-]/g,'')); return isNaN(n)?null:n; }
+function getBank(r) { return getVal(r, 'bank record', 'bank') || 'No data'; }
+function fRM(n) { return (n===null||n===undefined)?'—':'RM '+n.toLocaleString('en-MY',{minimumFractionDigits:2}); }
+function uniq(rows, key) { return [...new Set(rows.map(r=>getVal(r,key)).filter(Boolean))].sort(); }
+function bank(b) { return `<span class="bb ${/active/i.test(b)?'ba':/dormant/i.test(b)?'bd':'bn'}">${b}</span>`; }
 
-/* ══════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════ */
-function getVal(row, ...keys) {
-  const rKeys = Object.keys(row);
-  for (const k of keys) {
-    const kl = k.toLowerCase().trim();
-    const match = rKeys.find(rk => rk.toLowerCase().includes(kl));
-    if (match !== undefined && row[match] !== undefined) return row[match].toString().trim();
-  }
-  return '';
-}
-
-function cur() {
-  return S.mode === 'church' ? (S.cData[S.year] || []) : (S.sData[S.year] || []);
-}
-
-function getSt(r) {
-  const v = getVal(r, 'status', 'audit');
-  if (/audit/i.test(v))                     return 'Audited';
-  if (/work.in.progress|wip/i.test(v))      return 'WIP';
-  if (/pending/i.test(v))                   return 'Pending';
-  return v || 'Pending';
-}
-
-function getRC(r) {
-  return getVal(r, 'report collection', 'collection') || '';
-}
-
-function getFund(r) {
-  const raw = getVal(r, 'closing fund balance', 'closing fund bal', 'fund balance', 'fund bal', 'fund', 'balance');
-  const n = parseFloat(raw.replace(/[^0-9.-]/g, ''));
-  return isNaN(n) ? null : n;
-}
-
-function fRM(n) {
-  if (n === null || n === undefined) return '—';
-  return 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function uniq(rows, key) {
-  return [...new Set(rows.map(r => getVal(r, key)).filter(Boolean))].sort();
-}
-
-/* ── STATS ── */
-function stats(rows) {
-  const t = rows.length;
-  const a = rows.filter(r => getSt(r) === 'Audited').length;
-  const w = rows.filter(r => getSt(r) === 'WIP').length;
-  const p = rows.filter(r => getSt(r) === 'Pending').length;
-  const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length;
-  const rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
+function stats(rows) { 
+  const t=rows.length, a=rows.filter(r=>getSt(r)==='Audited').length, w=rows.filter(r=>getSt(r)==='WIP').length, p=rows.filter(r=>getSt(r)==='Pending').length; 
+  const bk = {}; rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
   const fund = rows.reduce((acc, r) => acc + (getFund(r) || 0), 0);
-  return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, fund, rc_c, rc_p };
+  return {t,a,w,p,pct:t?Math.round(a/t*100):0,rc_c:rows.filter(r=>/collect/i.test(getRC(r))).length,rc_p:rows.filter(r=>/pending/i.test(getRC(r))).length, bk, fund}; 
 }
 
-/* ══════════════════════════════════════════════════
-   YEAR SELECTOR
-══════════════════════════════════════════════════ */
-function renderYrs() {
-  document.getElementById('yrSel').innerHTML =
-    YEARS.map(y =>
-      `<button class="yr-btn${S.year === y ? ' on' : ''}" onclick="setYear(${y})">${y}</button>`
-    ).join('');
+function trends() {
+  return YEARS.map(yr => {
+    const rows = S.mode === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+    const s = stats(rows);
+    return { yr, t: s.t, a: s.a, pct: s.pct };
+  });
 }
 
-/* ══════════════════════════════════════════════════
-   MAIN RENDER ROUTER
-══════════════════════════════════════════════════ */
-function renderAll() {
-  renderYrs();
-  const m = document.getElementById('main');
-  S.mode === 'church' ? renderChurch(m) : renderSchool(m);
-  
+function destroyCharts() {
+  Object.values(S.charts).forEach(c => { try { c.destroy(); } catch(e) {} });
+  S.charts = {};
+}
+
+function mkChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  try {
+    if (S.charts[id]) S.charts[id].destroy();
+    S.charts[id] = new Chart(el.getContext('2d'), cfg);
+  } catch(e) {}
+}
+
+Chart.defaults.color = '#6b82a8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'Plus Jakarta Sans',sans-serif";
+const TT = { backgroundColor: 'rgba(7,17,31,.92)', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 10, titleColor: '#e2eaff', bodyColor: '#6b82a8'};
+
+function renderAll() { 
+  destroyCharts(); 
+  renderYrs(); 
+  const m=document.getElementById('main'); 
+  m.innerHTML=''; 
+  if(S.mode==='church') renderChurch(m); else renderSchool(m); 
   const ft = document.getElementById('ft');
   ft.style.display = '';
   document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY');
 }
 
-/* ══════════════════════════════════════════════════
-   CHURCH DASHBOARD
-══════════════════════════════════════════════════ */
-function renderChurch(m) {
+function renderYrs() { document.getElementById('yrSel').innerHTML = YEARS.map(y=>`<button class="yr-btn${S.year===y?' on':''}" onclick="setYear(${y})">${y}</button>`).join(''); }
+
+function renderChurch(m) { 
   const rows = cur();
   const s    = stats(rows);
+  const tr   = trends();
 
   m.innerHTML = `<div class="fade-in">
-<div class="page-header">
-  <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
-  <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
-  <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}</p>
-</div>
+    <div class="page-header">
+      <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
+      <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
+      <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}</p>
+    </div>
 
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${uniq(rows,'wilayah').length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
-  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
-</div>
-</div>`;
+    <div class="kpi-row">
+      <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
+      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
+      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${uniq(rows,'wilayah').length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
+      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
+    </div>
 
-  setTimeout(() => { animB(); }, 60);
+    <div class="g3">
+      <div class="card">
+        <div class="card-t">Audit Status Overview</div>
+        <div class="card-s">FY${S.year} distribution</div>
+        <div class="donut-area">
+          <div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div>
+          <div class="legend">
+            ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
+            <div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-t">Year-over-Year Trend</div>
+        <div class="card-s">Completion % vs total churches</div>
+        <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Bank Record Breakdown</div>
+        <div class="card-s">All churches FY${S.year}</div>
+        ${Object.entries(s.bk).map(([b,cnt])=>`
+        <div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}
+      </div>
+    </div>
+  </div>`;
+
+  setTimeout(() => { animB(); aniPct('dPct', s.pct); bDonut(s); bTrend(tr); }, 60);
 }
 
-/* ══════════════════════════════════════════════════
-   SCHOOL DASHBOARD
-══════════════════════════════════════════════════ */
-function renderSchool(m) {
+function renderSchool(m) { 
   const rows = cur();
   const s    = stats(rows);
+  const tr   = trends();
 
   m.innerHTML = `<div class="fade-in">
-<div class="page-header">
-  <div class="mode-label lbl-s">🏫 School Audit · ${S.year}</div>
-  <h1 class="page-title">SAB Mission <em>School</em> <span class="ac-gold">Audit</span></h1>
-  <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
-</div>
+    <div class="page-header">
+      <div class="mode-label lbl-s">🏫 School Audit · ${S.year}</div>
+      <h1 class="page-title">SAB Mission <em>School</em> <span class="ac-gold">Audit</span></h1>
+      <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
+    </div>
 
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
-</div>
-</div>`;
+    <div class="kpi-row">
+      <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
+      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
+      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
+    </div>
 
-  setTimeout(() => { animB(); }, 60);
+    <div class="g3">
+      <div class="card">
+        <div class="card-t">Audit Status Overview</div>
+        <div class="card-s">FY${S.year} distribution</div>
+        <div class="donut-area">
+          <div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div>
+          <div class="legend">
+            ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
+            <div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-t">Year-over-Year Trend</div>
+        <div class="card-s">Completion % across years</div>
+        <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Bank Record Breakdown</div>
+        <div class="card-s">All schools FY${S.year}</div>
+        ${Object.entries(s.bk).map(([b,cnt])=>`
+        <div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}
+      </div>
+    </div>
+  </div>`;
+
+  setTimeout(() => { animB(); aniPct('dPct', s.pct); bDonut(s); bTrend(tr); }, 60);
 }
 
-/* ══════════════════════════════════════════════════
-   ANIMATIONS
-══════════════════════════════════════════════════ */
+function bDonut(s) {
+  mkChart('cDnt', {
+    type: 'doughnut',
+    data: {
+      labels: ['Audited','Work in Progress','Pending'],
+      datasets: [{ data: [s.a||0.001, s.w||0.001, s.p||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 0, hoverOffset: 4 }],
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } },
+  });
+}
+
+function bTrend(tr) {
+  mkChart('cTrend', {
+    type: 'line',
+    data: {
+      labels: tr.map(t => t.yr),
+      datasets: [
+        { label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 },
+        { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#6b82a8', font:{size:10}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } }, x: { ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#6b82a8', font:{size:10}, boxWidth:10, padding:10 } }, tooltip: TT } },
+  });
+}
+
 function animB() {
   document.querySelectorAll('.kpi-bar-fill').forEach(el => {
-    const w = el.style.width;
-    el.style.width = '0';
+    const w = el.style.width; el.style.width = '0';
     requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 20));
   });
 }
 
-/* ══════════════════════════════════════════════════
-   CONTROLS
-══════════════════════════════════════════════════ */
-function setMode(m) {
-  S.mode = m;
-  document.getElementById('btnC').className = 'mode-btn' + (m==='church' ? ' on' : '');
-  document.getElementById('btnS').className = 'mode-btn' + (m==='school' ? ' son' : '');
-  renderAll();
+function aniPct(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let c = 0;
+  const step = () => {
+    if (c < target) { c++; el.textContent = c + '%'; requestAnimationFrame(step); }
+    else el.textContent = target + '%';
+  };
+  step();
 }
 
-function setYear(y) {
-  S.year = y; 
-  renderAll();
-}
+function setYear(y) { S.year=y; renderAll(); }
+function setMode(m) { S.mode=m; document.getElementById('btnC').className = 'mode-btn' + (m==='church' ? ' on' : ''); document.getElementById('btnS').className = 'mode-btn' + (m==='school' ? ' son' : ''); renderAll(); }
 
-/* ══════════════════════════════════════════════════
-   BOOT
-══════════════════════════════════════════════════ */
-renderYrs();
-loadAll();
+renderYrs(); loadAll();
 </script>
 </body>
 </html>
