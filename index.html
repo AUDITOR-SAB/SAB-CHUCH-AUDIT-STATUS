@@ -361,6 +361,11 @@ function fetchCSV(id, tab) {
             else obj[dKey] = lastDaer;
           }
 
+          /* Pass B — if values are numeric, prefix "Wilayah " */
+          if (obj[wKey] && /^\d+$/.test(obj[wKey])) {
+             obj[wKey] = 'Wilayah ' + obj[wKey];
+          }
+
           data.push(obj);
         }
 
@@ -489,6 +494,24 @@ function wilStats(rows) {
     .sort((a, b) => a.n.localeCompare(b.n, undefined, { numeric: true, sensitivity: 'base' }));
 }
 
+function daerStats(rows, wilFilter) {
+  const m = {};
+  const subset = wilFilter ? rows.filter(r => getVal(r, 'wilayah') === wilFilter) : rows;
+  subset.forEach(r => {
+    const d = getVal(r, 'daerah') || 'Unknown';
+    if (!m[d]) m[d] = { t: 0, a: 0, w: 0, p: 0 };
+    m[d].t++;
+    const s = getSt(r);
+    if (s === 'Audited') m[d].a++;
+    else if (s === 'WIP') m[d].w++;
+    else m[d].p++;
+  });
+  return Object.entries(m)
+    .map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 }))
+    .sort((a, b) => b.t - a.t)
+    .slice(0, 20);
+}
+
 function trends() {
   return YEARS.map(yr => {
     const rows = S.mode === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
@@ -550,17 +573,21 @@ function renderAll() {
 }
 
 /* ══════════════════════════════════════════════════
-   CHURCH DASHBOARD (SIMPLIFIED)
+   CHURCH DASHBOARD (FULL ORIGINAL RESTORED)
 ══════════════════════════════════════════════════ */
 function renderChurch(m) {
   const rows = cur();
   const s    = stats(rows);
+  const wil  = wilStats(rows);
+  const dae  = daerStats(rows, S.fWil || null);
+  const tr   = trends();
 
   m.innerHTML = `<div class="fade-in">
+
 <div class="page-header">
   <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
   <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
-  <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}</p>
+  <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong>${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
 </div>
 
 <div class="kpi-row">
@@ -569,16 +596,115 @@ function renderChurch(m) {
   <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
   <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
   <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${uniq(rows,'wilayah').length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
+  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
   <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
 </div>
+
+<div class="g3">
+  <div class="card">
+    <div class="card-t">Audit Status Overview</div>
+    <div class="card-s">FY${S.year} distribution</div>
+    <div class="donut-area">
+      <div class="donut-box">
+        <canvas id="cDnt"></canvas>
+        <div class="donut-center">
+          <div class="d-pct" id="dPct">0%</div>
+          <div class="d-lbl">Audited</div>
+        </div>
+      </div>
+      <div class="legend">
+        ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
+        <div class="li">
+          <div class="ldot" style="background:${c}"></div>
+          <span class="ll">${l}</span>
+          <span class="lv">${v}</span>
+          <span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">Year-over-Year Trend</div>
+    <div class="card-s">Completion % vs total churches</div>
+    <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">Bank Record Breakdown</div>
+    <div class="card-s">All churches FY${S.year}</div>
+    ${Object.entries(s.bk).map(([b,cnt])=>`
+    <div class="bkrow">
+      ${bank(b)}
+      <span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded. Ensure sheet is public.</div>'}
+  </div>
+</div>
+
+<div class="glh">
+  <div class="card">
+    <div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div>
+    <div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div>
+    <div class="bar-list">
+      ${dae.length
+        ? dae.map((d,i)=>`
+          <div class="brow">
+            <div class="bhdr">
+              <span class="bname">${d.n}</span>
+              <span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; ${d.pct}%</span>
+            </div>
+            <div class="btrack">
+              <div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div>
+            </div>
+          </div>`).join('')
+        : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">No data for this year</div>'}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">Wilayah Stacked Status</div>
+    <div class="card-s">Audited · WIP · Pending per Wilayah</div>
+    <div class="cw" style="height:260px"><canvas id="cWil"></canvas></div>
+  </div>
+</div>
+
+<div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)">&nbsp;— click to filter Daerah & table</span></div>
+<div class="wgrid">
+  ${wil.length
+    ? wil.map(w => `
+      <div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')">
+        <div class="wname">📍 ${w.n}</div>
+        <div class="wstats">
+          <div class="ws"><span class="wsv" style="color:#10b981">${w.a}</span><span class="wsl">Audited</span></div>
+          <div class="ws"><span class="wsv" style="color:#f59e0b">${w.w}</span><span class="wsl">WIP</span></div>
+          <div class="ws"><span class="wsv" style="color:#ef4444">${w.p}</span><span class="wsl">Pending</span></div>
+          <div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div>
+        </div>
+        <div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div>
+        <div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div>
+      </div>`).join('')
+    : '<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}
+</div>
+
+${topFunds(rows)}
+
+<div class="sec" style="margin-top:4px">Church Records</div>
+${churchTbl(rows)}
+
 </div>`;
 
-  setTimeout(() => { animB(); }, 60);
+  setTimeout(() => {
+    animB();
+    aniPct('dPct', s.pct);
+    bDonut(s);
+    bTrend(tr);
+    bWil(wil);
+    bFund(rows);
+  }, 60);
 }
 
 /* ══════════════════════════════════════════════════
-   SCHOOL DASHBOARD (FULL ORIGINAL)
+   SCHOOL DASHBOARD
 ══════════════════════════════════════════════════ */
 function renderSchool(m) {
   const rows = cur();
@@ -740,6 +866,108 @@ function topFunds(rows) {
 }
 
 /* ══════════════════════════════════════════════════
+   CHURCH TABLE
+══════════════════════════════════════════════════ */
+function churchTbl(rows) {
+  const wils = uniq(rows, 'wilayah');
+  const COLS = ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Status','Report Collection'];
+
+  let filt = rows;
+  if (S.search) {
+    const q = S.search.toLowerCase();
+    filt = filt.filter(r =>
+      ['wilayah','daerah','gereja','type'].some(k => getVal(r, k).toLowerCase().includes(q))
+    );
+  }
+  if (S.fSt)  filt = filt.filter(r => getSt(r) === S.fSt);
+  if (S.fWil) filt = filt.filter(r => getVal(r, 'wilayah') === S.fWil);
+
+  if (S.sc >= 0) {
+    const keyMap = {
+      0:'wilayah',1:'daerah',2:'gereja',3:'type',
+      4:'bank',5:'fund',6:'status',7:'collection',
+    };
+    const k = keyMap[S.sc] || '';
+    filt = [...filt].sort((a, b) => {
+      const av = getVal(a, k).toLowerCase();
+      const bv = getVal(b, k).toLowerCase();
+      return av < bv ? -S.sd : av > bv ? S.sd : 0;
+    });
+  }
+
+  const tot   = filt.length;
+  const pages = Math.max(1, Math.ceil(tot / S.perPage));
+  const pg    = Math.min(S.page, pages);
+  const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage);
+  const sa    = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
+
+  const pNums = []; const used = new Set();
+  for (let i = 1; i <= pages; i++) {
+    if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) {
+      pNums.push(i); used.add(i);
+    } else if (Math.abs(i-pg) === 2 && !used.has('…')) {
+      pNums.push('…'); used.add('…');
+    }
+  }
+
+  return `
+<div class="tbl-ctrl">
+  <div class="srch"><span class="sic">🔍</span>
+    <input type="text" placeholder="Search church, daerah, wilayah, type…"
+      value="${S.search}"
+      oninput="S.search=this.value;S.page=1;renderAll()">
+  </div>
+  <select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()">
+    <option value="">All Wilayah</option>
+    ${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}
+  </select>
+  <select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()">
+    <option value="">All Status</option>
+    <option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option>
+    <option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option>
+    <option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
+  </select>
+  <span style="font-size:11px;color:var(--muted)">${tot} record${tot!==1?'s':''}</span>
+</div>
+
+<div class="twrap">
+  <table>
+    <thead>
+      <tr>
+        ${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>
+    ${slice.length
+      ? slice.map(r => `<tr>
+          <td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td>
+          <td>${getVal(r,'daerah')||'—'}</td>
+          <td style="font-weight:700">${getVal(r,'gereja')||'—'}</td>
+          <td style="color:var(--muted)">${getVal(r,'type')||'—'}</td>
+          <td>${bank(getBank(r))}</td>
+          <td class="tfund">${fRM(getFund(r))}</td>
+          <td>${pill(getSt(r))}</td>
+          <td>${rcBadge(getRC(r))}</td>
+        </tr>`).join('')
+      : '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}
+    </tbody>
+  </table>
+  ${pages > 1 ? `
+  <div class="pgn">
+    <span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span>
+    <div class="pbtns">
+      <button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>
+      ${pNums.map(n => n==='…'
+        ? `<button class="pbtn" disabled>…</button>`
+        : `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`
+      ).join('')}
+      <button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button>
+    </div>
+  </div>` : ''}
+</div>`;
+}
+
+/* ══════════════════════════════════════════════════
    CHART BUILDERS
 ══════════════════════════════════════════════════ */
 function bDonut(s) {
@@ -798,6 +1026,34 @@ function bTrend(tr) {
       plugins: {
         legend: { position:'bottom', labels: { color:'#6b82a8', font:{size:10}, boxWidth:10, padding:10 } },
         tooltip: TT,
+      },
+    },
+  });
+}
+
+function bWil(wil) {
+  if (!wil.length) return;
+  const top = wil.slice(0, 12);
+  mkChart('cWil', {
+    type: 'bar',
+    data: {
+      labels: top.map(w => w.n),
+      datasets: [
+        { label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' },
+        { label:'WIP',     data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' },
+        { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)',  stack:'s' },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 800 },
+      scales: {
+        x: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } },
+        y: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9} }, grid:{ color:'rgba(255,255,255,.04)' } },
+      },
+      plugins: {
+        legend: { position:'bottom', labels:{ color:'#6b82a8', font:{size:10}, boxWidth:10, padding:8 } },
+        tooltip: { ...TT, stacked: true },
       },
     },
   });
@@ -933,6 +1189,25 @@ function setYear(y) {
   S.year = y; S.page = 1; S.search = ''; S.fSt = ''; S.fWil = '';
   renderAll();
 }
+
+function srt(col) {
+  if (S.sc === col) S.sd *= -1; else { S.sc = col; S.sd = 1; }
+  renderAll();
+}
+
+function fwil(w) {
+  S.fWil = S.fWil === w ? '' : w;
+  S.page = 1;
+  renderAll();
+  if (w) {
+    setTimeout(() => {
+      const t = document.querySelector('.bar-list');
+      if (t) t.closest('.card')?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 120);
+  }
+}
+
+function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
 /* ══════════════════════════════════════════════════
    BOOT
