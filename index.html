@@ -403,7 +403,31 @@ function fetchCSV(id, gid, label) {
 
         /* ── 2. Normalise column headers (lowercase, trimmed) ── */
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
+
+        /* ── 2b. FIX: fill in BLANK header cells by position ──
+         *
+         * Confirmed by live debug data: column A's header cell is
+         * literally empty ("") even though the data below it holds
+         * the Wilayah number ("1", "2"...). Same issue affects the
+         * Fund Balance column. Since each sheet uses a FIXED column
+         * order, we patch any blank header at a known position with
+         * its expected name. We use the fetch `label` (passed in as
+         * "church-2025" / "school-2025") to know which column order
+         * applies — never guessed from content, so it's reliable even
+         * when BOTH sheets have blank headers in the same position.
+         */
+        const isChurchSheet = label.startsWith('church');
+        const EXPECTED_ORDER = isChurchSheet
+          ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection']
+          : ['school','bank record','closing fund bal','status','school pic','report collection'];
+
+        for (let i = 0; i < EXPECTED_ORDER.length && i < headers.length; i++) {
+          if (headers[i] === '') headers[i] = EXPECTED_ORDER[i];
+        }
+
         S.debugLog[label].normalisedHeaders = headers;
+        S.debugLog[label].headerPatchApplied = true;
+        S.debugLog[label].expectedOrderUsed = EXPECTED_ORDER;
 
         /* ── 3. Build data objects ── */
         const data = [];
