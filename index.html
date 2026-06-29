@@ -263,6 +263,7 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 
     <div class="hdr-right">
       <button class="icon-btn" onclick="doRefresh()">↻ Refresh</button>
+      <button class="icon-btn" onclick="showDebug()" style="border-color:rgba(239,68,68,.3);color:#fca5a5">🐞 Debug Data</button>
       <div class="mode-toggle">
         <button class="mode-btn on" id="btnC" onclick="setMode('church')">⛪ Church</button>
         <button class="mode-btn"    id="btnS" onclick="setMode('school')">🏫 School</button>
@@ -282,6 +283,21 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 <footer id="ft" style="display:none">
   SAB Mission Audit Dashboard &nbsp;·&nbsp; Last updated: <span id="ftT"></span>
 </footer>
+</div>
+
+<!-- DEBUG MODAL -->
+<div id="debugModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 20px">
+  <div style="max-width:900px;margin:0 auto;background:#0c1a2e;border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:28px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="font-size:18px;font-weight:800;color:#fca5a5">🐞 Data Diagnostic Report</h2>
+      <button onclick="document.getElementById('debugModal').style.display='none'"
+        style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit">✕ Close</button>
+    </div>
+    <p style="font-size:12px;color:#6b82a8;margin-bottom:18px;line-height:1.6">
+      This shows exactly what was fetched from Google Sheets for the currently selected year/mode (<strong id="dbgContext" style="color:#fca5a5"></strong>), before and after processing. Screenshot this and send it back if Wilayah/Daerah still look wrong.
+    </p>
+    <div id="debugContent" style="font-family:monospace;font-size:11px;color:#e2eaff;white-space:pre-wrap;background:rgba(0,0,0,.3);border-radius:10px;padding:16px;max-height:70vh;overflow-y:auto;line-height:1.6"></div>
+  </div>
 </div>
 
 <script>
@@ -311,6 +327,8 @@ const S = {
   charts: {},
   /* Wilayah number→name map, built after load */
   wilMap: {},
+  /* Diagnostic info captured during fetch — viewable via Debug Data button */
+  debugLog: {},
 };
 
 /* ══════════════════════════════════════════════════
@@ -344,7 +362,7 @@ function csvUrl(id, gid) {
  * in the same row. If that also doesn't exist, we keep the number
  * but prefix "Wilayah " so cards read "Wilayah 1", "Wilayah 2"…
  */
-function fetchCSV(id, gid) {
+function fetchCSV(id, gid, label) {
   return new Promise((ok, fail) => {
     Papa.parse(csvUrl(id, gid), {
       download: true,
@@ -352,7 +370,10 @@ function fetchCSV(id, gid) {
       skipEmptyLines: true,
       complete: r => {
         const rows = r.data;
-        if (!rows.length) { ok([]); return; }
+        if (!rows.length) {
+          S.debugLog[label] = { error: 'No rows returned at all from fetch.' };
+          ok([]); return;
+        }
 
         /* ── 1. Find header row ── */
         const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic'];
@@ -363,10 +384,26 @@ function fetchCSV(id, gid) {
           KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-        if (hIdx === -1 || bestScore < 2) { ok([]); return; }
+
+        /* DIAGNOSTIC SNAPSHOT — captured regardless of success/failure below */
+        S.debugLog[label] = {
+          totalRowsFetched: rows.length,
+          hIdx, bestScore,
+          rawFirst3Rows: rows.slice(0, 3),
+          rawHeaderRowFound: hIdx >= 0 ? rows[hIdx] : null,
+          firstHeaderCellCharCodes: (hIdx >= 0 && rows[hIdx][0])
+            ? rows[hIdx][0].toString().split('').slice(0,12).map(c => c.charCodeAt(0))
+            : null,
+        };
+
+        if (hIdx === -1 || bestScore < 2) {
+          S.debugLog[label].error = `Header detection failed — bestScore=${bestScore} (need ≥2). No usable header row found in first 8 rows.`;
+          ok([]); return;
+        }
 
         /* ── 2. Normalise column headers (lowercase, trimmed) ── */
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
+        S.debugLog[label].normalisedHeaders = headers;
 
         /* ── 3. Build data objects ── */
         const data = [];
@@ -430,6 +467,12 @@ function fetchCSV(id, gid) {
           });
         }
 
+        /* DIAGNOSTIC: capture wilKey/daerKey detection + sample of final data */
+        S.debugLog[label].wilKeyFound = wilKey || null;
+        S.debugLog[label].daerKeyFound = daerKey || null;
+        S.debugLog[label].finalRowCount = data.length;
+        S.debugLog[label].sampleFinalRows = data.slice(0, 3);
+
         ok(data);
       },
       error: e => fail(e),
@@ -443,9 +486,9 @@ async function loadAll() {
 
   /* Each year maps to its own tab gid — fetch all 4 years for both sheets. */
   for (const yr of YEARS) {
-    try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr]); }
+    try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`); }
     catch(e) { S.cData[yr] = []; console.warn('Church', yr, 'failed:', e); }
-    try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr]); }
+    try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`); }
     catch(e) { S.sData[yr] = []; console.warn('School', yr, 'failed:', e); }
   }
   renderAll();
@@ -1302,6 +1345,47 @@ function fwil(w) {
 }
 
 function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+/* ══════════════════════════════════════════════════
+   DEBUG PANEL — shows exactly what was fetched/parsed
+   for the currently active mode + year, so mismatches
+   between the sheet and the dashboard can be diagnosed
+   directly from a screenshot instead of guesswork.
+══════════════════════════════════════════════════ */
+function showDebug() {
+  const label = `${S.mode}-${S.year}`;
+  const info = S.debugLog[label];
+  document.getElementById('dbgContext').textContent = label;
+  const box = document.getElementById('debugContent');
+
+  if (!info) {
+    box.textContent = `No diagnostic data captured yet for "${label}". Try refreshing first.`;
+  } else {
+    let out = '';
+    out += `FETCH LABEL: ${label}\n`;
+    out += `Total raw rows fetched: ${info.totalRowsFetched ?? 'n/a'}\n`;
+    out += `Header row index (hIdx): ${info.hIdx}\n`;
+    out += `Header match score (need ≥2): ${info.bestScore}\n`;
+    if (info.error) out += `\n⚠️ ERROR: ${info.error}\n`;
+    out += `\n--- RAW HEADER ROW (as fetched, before lowercase) ---\n`;
+    out += JSON.stringify(info.rawHeaderRowFound) + '\n';
+    out += `\n--- First header cell char codes (checks for hidden BOM/space) ---\n`;
+    out += JSON.stringify(info.firstHeaderCellCharCodes) + '\n';
+    out += `  (Normal "W" = 87. A BOM shows as 65279 first.)\n`;
+    out += `\n--- NORMALISED HEADERS (lowercase, used for matching) ---\n`;
+    out += JSON.stringify(info.normalisedHeaders, null, 2) + '\n';
+    out += `\n--- wilKey detected: ${info.wilKeyFound ?? 'NOT FOUND ❌'} ---\n`;
+    out += `--- daerKey detected: ${info.daerKeyFound ?? 'NOT FOUND ❌'} ---\n`;
+    out += `\n--- First 3 RAW rows (straight from CSV, before any processing) ---\n`;
+    out += JSON.stringify(info.rawFirst3Rows, null, 2) + '\n';
+    out += `\n--- Final row count after processing: ${info.finalRowCount ?? 'n/a'} ---\n`;
+    out += `\n--- First 3 FINAL rows (after header mapping + forward-fill) ---\n`;
+    out += JSON.stringify(info.sampleFinalRows, null, 2) + '\n';
+    box.textContent = out;
+  }
+
+  document.getElementById('debugModal').style.display = 'block';
+}
 
 /* ══════════════════════════════════════════════════
    BOOT
