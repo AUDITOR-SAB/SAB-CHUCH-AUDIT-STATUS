@@ -233,14 +233,200 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 
 /* ── RESPONSIVE ── */
 @media(max-width:1100px){.g2,.g3,.glh{grid-template-columns:1fr}}
+
+/* ═══ TABLET (≤768px) ═══ */
 @media(max-width:768px){
-  .hdr{padding:0 16px;height:auto;flex-wrap:wrap;padding:12px 16px;gap:10px}
-  .hdr-mid{display:none}
-  main{padding:20px 14px 60px}
-  .kpi-row{grid-template-columns:repeat(2,1fr)}
-  td{padding:9px 10px}
+  /* Header: stack into two rows instead of hiding the year selector */
+  .hdr{
+    max-width:100%;
+    padding:10px 14px;
+    height:auto;
+    flex-wrap:wrap;
+    row-gap:10px;
+  }
+  .logo{flex:1 1 auto}
+  .logo-name{font-size:13px}
+  .logo-tagline{font-size:9px}
+  .logo-img,.logo-fallback{width:36px;height:36px}
+
+  /* Year selector becomes a full-width horizontally scrollable strip
+     instead of being hidden entirely */
+  .hdr-mid{
+    display:flex;
+    order:3;
+    flex:1 1 100%;
+    justify-content:flex-start;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    gap:6px;
+    padding-bottom:2px;
+    scrollbar-width:none;
+  }
+  .hdr-mid::-webkit-scrollbar{display:none}
+  .yr-btn{flex-shrink:0;padding:6px 14px;font-size:12px}
+
+  .hdr-right{
+    order:2;
+    flex:0 0 auto;
+    margin-left:auto;
+    gap:6px;
+  }
+  /* Hide the debug button on mobile — keep header from overflowing.
+     It's a developer tool, not needed for day-to-day phone use. */
+  .hdr-right button[onclick="showDebug()"]{display:none}
+  .icon-btn{padding:6px 10px;font-size:11px}
+  .mode-btn{padding:6px 12px;font-size:11px}
+
+  main{padding:18px 14px 60px}
+
+  /* Page title scales down, stops clipping on small screens */
+  .page-title{font-size:22px;line-height:1.25}
+  .page-sub{font-size:12px;line-height:1.5}
+  .mode-label{font-size:10px;padding:3px 10px}
+
+  /* KPI cards: 2 per row, tighter padding */
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:10px}
+  .kpi{padding:14px 14px}
+  .kpi-val{font-size:24px}
+  .kpi-ic{font-size:17px;margin-bottom:5px}
+  .kpi-lbl{font-size:9px}
+  .kpi-meta{font-size:10px}
+
+  /* All multi-column grids stack on mobile */
+  .g2,.g3,.glh{grid-template-columns:1fr;gap:14px}
+
+  .card{padding:16px 16px}
+  .card-t{font-size:13px}
+  .card-s{font-size:10px;margin-bottom:14px}
+
+  /* Donut + legend: stack vertically, donut centered */
+  .donut-area{flex-direction:column;align-items:center;gap:16px}
+  .donut-box{width:140px;height:140px}
+  .d-pct{font-size:24px}
+  .legend{width:100%;min-width:0}
+
+  /* Chart canvases: Chart.js with maintainAspectRatio:false needs an
+     explicit container height — "auto" would collapse it to 0px.
+     Instead we scale down the inline pixel heights set by JS using
+     a CSS class override applied per chart type below. */
+  .cw{max-width:100%}
+
+  /* Wilayah cards: 1 per row on small screens for readability */
+  .wgrid{grid-template-columns:1fr;gap:10px}
+  .wcard{padding:14px 16px}
+  .wstats{flex-wrap:wrap;row-gap:8px}
+
+  /* School cards: 1 per row */
+  .sgrid{grid-template-columns:1fr;gap:12px}
+  .scard{padding:18px}
+
+  /* Table controls stack and become full width */
+  .tbl-ctrl{flex-direction:column;align-items:stretch;gap:8px}
+  .srch{min-width:0;width:100%}
+  .flt{width:100%}
+
+  /* Table: allow horizontal scroll, shrink padding, smaller font.
+     A subtle right-edge fade hints that more columns exist off-screen. */
+  .twrap{
+    border-radius:10px;
+    -webkit-overflow-scrolling:touch;
+    position:relative;
+    background-image:linear-gradient(to right, var(--panel) 0%, transparent 2%, transparent 98%, var(--panel) 100%);
+  }
+  .twrap::after{
+    content:'';
+    position:absolute;
+    top:0; right:0; bottom:0;
+    width:24px;
+    background:linear-gradient(to right, transparent, rgba(7,17,31,.65));
+    pointer-events:none;
+    border-radius:0 10px 10px 0;
+  }
+  table{font-size:11px}
+  thead th{padding:9px 10px;font-size:9px}
+  td{padding:9px 10px;font-size:11px}
+
+  /* Pagination wraps cleanly */
+  .pgn{padding:10px 12px;font-size:10px}
+  .pbtn{padding:4px 8px;font-size:10px}
+
+  /* Fund leader rows */
+  .frow{padding:7px 10px;font-size:11px}
+  .fname{font-size:11px}
+
+  /* Section titles */
+  .sec{font-size:9px;margin-bottom:11px}
+
+  /* Bank record rows */
+  .bkrow{font-size:11px;padding:8px 0}
+
+  footer{font-size:10px;padding:14px}
 }
-@media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr}.sgrid{grid-template-columns:1fr}.wgrid{grid-template-columns:1fr 1fr}}
+
+/* ═══ SMALL PHONES (≤480px) ═══ */
+@media(max-width:480px){
+  .hdr{padding:8px 12px}
+  main{padding:14px 10px 50px}
+
+  .page-title{font-size:19px}
+  .page-sub{font-size:11px}
+
+  /* KPI cards: still 2 per row but tighter — most phones handle this fine,
+     dropping to 1-per-row wastes vertical space and looks sparse */
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi{padding:12px 12px;border-radius:12px}
+  .kpi-val{font-size:21px}
+
+  .card{padding:14px 14px;border-radius:12px}
+  .donut-box{width:120px;height:120px}
+  .d-pct{font-size:21px}
+  .d-lbl{font-size:9px}
+
+  .li{font-size:11px}
+
+  .wgrid{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr}
+
+  .sname{font-size:13px}
+  .spic{font-size:10px}
+
+  /* Table: switch to a card-like compressed view by hiding less-critical
+     columns is overkill here — instead keep horizontal scroll but signal
+     it clearly with a subtle fade hint via padding */
+  table{font-size:10px}
+  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
+  td{padding:8px 8px;font-size:10px}
+
+  .mode-btn{padding:6px 10px;font-size:10px}
+  .mode-btn .icon{display:none}
+
+  .logo-tagline{display:none}
+}
+
+/* Chart heights scaled down for mobile — overrides the inline px heights
+   set in JS template strings, targeted by canvas ID since those are
+   stable. !important is required because the JS sets style="height:Npx"
+   directly on the element, which otherwise wins over the class rule. */
+@media(max-width:768px){
+  #cTrend{height:140px!important}
+  #cWil{height:220px!important}
+  #cSchSt{height:190px!important}
+  #cSchFd{height:190px!important}
+  #cFund{height:170px!important}
+}
+@media(max-width:480px){
+  #cTrend{height:120px!important}
+  #cWil{height:200px!important}
+  #cSchSt{height:170px!important}
+  #cSchFd{height:170px!important}
+  #cFund{height:150px!important}
+}
+
+/* Prevent horizontal page scroll on any mobile size due to wide canvases */
+@media(max-width:768px){
+  body{overflow-x:hidden}
+  .cw canvas{max-width:100%}
+}
 </style>
 </head>
 <body>
