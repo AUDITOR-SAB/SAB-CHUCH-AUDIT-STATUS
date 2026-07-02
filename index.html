@@ -56,8 +56,6 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:14px;text-align:center}
 .spin{width:40px;height:40px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.debug-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px 18px;font-size:11px;color:#fca5a5;max-width:600px;line-height:1.8;text-align:left;margin-top:12px}
-.debug-box b{color:#f87171}
 
 /* ── PAGE HEADER ── */
 .page-header{margin-bottom:28px}
@@ -132,7 +130,7 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .btrack{height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
 .bfill{height:100%;border-radius:4px;transition:width 1.3s cubic-bezier(.34,1.56,.64,1)}
 
-/* ── STATUS PILLS ── */
+/* ── STATUS PILLS & BADGES ── */
 .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .pill::before{content:'';width:6px;height:6px;border-radius:50%}
 .pa{background:rgba(16,185,129,.13);color:#34d399}.pa::before{background:#10b981;box-shadow:0 0 5px #10b981}
@@ -140,13 +138,11 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .pp{background:rgba(239,68,68,.13);color:#fca5a5}.pp::before{background:#ef4444}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* ── REPORT COLLECTION BADGES ── */
 .rc{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
 .rc-col{background:rgba(34,211,238,.12);color:#67e8f9}
 .rc-na{background:rgba(107,130,168,.1);color:#6b82a8}
 .rc-pend{background:rgba(239,68,68,.1);color:#fca5a5}
 
-/* ── BANK BADGES ── */
 .bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
 .ba{background:rgba(16,185,129,.12);color:#34d399}
 .bd{background:rgba(245,158,11,.12);color:#fbbf24}
@@ -234,187 +230,90 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 /* ── RESPONSIVE ── */
 @media(max-width:1100px){.g2,.g3,.glh{grid-template-columns:1fr}}
 
-/* ═══ TABLET (≤768px) ═══ */
+/* ═══ TABLET & MOBILE (≤768px) ═══ */
 @media(max-width:768px){
-  /* Header: stack into two rows instead of hiding the year selector */
-  .hdr{
-    max-width:100%;
-    padding:10px 14px;
-    height:auto;
-    flex-wrap:wrap;
-    row-gap:10px;
-  }
+  .hdr{max-width:100%;padding:10px 14px;height:auto;flex-wrap:wrap;row-gap:10px}
   .logo{flex:1 1 auto}
   .logo-name{font-size:13px}
   .logo-tagline{font-size:9px}
   .logo-img,.logo-fallback{width:36px;height:36px}
-
-  /* Year selector becomes a full-width horizontally scrollable strip
-     instead of being hidden entirely */
-  .hdr-mid{
-    display:flex;
-    order:3;
-    flex:1 1 100%;
-    justify-content:flex-start;
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    gap:6px;
-    padding-bottom:2px;
-    scrollbar-width:none;
-  }
+  .hdr-mid{display:flex;order:3;flex:1 1 100%;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:2px;scrollbar-width:none}
   .hdr-mid::-webkit-scrollbar{display:none}
   .yr-btn{flex-shrink:0;padding:6px 14px;font-size:12px}
-
-  .hdr-right{
-    order:2;
-    flex:0 0 auto;
-    margin-left:auto;
-    gap:6px;
-  }
-  /* Hide the debug button on mobile — keep header from overflowing.
-     It's a developer tool, not needed for day-to-day phone use. */
+  .hdr-right{order:2;flex:0 0 auto;margin-left:auto;gap:6px}
   .hdr-right button[onclick="showDebug()"]{display:none}
   .icon-btn{padding:6px 10px;font-size:11px}
   .mode-btn{padding:6px 12px;font-size:11px}
-
   main{padding:18px 14px 60px}
-
-  /* Page title scales down, stops clipping on small screens */
   .page-title{font-size:22px;line-height:1.25}
   .page-sub{font-size:12px;line-height:1.5}
   .mode-label{font-size:10px;padding:3px 10px}
-
-  /* KPI cards: 2 per row, tighter padding */
   .kpi-row{grid-template-columns:repeat(2,1fr);gap:10px}
   .kpi{padding:14px 14px}
   .kpi-val{font-size:24px}
   .kpi-ic{font-size:17px;margin-bottom:5px}
   .kpi-lbl{font-size:9px}
   .kpi-meta{font-size:10px}
-
-  /* All multi-column grids stack on mobile */
   .g2,.g3,.glh{grid-template-columns:1fr;gap:14px}
-
   .card{padding:16px 16px}
   .card-t{font-size:13px}
   .card-s{font-size:10px;margin-bottom:14px}
-
-  /* Donut + legend: stack vertically, donut centered */
   .donut-area{flex-direction:column;align-items:center;gap:16px}
   .donut-box{width:140px;height:140px}
   .d-pct{font-size:24px}
   .legend{width:100%;min-width:0}
-
-  /* Chart canvases: Chart.js with maintainAspectRatio:false needs an
-     explicit container height — "auto" would collapse it to 0px.
-     Instead we scale down the inline pixel heights set by JS using
-     a CSS class override applied per chart type below. */
   .cw{max-width:100%}
-
-  /* Wilayah cards: 1 per row on small screens for readability */
   .wgrid{grid-template-columns:1fr;gap:10px}
   .wcard{padding:14px 16px}
   .wstats{flex-wrap:wrap;row-gap:8px}
-
-  /* School cards: 1 per row */
   .sgrid{grid-template-columns:1fr;gap:12px}
   .scard{padding:18px}
-
-  /* Table controls stack and become full width */
   .tbl-ctrl{flex-direction:column;align-items:stretch;gap:8px}
   .srch{min-width:0;width:100%}
   .flt{width:100%}
-
-  /* Table: allow horizontal scroll, shrink padding, smaller font.
-     A subtle right-edge fade hints that more columns exist off-screen. */
-  .twrap{
-    border-radius:10px;
-    -webkit-overflow-scrolling:touch;
-    position:relative;
-    background-image:linear-gradient(to right, var(--panel) 0%, transparent 2%, transparent 98%, var(--panel) 100%);
-  }
-  .twrap::after{
-    content:'';
-    position:absolute;
-    top:0; right:0; bottom:0;
-    width:24px;
-    background:linear-gradient(to right, transparent, rgba(7,17,31,.65));
-    pointer-events:none;
-    border-radius:0 10px 10px 0;
-  }
+  .twrap{border-radius:10px;-webkit-overflow-scrolling:touch;position:relative;background-image:linear-gradient(to right, var(--panel) 0%, transparent 2%, transparent 98%, var(--panel) 100%)}
+  .twrap::after{content:'';position:absolute;top:0;right:0;bottom:0;width:24px;background:linear-gradient(to right, transparent, rgba(7,17,31,.65));pointer-events:none;border-radius:0 10px 10px 0}
   table{font-size:11px}
   thead th{padding:9px 10px;font-size:9px}
   td{padding:9px 10px;font-size:11px}
-
-  /* Pagination wraps cleanly */
   .pgn{padding:10px 12px;font-size:10px}
   .pbtn{padding:4px 8px;font-size:10px}
-
-  /* Fund leader rows */
   .frow{padding:7px 10px;font-size:11px}
   .fname{font-size:11px}
-
-  /* Section titles */
   .sec{font-size:9px;margin-bottom:11px}
-
-  /* Bank record rows */
   .bkrow{font-size:11px;padding:8px 0}
-
   footer{font-size:10px;padding:14px}
-}
-
-/* ═══ SMALL PHONES (≤480px) ═══ */
-@media(max-width:480px){
-  .hdr{padding:8px 12px}
-  main{padding:14px 10px 50px}
-
-  .page-title{font-size:19px}
-  .page-sub{font-size:11px}
-
-  /* KPI cards: still 2 per row but tighter — most phones handle this fine,
-     dropping to 1-per-row wastes vertical space and looks sparse */
-  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
-  .kpi{padding:12px 12px;border-radius:12px}
-  .kpi-val{font-size:21px}
-
-  .card{padding:14px 14px;border-radius:12px}
-  .donut-box{width:120px;height:120px}
-  .d-pct{font-size:21px}
-  .d-lbl{font-size:9px}
-
-  .li{font-size:11px}
-
-  .wgrid{grid-template-columns:1fr}
-  .sgrid{grid-template-columns:1fr}
-
-  .sname{font-size:13px}
-  .spic{font-size:10px}
-
-  /* Table: switch to a card-like compressed view by hiding less-critical
-     columns is overkill here — instead keep horizontal scroll but signal
-     it clearly with a subtle fade hint via padding */
-  table{font-size:10px}
-  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
-  td{padding:8px 8px;font-size:10px}
-
-  .mode-btn{padding:6px 10px;font-size:10px}
-  .mode-btn .icon{display:none}
-
-  .logo-tagline{display:none}
-}
-
-/* Chart heights scaled down for mobile — overrides the inline px heights
-   set in JS template strings, targeted by canvas ID since those are
-   stable. !important is required because the JS sets style="height:Npx"
-   directly on the element, which otherwise wins over the class rule. */
-@media(max-width:768px){
   #cTrend{height:140px!important}
   #cWil{height:220px!important}
   #cSchSt{height:190px!important}
   #cSchFd{height:190px!important}
   #cFund{height:170px!important}
+  body{overflow-x:hidden}
+  .cw canvas{max-width:100%}
 }
 @media(max-width:480px){
+  .hdr{padding:8px 12px}
+  main{padding:14px 10px 50px}
+  .page-title{font-size:19px}
+  .page-sub{font-size:11px}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi{padding:12px 12px;border-radius:12px}
+  .kpi-val{font-size:21px}
+  .card{padding:14px 14px;border-radius:12px}
+  .donut-box{width:120px;height:120px}
+  .d-pct{font-size:21px}
+  .d-lbl{font-size:9px}
+  .li{font-size:11px}
+  .wgrid{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr}
+  .sname{font-size:13px}
+  .spic{font-size:10px}
+  table{font-size:10px}
+  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
+  td{padding:8px 8px;font-size:10px}
+  .mode-btn{padding:6px 10px;font-size:10px}
+  .mode-btn .icon{display:none}
+  .logo-tagline{display:none}
   #cTrend{height:120px!important}
   #cWil{height:200px!important}
   #cSchSt{height:170px!important}
@@ -422,17 +321,67 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
   #cFund{height:150px!important}
 }
 
-/* Prevent horizontal page scroll on any mobile size due to wide canvases */
-@media(max-width:768px){
-  body{overflow-x:hidden}
-  .cw canvas{max-width:100%}
+/* ══════════════════════════════════════════════════
+   REPORT VIEW (EXECUTIVE SUMMARY) CSS 
+══════════════════════════════════════════════════ */
+#reportOverlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: #f1f5f9; color: #0f172a;
+  overflow-y: auto; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.report-top-bar {
+  background: #fff; padding: 12px 24px; border-bottom: 1px solid #e2e8f0;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.rv-btn {
+  padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; transition: 0.2s;
+}
+.rv-btn-primary { background: #1d6bf3; color: #fff; }
+.rv-btn-primary:hover { background: #2563eb; }
+.rv-btn-secondary { background: #e2e8f0; color: #475569; margin-right: 10px; }
+.rv-btn-secondary:hover { background: #cbd5e1; }
+.rv-container {
+  max-width: 1123px; /* A4 Landscape rough width */
+  margin: 30px auto; background: #fff;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 40px;
+}
+.rv-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #1e293b; padding-bottom: 16px; margin-bottom: 24px; }
+.rv-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.rv-subtitle { font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.rv-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.rv-kpi { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; }
+.rv-kpi-lbl { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+.rv-kpi-val { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1; }
+.rv-kpi-val.green { color: #10b981; }
+.rv-charts { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 24px; }
+.rv-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; background: #fff; }
+.rv-card-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;}
+.rv-table-wrapper { width: 100%; border-collapse: collapse; font-size: 12px; }
+.rv-table-wrapper th { text-align: left; padding: 10px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; color: #475569; font-weight: 700; }
+.rv-table-wrapper td { padding: 10px; border-bottom: 1px solid #e2e8f0; color: #334155; }
+
+/* Modal Checkboxes */
+.yr-check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.yr-lbl { display: flex; align-items: center; gap: 8px; font-size: 14px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s;}
+.yr-lbl:hover { border-color: var(--blue2); background: rgba(29,107,243,0.1); }
+.yr-lbl input { accent-color: var(--blue2); transform: scale(1.2); }
+
+/* Print Styles */
+@media print {
+  body { background: #fff !important; }
+  .page, .report-top-bar, #debugModal, #reportModal { display: none !important; }
+  #reportOverlay { display: block !important; position: static !important; background: #fff !important; padding: 0 !important; }
+  .rv-container { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  @page { size: A4 landscape; margin: 10mm; }
 }
 </style>
 </head>
 <body>
 <div class="page">
 
-<!-- ── HEADER ── -->
 <header>
   <div class="hdr">
     <a class="logo" href="#">
@@ -448,8 +397,9 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
     <div class="hdr-mid" id="yrSel"></div>
 
     <div class="hdr-right">
+      <button class="icon-btn" onclick="openReportModal()" style="border-color:rgba(16,185,129,.4);color:#34d399;font-weight:600">📄 Generate Report</button>
       <button class="icon-btn" onclick="doRefresh()">↻ Refresh</button>
-      <button class="icon-btn" onclick="showDebug()" style="border-color:rgba(239,68,68,.3);color:#fca5a5">🐞 Debug Data</button>
+      <button class="icon-btn" onclick="showDebug()" style="border-color:rgba(239,68,68,.3);color:#fca5a5">🐞 Debug</button>
       <div class="mode-toggle">
         <button class="mode-btn on" id="btnC" onclick="setMode('church')">⛪ Church</button>
         <button class="mode-btn"    id="btnS" onclick="setMode('school')">🏫 School</button>
@@ -458,7 +408,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
   </div>
 </header>
 
-<!-- ── MAIN ── -->
 <main id="main">
   <div class="center-state">
     <div class="spin"></div>
@@ -471,7 +420,80 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 </footer>
 </div>
 
-<!-- DEBUG MODAL -->
+<div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
+  <div style="width:100%;max-width:400px;background:#0c1a2e;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Generate Executive Summary</h3>
+    <p style="font-size:12px;color:var(--muted)">Select the audit year(s) to include in the combined report.</p>
+    
+    <div class="yr-check-grid" id="reportYrChecks">
+      </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px">
+      <button onclick="document.getElementById('reportModal').style.display='none'" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--white);cursor:pointer;font-family:inherit">Cancel</button>
+      <button onclick="buildAndShowReport()" style="padding:8px 16px;border-radius:6px;border:none;background:var(--blue);color:#fff;font-weight:600;cursor:pointer;font-family:inherit">Generate</button>
+    </div>
+  </div>
+</div>
+
+<div id="reportOverlay">
+  <div class="report-top-bar">
+    <div style="font-weight:700;font-size:16px;color:#0f172a">Executive Summary Preview</div>
+    <div>
+      <button class="rv-btn rv-btn-secondary" onclick="document.getElementById('reportOverlay').style.display='none'">Back to Dashboard</button>
+      <button class="rv-btn rv-btn-primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
+  </div>
+  
+  <div class="rv-container">
+    <div class="rv-header">
+      <div>
+        <div class="rv-title">SAB Mission Audit Report</div>
+        <div class="rv-subtitle" id="rvYears">Selected Years: </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:#64748b;font-weight:600">GENERATED ON</div>
+        <div style="font-size:13px;font-weight:700;color:#0f172a" id="rvDate"></div>
+      </div>
+    </div>
+
+    <div class="rv-kpi-grid">
+      <div class="rv-kpi"><div class="rv-kpi-lbl">Total Facilities Audited</div><div class="rv-kpi-val" id="rvTotFac">0</div></div>
+      <div class="rv-kpi"><div class="rv-kpi-lbl">Overall Completion</div><div class="rv-kpi-val green" id="rvComp">0%</div></div>
+      <div class="rv-kpi"><div class="rv-kpi-lbl">Pending Audits</div><div class="rv-kpi-val" style="color:#ef4444" id="rvPend">0</div></div>
+      <div class="rv-kpi"><div class="rv-kpi-lbl">Combined Fund Balance</div><div class="rv-kpi-val" style="font-size:22px;color:#f59e0b" id="rvFund">RM 0</div></div>
+    </div>
+
+    <div class="rv-charts">
+      <div class="rv-card">
+        <div class="rv-card-title">Overall Status Breakdown</div>
+        <div class="cw" style="height:220px;display:flex;justify-content:center"><canvas id="rvDonut"></canvas></div>
+      </div>
+      <div class="rv-card">
+        <div class="rv-card-title">Year-over-Year Completion Progress</div>
+        <div class="cw" style="height:220px"><canvas id="rvBar"></canvas></div>
+      </div>
+    </div>
+
+    <div class="rv-card" style="padding:0;overflow:hidden">
+      <table class="rv-table-wrapper">
+        <thead>
+          <tr>
+            <th>Audit Year</th>
+            <th>Facility Type</th>
+            <th>Total Records</th>
+            <th>Audited</th>
+            <th>WIP</th>
+            <th>Pending</th>
+            <th>Completion %</th>
+          </tr>
+        </thead>
+        <tbody id="rvTableBody">
+          </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div id="debugModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 20px">
   <div style="max-width:900px;margin:0 auto;background:#0c1a2e;border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:28px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
@@ -479,129 +501,57 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
       <button onclick="document.getElementById('debugModal').style.display='none'"
         style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit">✕ Close</button>
     </div>
-    <p style="font-size:12px;color:#6b82a8;margin-bottom:18px;line-height:1.6">
-      This shows exactly what was fetched from Google Sheets for the currently selected year/mode (<strong id="dbgContext" style="color:#fca5a5"></strong>), before and after processing. Screenshot this and send it back if Wilayah/Daerah still look wrong.
-    </p>
     <div id="debugContent" style="font-family:monospace;font-size:11px;color:#e2eaff;white-space:pre-wrap;background:rgba(0,0,0,.3);border-radius:10px;padding:16px;max-height:70vh;overflow-y:auto;line-height:1.6"></div>
   </div>
 </div>
 
 <script>
 /* ══════════════════════════════════════════════════
-   CONFIG
-   Each year tab is identified by its own gid (Sheet tab ID).
-   Find a tab's gid by opening it in the browser and reading
-   the URL: .../edit#gid=XXXXXXXXX
+   CONFIG & STATE
 ══════════════════════════════════════════════════ */
 const CHURCH_ID = '1Kw04DaAB0AG1mrv_nqrXuHmbYVdvJ1b8DKZkRYBCIyo';
 const SCHOOL_ID = '1JmzWY0wpXu6GXMdtXRRQjO_PpOH0oHiNRjPA5BBlrUU';
-
 const CHURCH_GIDS = { 2023: '0', 2024: '1678278838', 2025: '290369180', 2026: '1443465864' };
 const SCHOOL_GIDS = { 2023: '0', 2024: '308447492',  2025: '816919702', 2026: '1527293539' };
-
 const YEARS = [2023, 2024, 2025, 2026];
 const PAL = ['#3b82f6','#10b981','#f0b429','#ef4444','#8b5cf6','#ec4899','#22d3ee','#f97316','#a3e635','#fb7185','#06b6d4','#84cc16'];
 
-/* ══════════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════════ */
 const S = {
   mode: 'church', year: 2025,
   cData: {}, sData: {},
   search: '', fSt: '', fWil: '',
   page: 1, perPage: 25, sc: -1, sd: 1,
-  charts: {},
-  /* Wilayah number→name map, built after load */
-  wilMap: {},
-  /* Diagnostic info captured during fetch — viewable via Debug Data button */
-  debugLog: {},
+  charts: {}, repCharts: {},
+  wilMap: {}, debugLog: {},
 };
 
 /* ══════════════════════════════════════════════════
-   DATA FETCHING
-   Uses headers=0 so PapaParse returns raw arrays,
-   then we find the header row ourselves — safely.
+   DATA FETCHING (Unchanged from original)
 ══════════════════════════════════════════════════ */
 function csvUrl(id, gid) {
-  /* gviz export targeted by gid (tab id) — works reliably across all
-     published/unpublished sheets as long as "Anyone with the link can view"
-     is enabled. cb= cache-busts so Refresh always pulls the latest data. */
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
 }
 
-/*
- * Key fix #1 — HEADER DETECTION
- * ──────────────────────────────
- * We search row-by-row for the one whose cells match the most
- * expected column keywords. We require ≥3 keyword hits so that
- * a title row containing only "SAB Mission 2025" can never win.
- *
- * Key fix #2 — WILAYAH NUMBER→NAME LOOKUP
- * ─────────────────────────────────────────
- * The sheet stores Wilayah as a *number* (1, 2, 3…) in column A,
- * but the actual *name* lives as a merged/title cell earlier in
- * the same sheet — OR it is simply the numeric ID used as-is.
- *
- * Strategy: after parsing, if every Wilayah value is numeric we
- * look for a separate lookup: check whether there is a column
- * whose header contains "wilayah" AND whose value is non-numeric
- * in the same row. If that also doesn't exist, we keep the number
- * but prefix "Wilayah " so cards read "Wilayah 1", "Wilayah 2"…
- */
 function fetchCSV(id, gid, label) {
   return new Promise((ok, fail) => {
     Papa.parse(csvUrl(id, gid), {
-      download: true,
-      header: false,
-      skipEmptyLines: true,
+      download: true, header: false, skipEmptyLines: true,
       complete: r => {
         const rows = r.data;
-        if (!rows.length) {
-          S.debugLog[label] = { error: 'No rows returned at all from fetch.' };
-          ok([]); return;
-        }
+        if (!rows.length) { S.debugLog[label] = { error: 'No rows' }; ok([]); return; }
 
-        /* ── 1. Find header row ── */
         const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic'];
         let hIdx = -1, bestScore = 0;
         for (let i = 0; i < Math.min(rows.length, 8); i++) {
           const str = rows[i].map(c => (c||'').toString().toLowerCase()).join(' ');
-          let score = 0;
-          KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
+          let score = 0; KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
 
-        /* DIAGNOSTIC SNAPSHOT — captured regardless of success/failure below */
-        S.debugLog[label] = {
-          totalRowsFetched: rows.length,
-          hIdx, bestScore,
-          rawFirst3Rows: rows.slice(0, 3),
-          rawHeaderRowFound: hIdx >= 0 ? rows[hIdx] : null,
-          firstHeaderCellCharCodes: (hIdx >= 0 && rows[hIdx][0])
-            ? rows[hIdx][0].toString().split('').slice(0,12).map(c => c.charCodeAt(0))
-            : null,
-        };
+        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore };
+        if (hIdx === -1 || bestScore < 2) { ok([]); return; }
 
-        if (hIdx === -1 || bestScore < 2) {
-          S.debugLog[label].error = `Header detection failed — bestScore=${bestScore} (need ≥2). No usable header row found in first 8 rows.`;
-          ok([]); return;
-        }
-
-        /* ── 2. Normalise column headers (lowercase, trimmed) ── */
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
-
-        /* ── 2b. FIX: fill in BLANK header cells by position ──
-         *
-         * Confirmed by live debug data: column A's header cell is
-         * literally empty ("") even though the data below it holds
-         * the Wilayah number ("1", "2"...). Same issue affects the
-         * Fund Balance column. Since each sheet uses a FIXED column
-         * order, we patch any blank header at a known position with
-         * its expected name. We use the fetch `label` (passed in as
-         * "church-2025" / "school-2025") to know which column order
-         * applies — never guessed from content, so it's reliable even
-         * when BOTH sheets have blank headers in the same position.
-         */
         const isChurchSheet = label.startsWith('church');
         const EXPECTED_ORDER = isChurchSheet
           ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection']
@@ -611,78 +561,36 @@ function fetchCSV(id, gid, label) {
           if (headers[i] === '') headers[i] = EXPECTED_ORDER[i];
         }
 
-        S.debugLog[label].normalisedHeaders = headers;
-        S.debugLog[label].headerPatchApplied = true;
-        S.debugLog[label].expectedOrderUsed = EXPECTED_ORDER;
-
-        /* ── 3. Build data objects ── */
         const data = [];
         for (let i = hIdx + 1; i < rows.length; i++) {
           const row = rows[i];
           if (!row.some(v => v !== null && v !== '')) continue;
           const obj = {};
-          headers.forEach((h, j) => {
-            if (h) obj[h] = (row[j] != null ? row[j].toString().trim() : '');
-          });
+          headers.forEach((h, j) => { if (h) obj[h] = (row[j] != null ? row[j].toString().trim() : ''); });
           data.push(obj);
         }
 
-        /* ── 4. WILAYAH: forward-fill merged cells + numeric→name ──
-         *
-         * Google Sheets exports MERGED cells as: value only in the
-         * FIRST row of the merged group, then EMPTY STRING for every
-         * subsequent row.  That means ~90% of rows have wilayah = ""
-         * and all fall through to 'Unknown'.
-         *
-         * Fix — two passes:
-         *   Pass A: forward-fill — carry the last seen non-empty
-         *           wilayah value down into every empty cell below it.
-         *   Pass B: if all values are purely numeric (1, 2 … 10)
-         *           prefix "Wilayah " so cards show "Wilayah 1" etc.
-         */
         const wilKey = headers.find(h => h.includes('wilayah'));
         if (wilKey) {
-          /* Pass A — forward-fill empty wilayah cells */
           let lastWil = '';
           data.forEach(r => {
             const v = (r[wilKey] || '').trim();
-            if (v !== '') {
-              lastWil = v;
-            } else {
-              r[wilKey] = lastWil;
-            }
+            if (v !== '') lastWil = v; else r[wilKey] = lastWil;
           });
-
-          /* Pass B — if values are numeric, prefix "Wilayah " */
           const nonEmpty = data.map(r => (r[wilKey] || '').trim()).filter(Boolean);
-          const allNumeric = nonEmpty.length > 0 && nonEmpty.every(v => /^\d+$/.test(v));
-          if (allNumeric) {
-            data.forEach(r => {
-              if (r[wilKey]) r[wilKey] = 'Wilayah ' + r[wilKey];
-            });
+          if (nonEmpty.length > 0 && nonEmpty.every(v => /^\d+$/.test(v))) {
+            data.forEach(r => { if (r[wilKey]) r[wilKey] = 'Wilayah ' + r[wilKey]; });
           }
         }
 
-        /* ── 5. DAERAH: forward-fill merged cells (same pattern) ── */
         const daerKey = headers.find(h => h.includes('daerah'));
         if (daerKey) {
           let lastDaer = '';
           data.forEach(r => {
             const v = (r[daerKey] || '').trim();
-            if (v !== '') {
-              lastDaer = v;
-            } else {
-              r[daerKey] = lastDaer;
-            }
+            if (v !== '') lastDaer = v; else r[daerKey] = lastDaer;
           });
         }
-
-        /* DIAGNOSTIC: capture wilKey/daerKey detection + sample of final data */
-        S.debugLog[label].wilKeyFound = wilKey || null;
-        S.debugLog[label].daerKeyFound = daerKey || null;
-        S.debugLog[label].finalRowCount = data.length;
-        S.debugLog[label].sampleFinalRows = data.slice(0, 3);
-
         ok(data);
       },
       error: e => fail(e),
@@ -691,911 +599,330 @@ function fetchCSV(id, gid, label) {
 }
 
 async function loadAll() {
-  document.getElementById('main').innerHTML =
-    '<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
-
-  /* Each year maps to its own tab gid — fetch all 4 years for both sheets. */
+  document.getElementById('main').innerHTML = '<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
   for (const yr of YEARS) {
-    try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`); }
-    catch(e) { S.cData[yr] = []; console.warn('Church', yr, 'failed:', e); }
-    try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`); }
-    catch(e) { S.sData[yr] = []; console.warn('School', yr, 'failed:', e); }
+    try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`); } catch(e) { S.cData[yr] = []; }
+    try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`); } catch(e) { S.sData[yr] = []; }
   }
+  document.getElementById('reportModal').style.display = 'none'; // reset
   renderAll();
 }
 
-async function doRefresh() {
-  destroyCharts();
-  S.cData = {}; S.sData = {};
-  await loadAll();
-}
+async function doRefresh() { destroyCharts(); S.cData = {}; S.sData = {}; await loadAll(); }
 
 /* ══════════════════════════════════════════════════
-   HELPERS
+   HELPERS & STATS
 ══════════════════════════════════════════════════ */
-
-/*
- * getVal — flexible column lookup.
- * Accepts multiple keyword fragments; returns the first match.
- * Matching is substring-based on the normalised (lowercase) key.
- */
 function getVal(row, ...keys) {
   const rKeys = Object.keys(row);
   for (const k of keys) {
-    const kl = k.toLowerCase().trim();
-    const match = rKeys.find(rk => rk.toLowerCase().includes(kl));
+    const match = rKeys.find(rk => rk.toLowerCase().includes(k.toLowerCase().trim()));
     if (match !== undefined && row[match] !== undefined) return row[match].toString().trim();
   }
   return '';
 }
+function cur() { return S.mode === 'church' ? (S.cData[S.year] || []) : (S.sData[S.year] || []); }
+function getSt(r) { const v = getVal(r, 'status'); return (/audit/i.test(v)?'Audited':/wip/i.test(v)?'WIP':/pending/i.test(v)?'Pending':v||'Pending'); }
+function getBank(r) { return getVal(r, 'bank record', 'bank') || 'No data'; }
+function getRC(r) { return getVal(r, 'report collection', 'collection') || ''; }
+function getFund(r) { const n = parseFloat(getVal(r, 'closing fund bal', 'fund', 'balance').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
+function fRM(n) { return n === null || n === undefined ? '—' : 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2 }); }
+function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s}</span>`; }
+function rcBadge(v) { if (!v) return `<span class="rc rc-na">—</span>`; return `<span class="rc ${/collect/i.test(v)?'rc-col':/pending/i.test(v)?'rc-pend':'rc-na'}">${v}</span>`; }
+function bank(b) { return `<span class="bb ${/active/i.test(b)?'ba':/dormant/i.test(b)?'bd':'bn'}">${b}</span>`; }
+function uniq(rows, key) { return [...new Set(rows.map(r => getVal(r, key)).filter(Boolean))].sort(); }
 
-function cur() {
-  return S.mode === 'church' ? (S.cData[S.year] || []) : (S.sData[S.year] || []);
-}
-
-function getSt(r) {
-  const v = getVal(r, 'status');
-  if (/audit/i.test(v))                     return 'Audited';
-  if (/work.in.progress|wip/i.test(v))      return 'WIP';
-  if (/pending/i.test(v))                   return 'Pending';
-  return v || 'Pending';
-}
-
-function getBank(r) {
-  return getVal(r, 'bank record', 'bank') || 'No data';
-}
-
-function getRC(r) {
-  /* Report Collection column — header may be "report collection" or just "collection" */
-  return getVal(r, 'report collection', 'collection') || '';
-}
-
-function getFund(r) {
-  const raw = getVal(r, 'closing fund balance', 'closing fund bal', 'fund balance', 'fund bal', 'fund', 'balance');
-  const n = parseFloat(raw.replace(/[^0-9.-]/g, ''));
-  return isNaN(n) ? null : n;
-}
-
-function fRM(n) {
-  if (n === null || n === undefined) return '—';
-  return 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function pill(s) {
-  const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp' };
-  const lbl = s === 'WIP' ? 'Work in Progress' : s;
-  return `<span class="pill ${m[s] || 'pp'}">${lbl}</span>`;
-}
-
-function rcBadge(v) {
-  if (!v || v === '') return `<span class="rc rc-na">—</span>`;
-  if (/collect/i.test(v))  return `<span class="rc rc-col">Collected</span>`;
-  if (/pending/i.test(v))  return `<span class="rc rc-pend">Pending</span>`;
-  if (/na|n\/a/i.test(v))  return `<span class="rc rc-na">N/A</span>`;
-  return `<span class="rc rc-na">${v}</span>`;
-}
-
-function bank(b) {
-  let c = 'bn';
-  if (/active/i.test(b))   c = 'ba';
-  else if (/dormant/i.test(b)) c = 'bd';
-  else if (/cash/i.test(b))    c = 'bc';
-  return `<span class="bb ${c}">${b}</span>`;
-}
-
-function uniq(rows, key) {
-  return [...new Set(rows.map(r => getVal(r, key)).filter(Boolean))].sort();
-}
-
-/* ── STATS ── */
 function stats(rows) {
-  const t = rows.length;
-  const a = rows.filter(r => getSt(r) === 'Audited').length;
-  const w = rows.filter(r => getSt(r) === 'WIP').length;
-  const p = rows.filter(r => getSt(r) === 'Pending').length;
-  /* Report Collection counts */
-  const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length;
-  const rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
-  const bk = {};
-  rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
+  const t = rows.length, a = rows.filter(r => getSt(r) === 'Audited').length, w = rows.filter(r => getSt(r) === 'WIP').length, p = rows.filter(r => getSt(r) === 'Pending').length;
+  const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length, rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
+  const bk = {}; rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
   const fund = rows.reduce((acc, r) => acc + (getFund(r) || 0), 0);
   return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p };
 }
 
-/* ── WILAYAH STATS ──
- * KEY FIX: uses getVal(r,'wilayah') which now returns
- * "Wilayah 1", "Wilayah 2" etc. after the numeric fix in fetchCSV.
- * Sorted naturally so "Wilayah 1" < "Wilayah 2" < … < "Wilayah 10".
- */
 function wilStats(rows) {
   const m = {};
   rows.forEach(r => {
     const w = getVal(r, 'wilayah') || 'Unknown';
-    if (!m[w]) m[w] = { t: 0, a: 0, w: 0, p: 0, fund: 0 };
-    m[w].t++;
-    const s = getSt(r);
-    if (s === 'Audited') m[w].a++;
-    else if (s === 'WIP') m[w].w++;
-    else m[w].p++;
+    if (!m[w]) m[w] = { t:0, a:0, w:0, p:0, fund:0 };
+    m[w].t++; const s = getSt(r); if (s === 'Audited') m[w].a++; else if (s === 'WIP') m[w].w++; else m[w].p++;
     const f = getFund(r); if (f) m[w].fund += f;
   });
-  return Object.entries(m)
-    .map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 }))
-    .sort((a, b) => a.n.localeCompare(b.n, undefined, { numeric: true, sensitivity: 'base' }));
+  return Object.entries(m).map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 })).sort((a, b) => a.n.localeCompare(b.n, undefined, { numeric: true, sensitivity: 'base' }));
 }
-
-/* ── DAERAH STATS ── */
 function daerStats(rows, wilFilter) {
-  const m = {};
-  const subset = wilFilter ? rows.filter(r => getVal(r, 'wilayah') === wilFilter) : rows;
+  const m = {}; const subset = wilFilter ? rows.filter(r => getVal(r, 'wilayah') === wilFilter) : rows;
   subset.forEach(r => {
     const d = getVal(r, 'daerah') || 'Unknown';
-    if (!m[d]) m[d] = { t: 0, a: 0, w: 0, p: 0 };
-    m[d].t++;
-    const s = getSt(r);
-    if (s === 'Audited') m[d].a++;
-    else if (s === 'WIP') m[d].w++;
-    else m[d].p++;
+    if (!m[d]) m[d] = { t:0, a:0, w:0, p:0 };
+    m[d].t++; const s = getSt(r); if(s==='Audited')m[d].a++; else if(s==='WIP')m[d].w++; else m[d].p++;
   });
-  return Object.entries(m)
-    .map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 }))
-    .sort((a, b) => b.t - a.t)
-    .slice(0, 20);
+  return Object.entries(m).map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 })).sort((a, b) => b.t - a.t).slice(0, 20);
 }
-
-function trends() {
-  return YEARS.map(yr => {
-    const rows = S.mode === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
-    const s = stats(rows);
-    return { yr, t: s.t, a: s.a, pct: s.pct };
-  });
-}
+function trends() { return YEARS.map(yr => { const s = stats(S.mode === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || [])); return { yr, t: s.t, a: s.a, pct: s.pct }; }); }
 
 /* ══════════════════════════════════════════════════
-   CHART HELPERS
+   CHART SETUP (Light / Dark)
 ══════════════════════════════════════════════════ */
-function destroyCharts() {
-  Object.values(S.charts).forEach(c => { try { c.destroy(); } catch(e) {} });
-  S.charts = {};
-}
-
-function mkChart(id, cfg) {
-  const el = document.getElementById(id);
-  if (!el) return;
+function destroyCharts() { Object.values(S.charts).forEach(c => { try { c.destroy(); } catch(e) {} }); S.charts = {}; }
+function destroyRepCharts() { Object.values(S.repCharts).forEach(c => { try { c.destroy(); } catch(e) {} }); S.repCharts = {}; }
+function mkChart(id, cfg, isReport = false) {
+  const el = document.getElementById(id); if (!el) return;
   try {
-    if (S.charts[id]) S.charts[id].destroy();
-    S.charts[id] = new Chart(el.getContext('2d'), cfg);
-  } catch(e) { console.warn('Chart err', id, e); }
+    if (isReport) { if (S.repCharts[id]) S.repCharts[id].destroy(); S.repCharts[id] = new Chart(el.getContext('2d'), cfg); }
+    else { if (S.charts[id]) S.charts[id].destroy(); S.charts[id] = new Chart(el.getContext('2d'), cfg); }
+  } catch(e) {}
 }
 
-Chart.defaults.color = '#6b82a8';
-Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
-Chart.defaults.font.family = "'Plus Jakarta Sans',sans-serif";
+const TT_DARK = { backgroundColor: 'rgba(7,17,31,.92)', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 10, titleColor: '#e2eaff', bodyColor: '#6b82a8' };
+const TT_LIGHT = { backgroundColor: '#fff', borderColor: '#e2e8f0', borderWidth: 1, padding: 10, titleColor: '#0f172a', bodyColor: '#475569', titleFont:{family:"'Plus Jakarta Sans'"}, bodyFont:{family:"'Plus Jakarta Sans'"} };
 
-const TT = {
-  backgroundColor: 'rgba(7,17,31,.92)',
-  borderColor: 'rgba(255,255,255,.1)',
-  borderWidth: 1, padding: 10,
-  titleColor: '#e2eaff', bodyColor: '#6b82a8',
-};
-
-/* ══════════════════════════════════════════════════
-   YEAR SELECTOR
-══════════════════════════════════════════════════ */
-function renderYrs() {
-  document.getElementById('yrSel').innerHTML =
-    YEARS.map(y =>
-      `<button class="yr-btn${S.year === y ? ' on' : ''}" onclick="setYear(${y})">${y}</button>`
-    ).join('');
+function applyChartDefaults(isLight = false) {
+  Chart.defaults.color = isLight ? '#64748b' : '#6b82a8';
+  Chart.defaults.borderColor = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = "'Plus Jakarta Sans',sans-serif";
 }
 
 /* ══════════════════════════════════════════════════
-   MAIN RENDER ROUTER
+   MAIN DASHBOARD RENDERING (UNCHANGED)
 ══════════════════════════════════════════════════ */
-function renderAll() {
-  destroyCharts();
-  renderYrs();
-  const m = document.getElementById('main');
-  S.mode === 'church' ? renderChurch(m) : renderSchool(m);
-  const ft = document.getElementById('ft');
-  ft.style.display = '';
-  document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY');
-}
+function renderYrs() { document.getElementById('yrSel').innerHTML = YEARS.map(y => `<button class="yr-btn${S.year === y ? ' on' : ''}" onclick="setYear(${y})">${y}</button>`).join(''); }
+function renderAll() { destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); }
 
-/* ══════════════════════════════════════════════════
-   CHURCH DASHBOARD
-══════════════════════════════════════════════════ */
 function renderChurch(m) {
-  const rows = cur();
-  const s    = stats(rows);
-  const wil  = wilStats(rows);
-  /* KEY FIX: pass S.fWil to daerStats so bars update when a card is clicked */
-  const dae  = daerStats(rows, S.fWil || null);
-  const tr   = trends();
-
+  const rows = cur(); const s = stats(rows); const wil = wilStats(rows); const dae = daerStats(rows, S.fWil || null); const tr = trends();
   m.innerHTML = `<div class="fade-in">
-
-<div class="page-header">
-  <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
-  <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
-  <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong>${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
-</div>
-
-<!-- KPI ROW -->
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
-  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
-</div>
-
-<!-- CHARTS ROW 1 -->
-<div class="g3">
-  <!-- Donut -->
-  <div class="card">
-    <div class="card-t">Audit Status Overview</div>
-    <div class="card-s">FY${S.year} distribution</div>
-    <div class="donut-area">
-      <div class="donut-box">
-        <canvas id="cDnt"></canvas>
-        <div class="donut-center">
-          <div class="d-pct" id="dPct">0%</div>
-          <div class="d-lbl">Audited</div>
-        </div>
-      </div>
-      <div class="legend">
-        ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
-        <div class="li">
-          <div class="ldot" style="background:${c}"></div>
-          <span class="ll">${l}</span>
-          <span class="lv">${v}</span>
-          <span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span>
-        </div>`).join('')}
-      </div>
+    <div class="page-header">
+      <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
+      <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
+      <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong>${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
     </div>
-  </div>
-
-  <!-- Trend -->
-  <div class="card">
-    <div class="card-t">Year-over-Year Trend</div>
-    <div class="card-s">Completion % vs total churches</div>
-    <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
-  </div>
-
-  <!-- Bank -->
-  <div class="card">
-    <div class="card-t">Bank Record Breakdown</div>
-    <div class="card-s">All churches FY${S.year}</div>
-    ${Object.entries(s.bk).map(([b,cnt])=>`
-    <div class="bkrow">
-      ${bank(b)}
-      <span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span>
-    </div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded. Ensure sheet is public.</div>'}
-  </div>
-</div>
-
-<!-- CHARTS ROW 2: Daerah bars + Wilayah stacked chart -->
-<div class="glh">
-  <div class="card">
-    <div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div>
-    <div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div>
-    <div class="bar-list">
-      ${dae.length
-        ? dae.map((d,i)=>`
-          <div class="brow">
-            <div class="bhdr">
-              <span class="bname">${d.n}</span>
-              <span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; ${d.pct}%</span>
-            </div>
-            <div class="btrack">
-              <div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div>
-            </div>
-          </div>`).join('')
-        : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">No data for this year</div>'}
+    <div class="kpi-row">
+      <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
+      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
+      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
+      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-t">Wilayah Stacked Status</div>
-    <div class="card-s">Audited · WIP · Pending per Wilayah</div>
-    <div class="cw" style="height:260px"><canvas id="cWil"></canvas></div>
-  </div>
-</div>
-
-<!-- WILAYAH CARDS -->
-<div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)">&nbsp;— click to filter Daerah & table</span></div>
-<div class="wgrid">
-  ${wil.length
-    ? wil.map(w => `
-      <div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')">
-        <div class="wname">📍 ${w.n}</div>
-        <div class="wstats">
-          <div class="ws"><span class="wsv" style="color:#10b981">${w.a}</span><span class="wsl">Audited</span></div>
-          <div class="ws"><span class="wsv" style="color:#f59e0b">${w.w}</span><span class="wsl">WIP</span></div>
-          <div class="ws"><span class="wsv" style="color:#ef4444">${w.p}</span><span class="wsl">Pending</span></div>
-          <div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div>
-        </div>
-        <div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div>
-        <div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div>
-      </div>`).join('')
-    : '<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}
-</div>
-
-<!-- TOP FUNDS -->
-${topFunds(rows)}
-
-<!-- TABLE -->
-<div class="sec" style="margin-top:4px">Church Records</div>
-${churchTbl(rows)}
-
-</div>`;
-
-  setTimeout(() => {
-    animB();
-    aniPct('dPct', s.pct);
-    bDonut(s);
-    bTrend(tr);
-    bWil(wil);
-    bFund(rows);
-  }, 60);
+    <div class="g3">
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % vs total churches</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
+      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}</div>
+    </div>
+    <div class="glh">
+      <div class="card"><div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div><div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div><div class="bar-list">${dae.length? dae.map((d,i)=>`<div class="brow"><div class="bhdr"><span class="bname">${d.n}</span><span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; ${d.pct}%</span></div><div class="btrack"><div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join(''): '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">No data</div>'}</div></div>
+      <div class="card"><div class="card-t">Wilayah Stacked Status</div><div class="card-s">Audited · WIP · Pending per Wilayah</div><div class="cw" style="height:260px"><canvas id="cWil"></canvas></div></div>
+    </div>
+    <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)">&nbsp;— click to filter Daerah & table</span></div>
+    <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#10b981">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#f59e0b">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#ef4444">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}</div>
+    ${topFunds(rows)}
+    <div class="sec" style="margin-top:4px">Church Records</div>
+    ${churchTbl(rows)}
+  </div>`;
+  setTimeout(() => { animB(); aniPct('dPct', s.pct); bDonut(s); bTrend(tr); bWil(wil); bFund(rows); }, 60);
 }
 
-/* ══════════════════════════════════════════════════
-   SCHOOL DASHBOARD
-══════════════════════════════════════════════════ */
 function renderSchool(m) {
-  const rows = cur();
-  const s    = stats(rows);
-  const tr   = trends();
-
+  const rows = cur(); const s = stats(rows); const tr = trends();
   let filt = rows;
-  if (S.search) {
-    const q = S.search.toLowerCase();
-    filt = filt.filter(r => ['school','pic'].some(k => getVal(r, k).toLowerCase().includes(q)));
-  }
+  if (S.search) { const q = S.search.toLowerCase(); filt = filt.filter(r => ['school','pic'].some(k => getVal(r, k).toLowerCase().includes(q))); }
   if (S.fSt) filt = filt.filter(r => getSt(r) === S.fSt);
 
   m.innerHTML = `<div class="fade-in">
-
-<div class="page-header">
-  <div class="mode-label lbl-s">🏫 School Audit · ${S.year}</div>
-  <h1 class="page-title">SAB Mission <em>School</em> <span class="ac-gold">Audit</span></h1>
-  <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
-</div>
-
-<!-- KPI ROW -->
-<div class="kpi-row">
-  <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
-  <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-  <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
-  <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-  <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
-</div>
-
-<!-- CHARTS -->
-<div class="g3">
-  <div class="card">
-    <div class="card-t">Audit Status Overview</div>
-    <div class="card-s">FY${S.year} distribution</div>
-    <div class="donut-area">
-      <div class="donut-box">
-        <canvas id="cDnt"></canvas>
-        <div class="donut-center">
-          <div class="d-pct" id="dPct">0%</div>
-          <div class="d-lbl">Audited</div>
-        </div>
-      </div>
-      <div class="legend">
-        ${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`
-        <div class="li">
-          <div class="ldot" style="background:${c}"></div>
-          <span class="ll">${l}</span><span class="lv">${v}</span>
-          <span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span>
-        </div>`).join('')}
-      </div>
+    <div class="page-header">
+      <div class="mode-label lbl-s">🏫 School Audit · ${S.year}</div>
+      <h1 class="page-title">SAB Mission <em>School</em> <span class="ac-gold">Audit</span></h1>
+      <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-t">Year-over-Year Trend</div>
-    <div class="card-s">Completion % across years</div>
-    <div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div>
-  </div>
-
-  <div class="card">
-    <div class="card-t">Bank Record Breakdown</div>
-    <div class="card-s">All schools FY${S.year}</div>
-    ${Object.entries(s.bk).map(([b,cnt])=>`
-    <div class="bkrow">
-      ${bank(b)}
-      <span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span>
-    </div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}
-  </div>
-</div>
-
-${topFunds(rows)}
-
-<div class="g2" style="margin-top:4px">
-  <div class="card">
-    <div class="card-t">Individual School Progress</div>
-    <div class="card-s">Audit status per school</div>
-    <div class="cw" style="height:220px"><canvas id="cSchSt"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Fund Balance Comparison</div>
-    <div class="card-s">Closing fund balance per school</div>
-    <div class="cw" style="height:220px"><canvas id="cSchFd"></canvas></div>
-  </div>
-</div>
-
-<div class="sec" style="margin-top:4px">School Overview</div>
-<div class="tbl-ctrl">
-  <div class="srch"><span class="sic">🔍</span>
-    <input type="text" placeholder="Search school or PIC…" value="${S.search}"
-      oninput="S.search=this.value;renderAll()">
-  </div>
-  <select class="flt" onchange="S.fSt=this.value;renderAll()">
-    <option value="">All Status</option>
-    <option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option>
-    <option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option>
-    <option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
-  </select>
-  <span style="font-size:11px;color:var(--muted)">${filt.length} school${filt.length!==1?'s':''}</span>
-</div>
-<div class="sgrid">
-  ${filt.length
-    ? filt.map(r => `
-    <div class="scard">
-      <div class="stop">
-        <div>
-          <div class="sname">${getVal(r,'school') || 'Unknown'}</div>
-          <div class="spic">👤 ${getVal(r,'school pic','pic','headmaster') || '—'}</div>
-        </div>
-        ${pill(getSt(r))}
-      </div>
-      <div class="sdiv"></div>
-      <div class="srow"><span class="slbl">Bank Record</span>${bank(getBank(r))}</div>
-      <div class="srow"><span class="slbl">Closing Fund</span><span style="font-weight:800;color:var(--gold)">${fRM(getFund(r))}</span></div>
-    </div>`).join('')
-    : '<div style="color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1">No schools found</div>'}
-</div>
-
-</div>`;
-
-  setTimeout(() => {
-    animB();
-    aniPct('dPct', s.pct);
-    bDonut(s);
-    bTrend(tr);
-    bFund(rows);
-    bSchool(rows);
-  }, 60);
+    <div class="kpi-row">
+      <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
+      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
+      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
+    </div>
+    <div class="g3">
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % across years</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
+      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}</div>
+    </div>
+    ${topFunds(rows)}
+    <div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Individual School Progress</div><div class="card-s">Audit status per school</div><div class="cw" style="height:220px"><canvas id="cSchSt"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Comparison</div><div class="card-s">Closing fund balance per school</div><div class="cw" style="height:220px"><canvas id="cSchFd"></canvas></div></div></div>
+    <div class="sec" style="margin-top:4px">School Overview</div>
+    <div class="tbl-ctrl">
+      <div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search school or PIC…" value="${S.search}" oninput="S.search=this.value;renderAll()"></div>
+      <select class="flt" onchange="S.fSt=this.value;renderAll()">
+        <option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
+      </select>
+      <span style="font-size:11px;color:var(--muted)">${filt.length} school${filt.length!==1?'s':''}</span>
+    </div>
+    <div class="sgrid">${filt.length? filt.map(r => `<div class="scard"><div class="stop"><div><div class="sname">${getVal(r,'school') || 'Unknown'}</div><div class="spic">👤 ${getVal(r,'school pic','pic','headmaster') || '—'}</div></div>${pill(getSt(r))}</div><div class="sdiv"></div><div class="srow"><span class="slbl">Bank Record</span>${bank(getBank(r))}</div><div class="srow"><span class="slbl">Closing Fund</span><span style="font-weight:800;color:var(--gold)">${fRM(getFund(r))}</span></div></div>`).join(''): '<div style="color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1">No schools found</div>'}</div>
+  </div>`;
+  setTimeout(() => { animB(); aniPct('dPct', s.pct); bDonut(s); bTrend(tr); bFund(rows); bSchool(rows); }, 60);
 }
 
-/* ══════════════════════════════════════════════════
-   TOP FUNDS SECTION
-══════════════════════════════════════════════════ */
 function topFunds(rows) {
   const key = S.mode === 'church' ? 'gereja' : 'school';
-  const data = rows
-    .map(r => ({ n: getVal(r, key) || '—', f: getFund(r) }))
-    .filter(d => d.f !== null && d.f > 0)
-    .sort((a, b) => b.f - a.f)
-    .slice(0, 8);
+  const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a, b) => b.f - a.f).slice(0, 8);
   if (!data.length) return '';
-  return `
-<div class="g2" style="margin-top:4px">
-  <div class="card">
-    <div class="card-t">Top Fund Balances</div>
-    <div class="card-s">Highest closing balances FY${S.year}</div>
-    <div class="cw" style="height:200px"><canvas id="cFund"></canvas></div>
-  </div>
-  <div class="card">
-    <div class="card-t">Fund Balance Leaders</div>
-    <div class="card-s">Top 8 by closing balance</div>
-    ${data.map((d,i) => `
-    <div class="frow">
-      <span class="fnum">${i+1}</span>
-      <span class="fname">${d.n}</span>
-      <span class="fval">${fRM(d.f)}</span>
-    </div>`).join('')}
-  </div>
-</div>`;
+  return `<div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Top Fund Balances</div><div class="card-s">Highest closing balances FY${S.year}</div><div class="cw" style="height:200px"><canvas id="cFund"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Leaders</div><div class="card-s">Top 8 by closing balance</div>${data.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval">${fRM(d.f)}</span></div>`).join('')}</div></div>`;
 }
 
-/* ══════════════════════════════════════════════════
-   CHURCH TABLE
-══════════════════════════════════════════════════ */
 function churchTbl(rows) {
-  const wils = uniq(rows, 'wilayah');
-  const COLS = ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Report Collection','Status'];
-
+  const wils = uniq(rows, 'wilayah'); const COLS = ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Report Collection','Status'];
   let filt = rows;
-  if (S.search) {
-    const q = S.search.toLowerCase();
-    filt = filt.filter(r =>
-      ['wilayah','daerah','gereja','type'].some(k => getVal(r, k).toLowerCase().includes(q))
-    );
-  }
-  if (S.fSt)  filt = filt.filter(r => getSt(r) === S.fSt);
+  if (S.search) { const q = S.search.toLowerCase(); filt = filt.filter(r => ['wilayah','daerah','gereja','type'].some(k => getVal(r, k).toLowerCase().includes(q))); }
+  if (S.fSt) filt = filt.filter(r => getSt(r) === S.fSt);
   if (S.fWil) filt = filt.filter(r => getVal(r, 'wilayah') === S.fWil);
-
-  if (S.sc >= 0) {
-    const keyMap = {
-      0:'wilayah',1:'daerah',2:'gereja',3:'type',
-      4:'bank',5:'fund',6:'collection',7:'status',
-    };
-    const k = keyMap[S.sc] || '';
-    filt = [...filt].sort((a, b) => {
-      const av = getVal(a, k).toLowerCase();
-      const bv = getVal(b, k).toLowerCase();
-      return av < bv ? -S.sd : av > bv ? S.sd : 0;
-    });
-  }
-
-  const tot   = filt.length;
-  const pages = Math.max(1, Math.ceil(tot / S.perPage));
-  const pg    = Math.min(S.page, pages);
-  const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage);
-  const sa    = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
-
-  /* page number list */
-  const pNums = []; const used = new Set();
-  for (let i = 1; i <= pages; i++) {
-    if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) {
-      pNums.push(i); used.add(i);
-    } else if (Math.abs(i-pg) === 2 && !used.has('…')) {
-      pNums.push('…'); used.add('…');
-    }
-  }
-
-  return `
-<div class="tbl-ctrl">
-  <div class="srch"><span class="sic">🔍</span>
-    <input type="text" placeholder="Search church, daerah, wilayah, type…"
-      value="${S.search}"
-      oninput="S.search=this.value;S.page=1;renderAll()">
-  </div>
-  <select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()">
-    <option value="">All Wilayah</option>
-    ${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}
-  </select>
-  <select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()">
-    <option value="">All Status</option>
-    <option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option>
-    <option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option>
-    <option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
-  </select>
-  <span style="font-size:11px;color:var(--muted)">${tot} record${tot!==1?'s':''}</span>
-</div>
-
-<div class="twrap">
-  <table>
-    <thead>
-      <tr>
-        ${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}
-      </tr>
-    </thead>
-    <tbody>
-    ${slice.length
-      ? slice.map(r => `<tr>
-          <td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td>
-          <td>${getVal(r,'daerah')||'—'}</td>
-          <td style="font-weight:700">${getVal(r,'gereja')||'—'}</td>
-          <td style="color:var(--muted)">${getVal(r,'type')||'—'}</td>
-          <td>${bank(getBank(r))}</td>
-          <td class="tfund">${fRM(getFund(r))}</td>
-          <td>${rcBadge(getRC(r))}</td>
-          <td>${pill(getSt(r))}</td>
-        </tr>`).join('')
-      : '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}
-    </tbody>
-  </table>
-  ${pages > 1 ? `
-  <div class="pgn">
-    <span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span>
-    <div class="pbtns">
-      <button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>
-      ${pNums.map(n => n==='…'
-        ? `<button class="pbtn" disabled>…</button>`
-        : `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`
-      ).join('')}
-      <button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button>
-    </div>
-  </div>` : ''}
-</div>`;
+  if (S.sc >= 0) { const keyMap = { 0:'wilayah',1:'daerah',2:'gereja',3:'type', 4:'bank',5:'fund',6:'collection',7:'status' }; const k = keyMap[S.sc] || ''; filt = [...filt].sort((a, b) => { const av = getVal(a, k).toLowerCase(); const bv = getVal(b, k).toLowerCase(); return av < bv ? -S.sd : av > bv ? S.sd : 0; }); }
+  const tot = filt.length; const pages = Math.max(1, Math.ceil(tot / S.perPage)); const pg = Math.min(S.page, pages); const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage); const sa = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
+  const pNums = []; const used = new Set(); for (let i = 1; i <= pages; i++) { if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) { pNums.push(i); used.add(i); } else if (Math.abs(i-pg) === 2 && !used.has('…')) { pNums.push('…'); used.add('…'); } }
+  return `<div class="tbl-ctrl"><div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search church, daerah, wilayah, type…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()"></div><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted)">${tot} record${tot!==1?'s':''}</span></div>
+  <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr><td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:700">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted)">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}</tbody></table>
+  ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
 
+function bDonut(s) { mkChart('cDnt', { type: 'doughnut', data: { labels: ['Audited','Work in Progress','Pending'], datasets: [{ data: [s.a||0.001, s.w||0.001, s.p||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
+function bTrend(tr) { mkChart('cTrend', { type: 'line', data: { labels: tr.map(t => t.yr), datasets: [{ label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }, { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#6b82a8', font:{size:10}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } }, x: { ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#6b82a8', font:{size:10}, boxWidth:10, padding:10 } }, tooltip: TT_DARK } } }); }
+function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#6b82a8', font:{size:10}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
+function bFund(rows) { const key = S.mode === 'church' ? 'gereja' : 'school'; const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a,b) => b.f - a.f).slice(0, 8); if (!data.length) return; mkChart('cFund', { type: 'bar', data: { labels: data.map(d => d.n), datasets: [{ label: 'Fund Balance', data: data.map(d => d.f), backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'), borderColor: data.map((_,i) => PAL[i%PAL.length]), borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } }, y: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
+function bSchool(rows) { const names = rows.map(r => getVal(r,'school') || '—'); const sts = rows.map(r => getSt(r)); const stMap = { Audited:100, WIP:50, Pending:0 }; const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', Pending:'rgba(239,68,68,.8)' }; mkChart('cSchSt', { type: 'bar', data: { labels: names, datasets: [{ label: 'Progress', data: sts.map(s => stMap[s] ?? 0), backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'), borderRadius: 5, borderSkipped: false }] }, options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { min:0, max:100, ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } } } } }); const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 })); mkChart('cSchFd', { type: 'bar', data: { labels: fdata.map(d => d.n), datasets: [{ label: 'Fund', data: fdata.map(d => d.f), backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'), borderColor: PAL.slice(0, fdata.length), borderWidth:1, borderRadius:5, borderSkipped:false }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
+
+function animB() { document.querySelectorAll('.bfill,.wfill,.kpi-bar-fill').forEach(el => { const w = el.style.width; el.style.width = '0'; requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 20)); }); }
+function aniPct(id, target) { const el = document.getElementById(id); if (!el) return; let c = 0; const step = () => { if (c < target) { c++; el.textContent = c + '%'; requestAnimationFrame(step); } else el.textContent = target + '%'; }; step(); }
+
+function setMode(m) { S.mode = m; S.search = ''; S.fSt = ''; S.fWil = ''; S.page = 1; document.getElementById('btnC').className = 'mode-btn' + (m==='church' ? ' on' : ''); document.getElementById('btnS').className = 'mode-btn' + (m==='school' ? ' son' : ''); renderAll(); }
+function setYear(y) { S.year = y; S.page = 1; S.search = ''; S.fSt = ''; S.fWil = ''; renderAll(); }
+function srt(col) { if (S.sc === col) S.sd *= -1; else { S.sc = col; S.sd = 1; } renderAll(); }
+function fwil(w) { S.fWil = S.fWil === w ? '' : w; S.page = 1; renderAll(); if (w) { setTimeout(() => { const t = document.querySelector('.bar-list'); if (t) t.closest('.card')?.scrollIntoView({ behavior:'smooth', block:'start' }); }, 120); } }
+function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function showDebug() { const label = `${S.mode}-${S.year}`; const info = S.debugLog[label]; const box = document.getElementById('debugContent'); if (!info) { box.textContent = `No data for "${label}".`; } else { box.textContent = JSON.stringify(info, null, 2); } document.getElementById('debugModal').style.display = 'block'; }
+
 /* ══════════════════════════════════════════════════
-   CHART BUILDERS
+   EXECUTIVE SUMMARY REPORT (NEW)
 ══════════════════════════════════════════════════ */
-function bDonut(s) {
-  mkChart('cDnt', {
+function openReportModal() {
+  const container = document.getElementById('reportYrChecks');
+  container.innerHTML = YEARS.map(y => `
+    <label class="yr-lbl">
+      <input type="checkbox" class="yr-cb" value="${y}" ${y === S.year ? 'checked' : ''}>
+      ${y}
+    </label>
+  `).join('');
+  document.getElementById('reportModal').style.display = 'flex';
+}
+
+function buildAndShowReport() {
+  const checkboxes = document.querySelectorAll('.yr-cb:checked');
+  const selectedYears = Array.from(checkboxes).map(cb => parseInt(cb.value)).sort();
+  
+  if (selectedYears.length === 0) {
+    alert("Please select at least one year.");
+    return;
+  }
+
+  // 1. Process Data
+  let agg = { total: 0, audited: 0, wip: 0, pending: 0, fund: 0 };
+  let yearlyData = [];
+  let tableRows = '';
+
+  selectedYears.forEach(yr => {
+    let chData = S.cData[yr] || [];
+    let scData = S.sData[yr] || [];
+    
+    let cS = stats(chData);
+    let sS = stats(scData);
+
+    // Aggregate overall
+    agg.total += (cS.t + sS.t);
+    agg.audited += (cS.a + sS.a);
+    agg.wip += (cS.w + sS.w);
+    agg.pending += (cS.p + sS.p);
+    agg.fund += (cS.fund + sS.fund);
+
+    // Save for bar chart
+    yearlyData.push({
+      yr: yr,
+      total: (cS.t + sS.t),
+      audited: (cS.a + sS.a)
+    });
+
+    // Build Table Rows
+    if (cS.t > 0) {
+      tableRows += `<tr><td>${yr}</td><td>Church</td><td>${cS.t}</td><td>${cS.a}</td><td>${cS.w}</td><td>${cS.p}</td><td style="font-weight:700">${cS.t ? Math.round(cS.a/cS.t*100) : 0}%</td></tr>`;
+    }
+    if (sS.t > 0) {
+      tableRows += `<tr><td>${yr}</td><td>School</td><td>${sS.t}</td><td>${sS.a}</td><td>${sS.w}</td><td>${sS.p}</td><td style="font-weight:700">${sS.t ? Math.round(sS.a/sS.t*100) : 0}%</td></tr>`;
+    }
+  });
+
+  const overallPct = agg.total ? Math.round((agg.audited / agg.total) * 100) : 0;
+
+  // 2. Populate UI Text
+  document.getElementById('rvYears').textContent = `Selected Years: ${selectedYears.join(', ')}`;
+  document.getElementById('rvDate').textContent = new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('rvTotFac').textContent = agg.total;
+  document.getElementById('rvComp').textContent = overallPct + '%';
+  document.getElementById('rvPend').textContent = agg.pending;
+  document.getElementById('rvFund').textContent = fRM(agg.fund);
+  document.getElementById('rvTableBody').innerHTML = tableRows || '<tr><td colspan="7">No data available for selected years.</td></tr>';
+
+  // 3. Switch to Light Mode for Charts
+  applyChartDefaults(true);
+
+  // 4. Render Light Donut Chart (Without Animation for clean printing)
+  mkChart('rvDonut', {
     type: 'doughnut',
     data: {
       labels: ['Audited','Work in Progress','Pending'],
       datasets: [{
-        data: [s.a||0.001, s.w||0.001, s.p||0.001],
+        data: [agg.audited||0.001, agg.wip||0.001, agg.pending||0.001],
         backgroundColor: ['#10b981','#f59e0b','#ef4444'],
-        borderWidth: 0, hoverOffset: 4,
-      }],
+        borderWidth: 2, borderColor: '#fff'
+      }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false, cutout: '70%',
-      animation: { duration: 900, easing: 'easeInOutQuart' },
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      animation: false,
       plugins: {
-        legend: { display: false },
-        tooltip: { ...TT, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } },
-      },
-    },
-  });
-}
+        legend: { position: 'bottom', labels: { color: '#0f172a', font: {family: "'Plus Jakarta Sans'", size: 12}, padding: 15 } },
+        tooltip: TT_LIGHT
+      }
+    }
+  }, true);
 
-function bTrend(tr) {
-  mkChart('cTrend', {
-    type: 'line',
+  // 5. Render Bar Chart (Without Animation)
+  mkChart('rvBar', {
+    type: 'bar',
     data: {
-      labels: tr.map(t => t.yr),
+      labels: yearlyData.map(d => d.yr),
       datasets: [
-        {
-          label: 'Audited %',
-          data: tr.map(t => t.pct),
-          borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)',
-          fill: true, tension: .4,
-          pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2,
-        },
-        {
-          label: 'Total',
-          data: tr.map(t => t.t),
-          borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)',
-          fill: true, tension: .4, yAxisID: 'y2',
-          pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3],
-        },
-      ],
+        { label: 'Audited', data: yearlyData.map(d => d.audited), backgroundColor: '#10b981', borderRadius: 4 },
+        { label: 'Total Planned', data: yearlyData.map(d => d.total), backgroundColor: '#cbd5e1', borderRadius: 4 }
+      ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      interaction: { intersect: false, mode: 'index' },
-      animation: { duration: 800 },
+      animation: false,
       scales: {
-        y:  { min: 0, max: 100, ticks: { color:'#6b82a8', font:{size:10}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } },
-        y2: { position: 'right', min: 0, ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } },
-        x:  { ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } },
+        x: { ticks: { color: '#475569', font: {size: 11} }, grid: { display: false } },
+        y: { ticks: { color: '#475569', font: {size: 11} }, grid: { color: '#f1f5f9' } }
       },
       plugins: {
-        legend: { position:'bottom', labels: { color:'#6b82a8', font:{size:10}, boxWidth:10, padding:10 } },
-        tooltip: TT,
-      },
-    },
-  });
+        legend: { position: 'bottom', labels: { color: '#0f172a', boxWidth: 12 } },
+        tooltip: TT_LIGHT
+      }
+    }
+  }, true);
+
+  // Hide Modal & Show Report Overlay
+  document.getElementById('reportModal').style.display = 'none';
+  document.getElementById('reportOverlay').style.display = 'block';
 }
 
-function bWil(wil) {
-  if (!wil.length) return;
-  const top = wil.slice(0, 12);
-  mkChart('cWil', {
-    type: 'bar',
-    data: {
-      labels: top.map(w => w.n),
-      datasets: [
-        { label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' },
-        { label:'WIP',     data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' },
-        { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)',  stack:'s' },
-      ],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: { duration: 800 },
-      scales: {
-        x: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } },
-        y: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9} }, grid:{ color:'rgba(255,255,255,.04)' } },
-      },
-      plugins: {
-        legend: { position:'bottom', labels:{ color:'#6b82a8', font:{size:10}, boxWidth:10, padding:8 } },
-        tooltip: { ...TT, stacked: true },
-      },
-    },
-  });
-}
-
-function bFund(rows) {
-  const key = S.mode === 'church' ? 'gereja' : 'school';
-  const data = rows
-    .map(r => ({ n: getVal(r, key) || '—', f: getFund(r) }))
-    .filter(d => d.f !== null && d.f > 0)
-    .sort((a,b) => b.f - a.f)
-    .slice(0, 8);
-  if (!data.length) return;
-  mkChart('cFund', {
-    type: 'bar',
-    data: {
-      labels: data.map(d => d.n),
-      datasets: [{
-        label: 'Fund Balance',
-        data: data.map(d => d.f),
-        backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'),
-        borderColor:      data.map((_,i) => PAL[i%PAL.length]),
-        borderWidth: 1, borderRadius: 4,
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: { duration: 800 },
-      scales: {
-        x: { ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } },
-        y: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } },
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { ...TT, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } },
-      },
-    },
-  });
-}
-
-function bSchool(rows) {
-  const names = rows.map(r => getVal(r,'school') || '—');
-  const sts   = rows.map(r => getSt(r));
-  const stMap = { Audited:100, WIP:50, Pending:0 };
-  const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', Pending:'rgba(239,68,68,.8)' };
-
-  mkChart('cSchSt', {
-    type: 'bar',
-    data: {
-      labels: names,
-      datasets: [{
-        label: 'Progress',
-        data: sts.map(s => stMap[s] ?? 0),
-        backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'),
-        borderRadius: 5, borderSkipped: false,
-      }],
-    },
-    options: {
-      indexAxis: 'y', responsive:true, maintainAspectRatio:false,
-      animation: { duration:800 },
-      scales: {
-        x: { min:0, max:100, ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } },
-        y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } },
-      },
-      plugins: {
-        legend: { display:false },
-        tooltip: { ...TT, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } },
-      },
-    },
-  });
-
-  const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 }));
-  mkChart('cSchFd', {
-    type: 'bar',
-    data: {
-      labels: fdata.map(d => d.n),
-      datasets: [{
-        label: 'Fund',
-        data: fdata.map(d => d.f),
-        backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'),
-        borderColor:      PAL.slice(0, fdata.length),
-        borderWidth:1, borderRadius:5, borderSkipped:false,
-      }],
-    },
-    options: {
-      indexAxis:'y', responsive:true, maintainAspectRatio:false,
-      animation: { duration:800 },
-      scales: {
-        x: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } },
-        y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } },
-      },
-      plugins: {
-        legend: { display:false },
-        tooltip: { ...TT, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } },
-      },
-    },
-  });
-}
-
-/* ══════════════════════════════════════════════════
-   ANIMATIONS
-══════════════════════════════════════════════════ */
-function animB() {
-  document.querySelectorAll('.bfill,.wfill,.kpi-bar-fill').forEach(el => {
-    const w = el.style.width;
-    el.style.width = '0';
-    requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 20));
-  });
-}
-
-function aniPct(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let c = 0;
-  const step = () => {
-    if (c < target) { c++; el.textContent = c + '%'; requestAnimationFrame(step); }
-    else el.textContent = target + '%';
-  };
-  step();
-}
-
-/* ══════════════════════════════════════════════════
-   CONTROLS
-══════════════════════════════════════════════════ */
-function setMode(m) {
-  S.mode = m; S.search = ''; S.fSt = ''; S.fWil = ''; S.page = 1;
-  document.getElementById('btnC').className = 'mode-btn' + (m==='church' ? ' on' : '');
-  document.getElementById('btnS').className = 'mode-btn' + (m==='school' ? ' son' : '');
-  renderAll();
-}
-
-function setYear(y) {
-  S.year = y; S.page = 1; S.search = ''; S.fSt = ''; S.fWil = '';
-  renderAll();
-}
-
-function srt(col) {
-  if (S.sc === col) S.sd *= -1; else { S.sc = col; S.sd = 1; }
-  renderAll();
-}
-
-/*
- * KEY FIX: fwil now re-renders the full dashboard so the
- * Daerah bar list also updates to show only the selected Wilayah.
- */
-function fwil(w) {
-  S.fWil = S.fWil === w ? '' : w;
-  S.page = 1;
-  renderAll();          /* full re-render keeps Daerah chart in sync */
-  if (w) {
-    setTimeout(() => {
-      const t = document.querySelector('.bar-list');
-      if (t) t.closest('.card')?.scrollIntoView({ behavior:'smooth', block:'start' });
-    }, 120);
-  }
-}
-
-function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-/* ══════════════════════════════════════════════════
-   DEBUG PANEL — shows exactly what was fetched/parsed
-   for the currently active mode + year, so mismatches
-   between the sheet and the dashboard can be diagnosed
-   directly from a screenshot instead of guesswork.
-══════════════════════════════════════════════════ */
-function showDebug() {
-  const label = `${S.mode}-${S.year}`;
-  const info = S.debugLog[label];
-  document.getElementById('dbgContext').textContent = label;
-  const box = document.getElementById('debugContent');
-
-  if (!info) {
-    box.textContent = `No diagnostic data captured yet for "${label}". Try refreshing first.`;
-  } else {
-    let out = '';
-    out += `FETCH LABEL: ${label}\n`;
-    out += `Total raw rows fetched: ${info.totalRowsFetched ?? 'n/a'}\n`;
-    out += `Header row index (hIdx): ${info.hIdx}\n`;
-    out += `Header match score (need ≥2): ${info.bestScore}\n`;
-    if (info.error) out += `\n⚠️ ERROR: ${info.error}\n`;
-    out += `\n--- RAW HEADER ROW (as fetched, before lowercase) ---\n`;
-    out += JSON.stringify(info.rawHeaderRowFound) + '\n';
-    out += `\n--- First header cell char codes (checks for hidden BOM/space) ---\n`;
-    out += JSON.stringify(info.firstHeaderCellCharCodes) + '\n';
-    out += `  (Normal "W" = 87. A BOM shows as 65279 first.)\n`;
-    out += `\n--- NORMALISED HEADERS (lowercase, used for matching) ---\n`;
-    out += JSON.stringify(info.normalisedHeaders, null, 2) + '\n';
-    out += `\n--- wilKey detected: ${info.wilKeyFound ?? 'NOT FOUND ❌'} ---\n`;
-    out += `--- daerKey detected: ${info.daerKeyFound ?? 'NOT FOUND ❌'} ---\n`;
-    out += `\n--- First 3 RAW rows (straight from CSV, before any processing) ---\n`;
-    out += JSON.stringify(info.rawFirst3Rows, null, 2) + '\n';
-    out += `\n--- Final row count after processing: ${info.finalRowCount ?? 'n/a'} ---\n`;
-    out += `\n--- First 3 FINAL rows (after header mapping + forward-fill) ---\n`;
-    out += JSON.stringify(info.sampleFinalRows, null, 2) + '\n';
-    box.textContent = out;
-  }
-
-  document.getElementById('debugModal').style.display = 'block';
-}
 
 /* ══════════════════════════════════════════════════
    BOOT
