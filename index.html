@@ -14,7 +14,8 @@
   --blue:#1d6bf3;--blue2:#3b82f6;--sky:#60a5fa;--cyan:#22d3ee;
   --green:#10b981;--amber:#f59e0b;--red:#ef4444;--gold:#f0b429;
   --purple:#8b5cf6;--pink:#ec4899;
-  --white:#fff;--off:#e2eaff;--muted:#6b82a8;--muted2:#3d5070;
+  /* Updated text colors for much higher contrast on projectors */
+  --white:#ffffff;--off:#f8fafc;--muted:#cbd5e1;--muted2:#94a3b8;
   --r:14px;--r2:10px;--sh:0 8px 32px rgba(0,0,0,.35);
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -38,35 +39,35 @@ header{position:sticky;top:0;z-index:200;background:rgba(7,17,31,.92);backdrop-f
 .logo-name{font-size:14px;font-weight:800;background:linear-gradient(120deg,#fff,var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-tagline{font-size:10px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
 .hdr-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
-.yr-btn{padding:5px 14px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.yr-btn{padding:5px 14px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
 .yr-btn:hover{color:var(--white);border-color:var(--border2)}
 .yr-btn.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 14px rgba(29,107,243,.45)}
 .hdr-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .mode-toggle{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);padding:3px;gap:2px}
-.mode-btn{padding:7px 18px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:6px}
+.mode-btn{padding:7px 18px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:6px}
 .mode-btn.on{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 3px 12px rgba(29,107,243,.4)}
 .mode-btn.son{background:linear-gradient(135deg,var(--gold),#d97706);color:#fff;box-shadow:0 3px 12px rgba(240,180,41,.4)}
-.icon-btn{padding:7px 13px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.icon-btn{padding:7px 13px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
 .icon-btn:hover{color:var(--white);border-color:var(--border2)}
 
 /* ── MAIN ── */
 main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 
 /* ── STATES ── */
-.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:14px;text-align:center}
+.center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:14px;text-align:center;font-weight:600}
 .spin{width:40px;height:40px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── PAGE HEADER ── */
 .page-header{margin-bottom:28px}
-.mode-label{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
+.mode-label{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px}
 .lbl-c{background:rgba(29,107,243,.12);border:1px solid rgba(29,107,243,.25);color:var(--sky)}
 .lbl-s{background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.25);color:var(--gold)}
 .page-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,42px);font-weight:700;line-height:1.1;margin-bottom:6px}
 .page-title em{font-style:italic;font-weight:400}
 .ac-blue{background:linear-gradient(120deg,var(--sky),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .ac-gold{background:linear-gradient(120deg,var(--gold),#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.page-sub{color:var(--muted);font-size:13px}
+.page-sub{color:var(--muted);font-size:13px;font-weight:600}
 
 /* ── KPI ROW ── */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:26px}
@@ -82,10 +83,10 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .kpi.ck::before{background:linear-gradient(90deg,var(--pink),transparent)}
 .kpi.ct::before{background:linear-gradient(90deg,var(--cyan),transparent)}
 .kpi-ic{font-size:20px;margin-bottom:8px}
-.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.kpi-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
 .kpi-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:3px}
 .kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}.kpi.ct .kpi-val{color:var(--cyan)}
-.kpi-meta{font-size:11px;color:var(--muted)}
+.kpi-meta{font-size:11px;color:var(--muted);font-weight:600}
 .kpi-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:11px;overflow:hidden}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
 .kpi.cg .kpi-bar-fill{background:var(--green)}.kpi.ca .kpi-bar-fill{background:var(--amber)}.kpi.co .kpi-bar-fill{background:var(--gold)}
@@ -97,8 +98,8 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 
 /* ── CARD ── */
 .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;position:relative;overflow:hidden}
-.card-t{font-size:14px;font-weight:700;margin-bottom:3px}
-.card-s{font-size:11px;color:var(--muted);margin-bottom:18px}
+.card-t{font-size:14px;font-weight:800;margin-bottom:3px}
+.card-s{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:18px}
 
 /* ── SECTION TITLE ── */
 .sec{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
@@ -110,12 +111,12 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .donut-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 .d-pct{font-size:28px;font-weight:800;line-height:1}
-.d-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.d-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px}
 .legend{display:flex;flex-direction:column;gap:9px;flex:1;min-width:130px}
-.li{display:flex;align-items:center;gap:9px;font-size:12px}
+.li{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600}
 .ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .ll{color:var(--muted);flex:1}
-.lv{font-weight:700}
+.lv{font-weight:800;color:var(--off)}
 .lp{font-size:11px;color:var(--muted2)}
 
 /* ── BAR LIST (Daerah) ── */
@@ -125,58 +126,58 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .bar-list::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:2px}
 .brow{display:flex;flex-direction:column;gap:5px}
 .bhdr{display:flex;justify-content:space-between;align-items:baseline}
-.bname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
-.bstat{font-size:11px;color:var(--muted)}
+.bname{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.bstat{font-size:11px;color:var(--muted);font-weight:600}
 .btrack{height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
 .bfill{height:100%;border-radius:4px;transition:width 1.3s cubic-bezier(.34,1.56,.64,1)}
 
 /* ── STATUS PILLS & BADGES ── */
-.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
 .pill::before{content:'';width:6px;height:6px;border-radius:50%}
-.pa{background:rgba(16,185,129,.13);color:#34d399}.pa::before{background:#10b981;box-shadow:0 0 5px #10b981}
-.pw{background:rgba(245,158,11,.13);color:#fbbf24}.pw::before{background:#f59e0b;animation:blink 1.6s infinite}
-.pp{background:rgba(239,68,68,.13);color:#fca5a5}.pp::before{background:#ef4444}
+.pa{background:rgba(16,185,129,.15);color:#4ade80}.pa::before{background:#10b981;box-shadow:0 0 5px #10b981}
+.pw{background:rgba(245,158,11,.15);color:#fcd34d}.pw::before{background:#f59e0b;animation:blink 1.6s infinite}
+.pp{background:rgba(239,68,68,.15);color:#fca5a5}.pp::before{background:#ef4444}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
-.rc{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.rc{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
 .rc-col{background:rgba(34,211,238,.12);color:#67e8f9}
-.rc-na{background:rgba(107,130,168,.1);color:#6b82a8}
-.rc-pend{background:rgba(239,68,68,.1);color:#fca5a5}
+.rc-na{background:rgba(148,163,184,.15);color:#cbd5e1}
+.rc-pend{background:rgba(239,68,68,.12);color:#fca5a5}
 
-.bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.ba{background:rgba(16,185,129,.12);color:#34d399}
-.bd{background:rgba(245,158,11,.12);color:#fbbf24}
+.bb{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.ba{background:rgba(16,185,129,.12);color:#4ade80}
+.bd{background:rgba(245,158,11,.12);color:#fcd34d}
 .bc{background:rgba(96,165,250,.12);color:#93c5fd}
-.bn{background:rgba(239,68,68,.1);color:#fca5a5}
+.bn{background:rgba(239,68,68,.12);color:#fca5a5}
 
 /* ── WILAYAH CARDS ── */
 .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:24px}
 .wcard{background:var(--panel);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all .2s}
 .wcard:hover,.wcard.act{border-color:rgba(59,130,246,.45);background:rgba(59,130,246,.06);transform:translateY(-1px)}
 .wcard.act{box-shadow:0 0 0 1px rgba(59,130,246,.3)}
-.wname{font-size:13px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.wname{font-size:13px;font-weight:800;margin-bottom:11px;display:flex;align-items:center;gap:7px}
 .wstats{display:flex;gap:14px;margin-bottom:10px}
 .ws{display:flex;flex-direction:column;gap:1px}
 .wsv{font-size:17px;font-weight:800;line-height:1}
-.wsl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.wsl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
 .wprog{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
 .wfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width 1.2s ease}
-.wpct{font-size:10px;color:var(--muted);text-align:right;margin-top:4px}
+.wpct{font-size:10px;color:var(--muted);font-weight:600;text-align:right;margin-top:4px}
 
 /* ── BANK ROWS ── */
 .bkrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
 .bkrow:last-child{border-bottom:none}
-.bkct{font-weight:800}
+.bkct{font-weight:800;color:var(--off)}
 
 /* ── TABLE CONTROLS ── */
 .tbl-ctrl{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 .srch{flex:1;min-width:180px;position:relative}
-.srch input{width:100%;padding:8px 12px 8px 34px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;outline:none;transition:border-color .2s}
+.srch input{width:100%;padding:8px 12px 8px 34px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;font-weight:600;outline:none;transition:border-color .2s}
 .srch input:focus{border-color:var(--blue2)}
 .srch input::placeholder{color:var(--muted)}
 .sic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
-.flt{padding:8px 11px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;outline:none;cursor:pointer}
-.flt option{background:#0c1a2e}
+.flt{padding:8px 11px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r2);color:var(--white);font-family:inherit;font-size:12px;font-weight:600;outline:none;cursor:pointer}
+.flt option{background:#0c1a2e;font-weight:600}
 
 /* ── TABLE ── */
 .twrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
@@ -186,13 +187,13 @@ thead th:hover{color:var(--white)}
 tbody tr{border-bottom:1px solid var(--border);transition:background .14s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:rgba(255,255,255,.025)}
-td{padding:11px 14px;color:var(--off);white-space:nowrap}
-.tfund{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold)}
+td{padding:11px 14px;color:var(--off);font-weight:500;white-space:nowrap}
+.tfund{font-weight:800;font-variant-numeric:tabular-nums;color:var(--gold)}
 
 /* ── PAGINATION ── */
-.pgn{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);flex-wrap:wrap;gap:8px}
+.pgn{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-weight:600;flex-wrap:wrap;gap:8px}
 .pbtns{display:flex;gap:4px}
-.pbtn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;cursor:pointer;transition:all .15s}
+.pbtn{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s}
 .pbtn:hover{color:var(--white);border-color:var(--border2)}
 .pbtn.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .pbtn:disabled{opacity:.3;cursor:not-allowed}
@@ -203,17 +204,17 @@ td{padding:11px 14px;color:var(--off);white-space:nowrap}
 .scard::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(240,180,41,.07),transparent 70%);pointer-events:none}
 .scard:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:rgba(240,180,41,.25)}
 .stop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-.sname{font-size:14px;font-weight:800;line-height:1.3}
-.spic{font-size:11px;color:var(--muted);margin-top:3px}
+.sname{font-size:14px;font-weight:800;line-height:1.3;color:var(--off)}
+.spic{font-size:11px;color:var(--muted);font-weight:600;margin-top:3px}
 .sdiv{height:1px;background:var(--border);margin:12px 0}
-.srow{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:7px}
+.srow{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:7px;font-weight:600}
 .srow:last-child{margin-bottom:0}
 .slbl{color:var(--muted)}
 
 /* ── FUND LEADERS ── */
 .frow{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);font-size:12px;margin-bottom:6px}
 .fnum{color:var(--muted);font-size:11px;font-weight:800;width:18px;flex-shrink:0}
-.fname{font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fname{font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--off)}
 .fval{font-weight:800;color:var(--gold);white-space:nowrap}
 
 /* ── CHART WRAPPER ── */
@@ -221,7 +222,7 @@ td{padding:11px 14px;color:var(--off);white-space:nowrap}
 .cw canvas{display:block;width:100%!important}
 
 /* ── FOOTER ── */
-footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-top:1px solid var(--border)}
+footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(--muted);border-top:1px solid var(--border)}
 
 /* ── ANIMATIONS ── */
 .fade-in{animation:fi .45s ease both}
@@ -321,7 +322,7 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 
 /* Modal Checkboxes */
 .yr-check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-.yr-lbl { display: flex; align-items: center; gap: 8px; font-size: 13px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; font-weight: 600; color: var(--off); }
+.yr-lbl { display: flex; align-items: center; gap: 8px; font-size: 13px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; font-weight: 700; color: var(--off); }
 .yr-lbl:hover { border-color: var(--blue2); background: rgba(29,107,243,0.08); }
 .yr-lbl input { accent-color: var(--blue2); transform: scale(1.1); margin: 0; }
 
@@ -389,7 +390,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 <body>
 <div class="page">
 
-<!-- ── HEADER ── -->
 <header>
   <div class="hdr">
     <a class="logo" href="#">
@@ -405,9 +405,9 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
     <div class="hdr-mid" id="yrSel"></div>
 
     <div class="hdr-right">
-      <button class="icon-btn" onclick="openReportModal()" style="border-color:rgba(16,185,129,.4);color:#34d399;font-weight:600">📄 Generate Report</button>
+      <button class="icon-btn" onclick="openReportModal()" style="border-color:rgba(16,185,129,.4);color:#4ade80;font-weight:700">📄 Generate Report</button>
       <button class="icon-btn" onclick="doRefresh()">↻ Refresh</button>
-      <button class="icon-btn" onclick="showDebug()" style="border-color:rgba(239,68,68,.3);color:#fca5a5">🐞 Debug</button>
+      <button class="icon-btn" onclick="showDebug()" style="border-color:rgba(239,68,68,.4);color:#fca5a5">🐞 Debug</button>
       <div class="mode-toggle">
         <button class="mode-btn on" id="btnC" onclick="setMode('church')">⛪ Church</button>
         <button class="mode-btn"    id="btnS" onclick="setMode('school')">🏫 School</button>
@@ -416,7 +416,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
   </div>
 </header>
 
-<!-- ── MAIN ── -->
 <main id="main">
   <div class="center-state">
     <div class="spin"></div>
@@ -429,33 +428,28 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
 </footer>
 </div>
 
-<!-- ── MODALS & OVERLAYS ── -->
-
-<!-- Report Selection Modal -->
 <div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
   <div style="width:100%;max-width:440px;background:#0c1a2e;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 12px 48px rgba(0,0,0,0.6);">
-    <h3 style="font-size:20px;font-weight:800;margin-bottom:6px">Executive Summary Setup</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Select the data you want to include in the printable report.</p>
+    <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;color:var(--white)">Executive Summary Setup</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:600">Select the data you want to include in the printable report.</p>
     
-    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">1. Select Facility Type</div>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">1. Select Facility Type</div>
     <div class="yr-check-grid" id="reportTypeChecks">
       <label class="yr-lbl"><input type="checkbox" class="type-cb" value="church" checked> ⛪ Churches</label>
       <label class="yr-lbl"><input type="checkbox" class="type-cb" value="school" checked> 🏫 Schools</label>
     </div>
 
-    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:20px;margin-bottom:8px">2. Select Audit Years</div>
+    <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:20px;margin-bottom:8px">2. Select Audit Years</div>
     <div class="yr-check-grid" id="reportYrChecks">
-      <!-- Generated by JS -->
-    </div>
+      </div>
 
     <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px">
-      <button onclick="document.getElementById('reportModal').style.display='none'" style="padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--white);font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
-      <button onclick="buildAndShowReport()" style="padding:10px 20px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(29,107,243,.3)">Generate</button>
+      <button onclick="document.getElementById('reportModal').style.display='none'" style="padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--white);font-weight:700;cursor:pointer;font-family:inherit">Cancel</button>
+      <button onclick="buildAndShowReport()" style="padding:10px 20px;border-radius:8px;border:none;background:var(--blue);color:#fff;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(29,107,243,.3)">Generate</button>
     </div>
   </div>
 </div>
 
-<!-- Executive Summary View (Modernized) -->
 <div id="reportOverlay">
   <div class="report-top-bar">
     <div style="font-weight:800;font-size:15px;color:#0f172a;letter-spacing:0.5px">Executive Summary Preview</div>
@@ -473,11 +467,10 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
       </div>
       <div style="text-align:right">
         <div style="font-size:10px;color:#64748b;font-weight:800;letter-spacing:1px;margin-bottom:4px">GENERATED ON</div>
-        <div style="font-size:14px;font-weight:700;color:#0f172a" id="rvDate"></div>
+        <div style="font-size:14px;font-weight:800;color:#0f172a" id="rvDate"></div>
       </div>
     </div>
 
-    <!-- Top KPIs (Fund removed, Audited added) -->
     <div class="rv-kpi-grid">
       <div class="rv-kpi b-gray"><div class="rv-kpi-lbl">Total Facilities</div><div class="rv-kpi-val" id="rvTotFac">0</div></div>
       <div class="rv-kpi b-blue"><div class="rv-kpi-lbl">Total Audited</div><div class="rv-kpi-val blue" id="rvAudited">0</div></div>
@@ -485,7 +478,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
       <div class="rv-kpi b-red"><div class="rv-kpi-lbl">Pending Audits</div><div class="rv-kpi-val red" id="rvPend">0</div></div>
     </div>
 
-    <!-- Charts -->
     <div class="rv-charts">
       <div class="rv-card">
         <div class="rv-card-title">Status Breakdown</div>
@@ -497,7 +489,6 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
       </div>
     </div>
 
-    <!-- Table Breakdown (Fund removed) -->
     <div class="rv-card" style="padding:0;overflow:hidden;border:none;box-shadow:0 4px 20px rgba(15,23,42,0.04)">
       <table class="rv-table-wrapper">
         <thead>
@@ -512,20 +503,18 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--muted2);border-
           </tr>
         </thead>
         <tbody id="rvTableBody">
-          <!-- JS injected -->
-        </tbody>
+          </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- DEBUG MODAL (Hidden by default) -->
 <div id="debugModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 20px">
   <div style="max-width:900px;margin:0 auto;background:#0c1a2e;border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:28px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
       <h2 style="font-size:18px;font-weight:800;color:#fca5a5">🐞 Data Diagnostic Report</h2>
       <button onclick="document.getElementById('debugModal').style.display='none'"
-        style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit">✕ Close</button>
+        style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit;font-weight:700">✕ Close</button>
     </div>
     <div id="debugContent" style="font-family:monospace;font-size:11px;color:#e2eaff;white-space:pre-wrap;background:rgba(0,0,0,.3);border-radius:10px;padding:16px;max-height:70vh;overflow-y:auto;line-height:1.6"></div>
   </div>
@@ -552,7 +541,7 @@ const S = {
 };
 
 /* ══════════════════════════════════════════════════
-   DATA FETCHING (Unchanged from original)
+   DATA FETCHING
 ══════════════════════════════════════════════════ */
 function csvUrl(id, gid) {
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
@@ -630,7 +619,7 @@ async function loadAll() {
     try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`); } catch(e) { S.cData[yr] = []; }
     try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`); } catch(e) { S.sData[yr] = []; }
   }
-  document.getElementById('reportModal').style.display = 'none'; // reset
+  document.getElementById('reportModal').style.display = 'none';
   renderAll();
 }
 
@@ -688,7 +677,7 @@ function daerStats(rows, wilFilter) {
 function trends() { return YEARS.map(yr => { const s = stats(S.mode === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || [])); return { yr, t: s.t, a: s.a, pct: s.pct }; }); }
 
 /* ══════════════════════════════════════════════════
-   CHART SETUP (Light / Dark)
+   CHART SETUP
 ══════════════════════════════════════════════════ */
 function destroyCharts() { Object.values(S.charts).forEach(c => { try { c.destroy(); } catch(e) {} }); S.charts = {}; }
 function destroyRepCharts() { Object.values(S.repCharts).forEach(c => { try { c.destroy(); } catch(e) {} }); S.repCharts = {}; }
@@ -700,17 +689,17 @@ function mkChart(id, cfg, isReport = false) {
   } catch(e) {}
 }
 
-const TT_DARK = { backgroundColor: 'rgba(7,17,31,.92)', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 10, titleColor: '#e2eaff', bodyColor: '#6b82a8' };
+const TT_DARK = { backgroundColor: 'rgba(7,17,31,.92)', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, padding: 10, titleColor: '#e2eaff', bodyColor: '#cbd5e1' };
 const TT_LIGHT = { backgroundColor: '#fff', borderColor: '#e2e8f0', borderWidth: 1, padding: 10, titleColor: '#0f172a', bodyColor: '#475569', titleFont:{family:"'Plus Jakarta Sans'"}, bodyFont:{family:"'Plus Jakarta Sans'"} };
 
 function applyChartDefaults(isLight = false) {
-  Chart.defaults.color = isLight ? '#64748b' : '#6b82a8';
+  Chart.defaults.color = isLight ? '#64748b' : '#cbd5e1';
   Chart.defaults.borderColor = isLight ? '#f1f5f9' : 'rgba(255,255,255,0.06)';
   Chart.defaults.font.family = "'Plus Jakarta Sans',sans-serif";
 }
 
 /* ══════════════════════════════════════════════════
-   MAIN DASHBOARD RENDERING (UNCHANGED)
+   DASHBOARD RENDERING
 ══════════════════════════════════════════════════ */
 function renderYrs() { document.getElementById('yrSel').innerHTML = YEARS.map(y => `<button class="yr-btn${S.year === y ? ' on' : ''}" onclick="setYear(${y})">${y}</button>`).join(''); }
 function renderAll() { destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); }
@@ -721,7 +710,7 @@ function renderChurch(m) {
     <div class="page-header">
       <div class="mode-label lbl-c">⛪ Church Audit · ${S.year}</div>
       <h1 class="page-title">Mission Church <em>Audit</em> <span class="ac-blue">Progress</span></h1>
-      <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong>${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
+      <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong style="color:var(--white)">${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
     </div>
     <div class="kpi-row">
       <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
@@ -735,14 +724,14 @@ function renderChurch(m) {
     <div class="g3">
       <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % vs total churches</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
-      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}</div>
+      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
     <div class="glh">
-      <div class="card"><div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div><div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div><div class="bar-list">${dae.length? dae.map((d,i)=>`<div class="brow"><div class="bhdr"><span class="bname">${d.n}</span><span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; ${d.pct}%</span></div><div class="btrack"><div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join(''): '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">No data</div>'}</div></div>
+      <div class="card"><div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div><div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div><div class="bar-list">${dae.length? dae.map((d,i)=>`<div class="brow"><div class="bhdr"><span class="bname">${d.n}</span><span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; <span style="color:var(--white);font-weight:700">${d.pct}%</span></span></div><div class="btrack"><div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join(''): '<div style="color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:20px">No data</div>'}</div></div>
       <div class="card"><div class="card-t">Wilayah Stacked Status</div><div class="card-s">Audited · WIP · Pending per Wilayah</div><div class="cw" style="height:260px"><canvas id="cWil"></canvas></div></div>
     </div>
-    <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2)">&nbsp;— click to filter Daerah & table</span></div>
-    <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#10b981">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#f59e0b">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#ef4444">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px">No data for this year</div>'}</div>
+    <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)">&nbsp;— click to filter Daerah & table</span></div>
+    <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#4ade80">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#fcd34d">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#fca5a5">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px;font-weight:600">No data for this year</div>'}</div>
     ${topFunds(rows)}
     <div class="sec" style="margin-top:4px">Church Records</div>
     ${churchTbl(rows)}
@@ -773,7 +762,7 @@ function renderSchool(m) {
     <div class="g3">
       <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % across years</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
-      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:400">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">No records loaded.</div>'}</div>
+      <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools FY${S.year}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
     ${topFunds(rows)}
     <div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Individual School Progress</div><div class="card-s">Audit status per school</div><div class="cw" style="height:220px"><canvas id="cSchSt"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Comparison</div><div class="card-s">Closing fund balance per school</div><div class="cw" style="height:220px"><canvas id="cSchFd"></canvas></div></div></div>
@@ -783,9 +772,9 @@ function renderSchool(m) {
       <select class="flt" onchange="S.fSt=this.value;renderAll()">
         <option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
       </select>
-      <span style="font-size:11px;color:var(--muted)">${filt.length} school${filt.length!==1?'s':''}</span>
+      <span style="font-size:11px;color:var(--muted);font-weight:600">${filt.length} school${filt.length!==1?'s':''}</span>
     </div>
-    <div class="sgrid">${filt.length? filt.map(r => `<div class="scard"><div class="stop"><div><div class="sname">${getVal(r,'school') || 'Unknown'}</div><div class="spic">👤 ${getVal(r,'school pic','pic','headmaster') || '—'}</div></div>${pill(getSt(r))}</div><div class="sdiv"></div><div class="srow"><span class="slbl">Bank Record</span>${bank(getBank(r))}</div><div class="srow"><span class="slbl">Closing Fund</span><span style="font-weight:800;color:var(--gold)">${fRM(getFund(r))}</span></div></div>`).join(''): '<div style="color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1">No schools found</div>'}</div>
+    <div class="sgrid">${filt.length? filt.map(r => `<div class="scard"><div class="stop"><div><div class="sname">${getVal(r,'school') || 'Unknown'}</div><div class="spic">👤 ${getVal(r,'school pic','pic','headmaster') || '—'}</div></div>${pill(getSt(r))}</div><div class="sdiv"></div><div class="srow"><span class="slbl">Bank Record</span>${bank(getBank(r))}</div><div class="srow"><span class="slbl">Closing Fund</span><span style="font-weight:800;color:var(--gold)">${fRM(getFund(r))}</span></div></div>`).join(''): '<div style="color:var(--muted);font-size:13px;font-weight:600;padding:20px;grid-column:1/-1">No schools found</div>'}</div>
   </div>`;
   setTimeout(() => { animB(); aniPct('dPct', s.pct); bDonut(s); bTrend(tr); bFund(rows); bSchool(rows); }, 60);
 }
@@ -806,16 +795,16 @@ function churchTbl(rows) {
   if (S.sc >= 0) { const keyMap = { 0:'wilayah',1:'daerah',2:'gereja',3:'type', 4:'bank',5:'fund',6:'collection',7:'status' }; const k = keyMap[S.sc] || ''; filt = [...filt].sort((a, b) => { const av = getVal(a, k).toLowerCase(); const bv = getVal(b, k).toLowerCase(); return av < bv ? -S.sd : av > bv ? S.sd : 0; }); }
   const tot = filt.length; const pages = Math.max(1, Math.ceil(tot / S.perPage)); const pg = Math.min(S.page, pages); const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage); const sa = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
   const pNums = []; const used = new Set(); for (let i = 1; i <= pages; i++) { if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) { pNums.push(i); used.add(i); } else if (Math.abs(i-pg) === 2 && !used.has('…')) { pNums.push('…'); used.add('…'); } }
-  return `<div class="tbl-ctrl"><div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search church, daerah, wilayah, type…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()"></div><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted)">${tot} record${tot!==1?'s':''}</span></div>
-  <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr><td style="color:var(--sky);font-weight:600">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:700">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted)">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No records found</td></tr>'}</tbody></table>
+  return `<div class="tbl-ctrl"><div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search church, daerah, wilayah, type…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()"></div><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
+  <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr><td style="color:var(--sky);font-weight:700">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:800">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted);font-weight:600">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);font-style:italic;font-weight:600">No records found</td></tr>'}</tbody></table>
   ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
 
 function bDonut(s) { mkChart('cDnt', { type: 'doughnut', data: { labels: ['Audited','Work in Progress','Pending'], datasets: [{ data: [s.a||0.001, s.w||0.001, s.p||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
-function bTrend(tr) { mkChart('cTrend', { type: 'line', data: { labels: tr.map(t => t.yr), datasets: [{ label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }, { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#6b82a8', font:{size:10}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } }, x: { ticks: { color:'#6b82a8', font:{size:10} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#6b82a8', font:{size:10}, boxWidth:10, padding:10 } }, tooltip: TT_DARK } } }); }
-function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#6b82a8', font:{size:9} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#6b82a8', font:{size:10}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
-function bFund(rows) { const key = S.mode === 'church' ? 'gereja' : 'school'; const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a,b) => b.f - a.f).slice(0, 8); if (!data.length) return; mkChart('cFund', { type: 'bar', data: { labels: data.map(d => d.n), datasets: [{ label: 'Fund Balance', data: data.map(d => d.f), backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'), borderColor: data.map((_,i) => PAL[i%PAL.length]), borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { ticks:{ color:'#6b82a8', font:{size:9}, maxRotation:40 }, grid:{ display:false } }, y: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
-function bSchool(rows) { const names = rows.map(r => getVal(r,'school') || '—'); const sts = rows.map(r => getSt(r)); const stMap = { Audited:100, WIP:50, Pending:0 }; const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', Pending:'rgba(239,68,68,.8)' }; mkChart('cSchSt', { type: 'bar', data: { labels: names, datasets: [{ label: 'Progress', data: sts.map(s => stMap[s] ?? 0), backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'), borderRadius: 5, borderSkipped: false }] }, options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { min:0, max:100, ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } } } } }); const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 })); mkChart('cSchFd', { type: 'bar', data: { labels: fdata.map(d => d.n), datasets: [{ label: 'Fund', data: fdata.map(d => d.f), backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'), borderColor: PAL.slice(0, fdata.length), borderWidth:1, borderRadius:5, borderSkipped:false }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { ticks:{ color:'#6b82a8', font:{size:9}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#6b82a8', font:{size:10} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
+function bTrend(tr) { mkChart('cTrend', { type: 'line', data: { labels: tr.map(t => t.yr), datasets: [{ label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }, { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } }, x: { ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:10 } }, tooltip: TT_DARK } } }); }
+function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
+function bFund(rows) { const key = S.mode === 'church' ? 'gereja' : 'school'; const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a,b) => b.f - a.f).slice(0, 8); if (!data.length) return; mkChart('cFund', { type: 'bar', data: { labels: data.map(d => d.n), datasets: [{ label: 'Fund Balance', data: data.map(d => d.f), backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'), borderColor: data.map((_,i) => PAL[i%PAL.length]), borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
+function bSchool(rows) { const names = rows.map(r => getVal(r,'school') || '—'); const sts = rows.map(r => getSt(r)); const stMap = { Audited:100, WIP:50, Pending:0 }; const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', Pending:'rgba(239,68,68,.8)' }; mkChart('cSchSt', { type: 'bar', data: { labels: names, datasets: [{ label: 'Progress', data: sts.map(s => stMap[s] ?? 0), backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'), borderRadius: 5, borderSkipped: false }] }, options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { min:0, max:100, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } } } } }); const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 })); mkChart('cSchFd', { type: 'bar', data: { labels: fdata.map(d => d.n), datasets: [{ label: 'Fund', data: fdata.map(d => d.f), backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'), borderColor: PAL.slice(0, fdata.length), borderWidth:1, borderRadius:5, borderSkipped:false }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
 
 function animB() { document.querySelectorAll('.bfill,.wfill,.kpi-bar-fill').forEach(el => { const w = el.style.width; el.style.width = '0'; requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 20)); }); }
 function aniPct(id, target) { const el = document.getElementById(id); if (!el) return; let c = 0; const step = () => { if (c < target) { c++; el.textContent = c + '%'; requestAnimationFrame(step); } else el.textContent = target + '%'; }; step(); }
@@ -828,11 +817,11 @@ function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function showDebug() { const label = `${S.mode}-${S.year}`; const info = S.debugLog[label]; const box = document.getElementById('debugContent'); if (!info) { box.textContent = `No data for "${label}".`; } else { box.textContent = JSON.stringify(info, null, 2); } document.getElementById('debugModal').style.display = 'block'; }
 
 /* ══════════════════════════════════════════════════
-   EXECUTIVE SUMMARY REPORT (MODERNIZED)
+   EXECUTIVE SUMMARY REPORT
 ══════════════════════════════════════════════════ */
 function openReportModal() {
-  const container = document.getElementById('reportYrChecks');
-  container.innerHTML = YEARS.map(y => `
+  const yrContainer = document.getElementById('reportYrChecks');
+  yrContainer.innerHTML = YEARS.map(y => `
     <label class="yr-lbl">
       <input type="checkbox" class="yr-cb" value="${y}" ${y === S.year ? 'checked' : ''}>
       ${y}
@@ -846,153 +835,68 @@ function buildAndShowReport() {
   const typeCheckboxes = document.querySelectorAll('.type-cb:checked');
   
   const selectedYears = Array.from(yrCheckboxes).map(cb => parseInt(cb.value)).sort();
-  const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value); // 'church' and/or 'school'
+  const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value);
   
-  if (selectedYears.length === 0) {
-    alert("Please select at least one audit year.");
-    return;
-  }
-  if (selectedTypes.length === 0) {
-    alert("Please select at least one facility type (Church or School).");
-    return;
-  }
+  if (selectedYears.length === 0) { alert("Please select at least one audit year."); return; }
+  if (selectedTypes.length === 0) { alert("Please select at least one facility type."); return; }
 
-  // 1. Process Data
   let agg = { total: 0, audited: 0, wip: 0, pending: 0 };
   let yearlyData = [];
   let tableRows = '';
 
   selectedYears.forEach(yr => {
-    let yrTotal = 0;
-    let yrAudited = 0;
+    let yrTotal = 0; let yrAudited = 0; let yrWip = 0; let yrPending = 0;
     
-    // Process Churches if selected
-    if (selectedTypes.includes('church')) {
-      let cS = stats(S.cData[yr] || []);
-      agg.total += cS.t;
-      agg.audited += cS.a;
-      agg.wip += cS.w;
-      agg.pending += cS.p;
-      
-      yrTotal += cS.t;
-      yrAudited += cS.a;
-
-      if (cS.t > 0) {
-        tableRows += `<tr>
-          <td>${yr}</td>
-          <td>Church</td>
-          <td>${cS.t}</td>
-          <td style="color:#10b981">${cS.a}</td>
-          <td style="color:#f59e0b">${cS.w}</td>
-          <td style="color:#ef4444">${cS.p}</td>
-          <td style="font-weight:800;color:#0f172a">${Math.round(cS.a/cS.t*100)}%</td>
-        </tr>`;
-      }
-    }
-
-    // Process Schools if selected
-    if (selectedTypes.includes('school')) {
-      let sS = stats(S.sData[yr] || []);
-      agg.total += sS.t;
-      agg.audited += sS.a;
-      agg.wip += sS.w;
-      agg.pending += sS.p;
-      
-      yrTotal += sS.t;
-      yrAudited += sS.a;
-
-      if (sS.t > 0) {
-        tableRows += `<tr>
-          <td>${yr}</td>
-          <td>School</td>
-          <td>${sS.t}</td>
-          <td style="color:#10b981">${sS.a}</td>
-          <td style="color:#f59e0b">${sS.w}</td>
-          <td style="color:#ef4444">${sS.p}</td>
-          <td style="font-weight:800;color:#0f172a">${Math.round(sS.a/sS.t*100)}%</td>
-        </tr>`;
-      }
-    }
-
-    if(yrTotal > 0) {
-      yearlyData.push({
-        yr: yr,
-        total: yrTotal,
-        audited: yrAudited
+    const processRows = (rows) => {
+      rows.forEach(r => {
+        const status = getSt(r);
+        yrTotal++;
+        if (status === 'Audited') { yrAudited++; agg.audited++; }
+        else if (status === 'WIP') { yrWip++; agg.wip++; }
+        else { yrPending++; agg.pending++; }
       });
+      agg.total += rows.length;
+    };
+
+    if (selectedTypes.includes('church')) {
+      const rows = S.cData[yr] || [];
+      processRows(rows);
+      if (rows.length > 0) tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${yrAudited}</td><td style="color:#f59e0b">${yrWip}</td><td style="color:#ef4444">${yrPending}</td><td style="font-weight:800">${Math.round(yrAudited/rows.length*100)}%</td></tr>`;
     }
+    if (selectedTypes.includes('school')) {
+      const rows = S.sData[yr] || [];
+      processRows(rows);
+      if (rows.length > 0) tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${yrAudited}</td><td style="color:#f59e0b">${yrWip}</td><td style="color:#ef4444">${yrPending}</td><td style="font-weight:800">${Math.round(yrAudited/rows.length*100)}%</td></tr>`;
+    }
+    if(yrTotal > 0) yearlyData.push({ yr, total: yrTotal, audited: yrAudited });
   });
 
   const overallPct = agg.total ? Math.round((agg.audited / agg.total) * 100) : 0;
-
-  // 2. Populate UI Text
-  const typeStrings = selectedTypes.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(' & ');
-  document.getElementById('rvSubtitle').textContent = `${typeStrings} Audits · Years: ${selectedYears.join(', ')}`;
+  document.getElementById('rvSubtitle').textContent = `${selectedTypes.join(' & ')} Audits · Years: ${selectedYears.join(', ')}`;
   document.getElementById('rvDate').textContent = new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' });
-  
   document.getElementById('rvTotFac').textContent = agg.total;
   document.getElementById('rvAudited').textContent = agg.audited;
   document.getElementById('rvComp').textContent = overallPct + '%';
   document.getElementById('rvPend').textContent = agg.pending;
-  
   document.getElementById('rvTableBody').innerHTML = tableRows || '<tr><td colspan="7">No data available for selected filters.</td></tr>';
 
-  // 3. Switch to Light Mode for Charts
   applyChartDefaults(true);
-
-  // 4. Render Light Donut Chart (Without Animation for clean printing)
   mkChart('rvDonut', {
     type: 'doughnut',
-    data: {
-      labels: ['Audited','Work in Progress','Pending'],
-      datasets: [{
-        data: [agg.audited||0.001, agg.wip||0.001, agg.pending||0.001],
-        backgroundColor: ['#10b981','#f59e0b','#ef4444'],
-        borderWidth: 2, borderColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
-      animation: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#334155', font: {family: "'Plus Jakarta Sans'", size: 12, weight: '600'}, padding: 20 } },
-        tooltip: TT_LIGHT
-      }
-    }
+    data: { labels: ['Audited','WIP','Pending'], datasets: [{ data: [agg.audited||0.001, agg.wip||0.001, agg.pending||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', animation: false, plugins: { legend: { position: 'bottom', labels: { color: '#334155', font: {size: 12, weight: '600'}, padding: 20 } }, tooltip: TT_LIGHT } }
   }, true);
 
-  // 5. Render Bar Chart (Without Animation)
   mkChart('rvBar', {
     type: 'bar',
-    data: {
-      labels: yearlyData.map(d => d.yr),
-      datasets: [
-        { label: 'Audited', data: yearlyData.map(d => d.audited), backgroundColor: '#10b981', borderRadius: 4 },
-        { label: 'Total Planned', data: yearlyData.map(d => d.total), backgroundColor: '#cbd5e1', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: false,
-      scales: {
-        x: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { display: false } },
-        y: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { color: '#f1f5f9' } }
-      },
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#334155', font: {weight:'600'}, boxWidth: 12, padding: 20 } },
-        tooltip: TT_LIGHT
-      }
-    }
+    data: { labels: yearlyData.map(d => d.yr), datasets: [{ label: 'Audited', data: yearlyData.map(d => d.audited), backgroundColor: '#10b981', borderRadius: 4 }, { label: 'Total Planned', data: yearlyData.map(d => d.total), backgroundColor: '#cbd5e1', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { x: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { display: false } }, y: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { color: '#f1f5f9' } } }, plugins: { legend: { position: 'bottom', labels: { color: '#334155', font: {weight:'600'}, boxWidth: 12, padding: 20 } }, tooltip: TT_LIGHT } }
   }, true);
 
-  // Hide Modal & Show Report Overlay
   document.getElementById('reportModal').style.display = 'none';
   document.getElementById('reportOverlay').style.display = 'block';
 }
 
-/* ══════════════════════════════════════════════════
-   BOOT
-══════════════════════════════════════════════════ */
 renderYrs();
 loadAll();
 </script>
