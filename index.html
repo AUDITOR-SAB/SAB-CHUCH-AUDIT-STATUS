@@ -91,10 +91,11 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .kpi.cp::before{background:linear-gradient(90deg,var(--purple),transparent)}
 .kpi.ck::before{background:linear-gradient(90deg,var(--pink),transparent)}
 .kpi.ct::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+.kpi.cv::before{background:linear-gradient(90deg,#f472b6,transparent)}
 .kpi-ic{font-size:20px;margin-bottom:8px}
 .kpi-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
 .kpi-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:3px}
-.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}.kpi.ct .kpi-val{color:var(--cyan)}
+.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}.kpi.ct .kpi-val{color:var(--cyan)}.kpi.cv .kpi-val{color:#f472b6}
 .kpi-meta{font-size:11px;color:var(--muted);font-weight:600}
 .kpi-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:11px;overflow:hidden}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
@@ -517,6 +518,8 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
             <th>WIP</th>
             <th>Pending</th>
             <th>Completion %</th>
+            <th>Tithes</th>
+            <th>Offerings</th>
           </tr>
         </thead>
         <tbody id="rvTableBody"></tbody>
@@ -567,6 +570,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
         • "Which year had the highest completion rate?"<br>
         • "What's the church vs school audit comparison?"<br>
         • "How many reports are still pending collection?"<br>
+        • "Total tithes and offerings for 2025"<br>
         • "Give me a summary"
       </div>
     </div>
@@ -616,9 +620,9 @@ function fetchCSV(id, gid, label) {
         if (hIdx === -1 || bestScore < 2) { ok([]); return; }
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
         const isChurchSheet = label.startsWith('church');
-        const EXPECTED_ORDER = isChurchSheet
-          ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection']
-          : ['school','bank record','closing fund bal','status','school pic','report collection'];
+          const EXPECTED_ORDER = isChurchSheet
+            ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection','tithes','offerings']
+            : ['school','bank record','closing fund bal','status','school pic','report collection'];
         for (let i = 0; i < EXPECTED_ORDER.length && i < headers.length; i++) {
           if (headers[i] === '') headers[i] = EXPECTED_ORDER[i];
         }
@@ -695,6 +699,8 @@ function getSt(r) {
 function getBank(r) { return getVal(r, 'bank record', 'bank') || 'No data'; }
 function getRC(r) { return getVal(r, 'report collection', 'collection') || ''; }
 function getFund(r) { const n = parseFloat(getVal(r, 'closing fund bal', 'fund', 'balance').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
+function getTithes(r) { const n = parseFloat(getVal(r, 'tithes', 'tithe').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
+function getOfferings(r) { const n = parseFloat(getVal(r, 'offerings', 'offering').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
 function fRM(n) { return n === null || n === undefined ? '—' : 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2 }); }
 function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s}</span>`; }
 function rcBadge(v) { if (!v) return `<span class="rc rc-na">—</span>`; return `<span class="rc ${/collect/i.test(v)?'rc-col':/pending/i.test(v)?'rc-pend':'rc-na'}">${v}</span>`; }
@@ -706,16 +712,20 @@ function stats(rows) {
   const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length, rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
   const bk = {}; rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
   const fund = rows.reduce((acc, r) => acc + (getFund(r) || 0), 0);
-  return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p };
+  const tithes = rows.reduce((acc, r) => acc + (getTithes(r) || 0), 0);
+  const offerings = rows.reduce((acc, r) => acc + (getOfferings(r) || 0), 0);
+  return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p, tithes, offerings };
 }
 
 function wilStats(rows) {
   const m = {};
   rows.forEach(r => {
     const w = getVal(r, 'wilayah') || 'Unknown';
-    if (!m[w]) m[w] = { t:0, a:0, w:0, p:0, fund:0 };
+    if (!m[w]) m[w] = { t:0, a:0, w:0, p:0, fund:0, tithes:0, offerings:0 };
     m[w].t++; const s = getSt(r); if (s === 'Audited') m[w].a++; else if (s === 'WIP') m[w].w++; else m[w].p++;
     const f = getFund(r); if (f) m[w].fund += f;
+    const ti = getTithes(r); if (ti) m[w].tithes += ti;
+    const of = getOfferings(r); if (of) m[w].offerings += of;
   });
   return Object.entries(m).map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 })).sort((a, b) => a.n.localeCompare(b.n, undefined, { numeric: true, sensitivity: 'base' }));
 }
@@ -775,6 +785,8 @@ function renderChurch(m) {
       <div class="kpi ca" onclick="showCardDetails('wip')"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
       <div class="kpi cr" onclick="showCardDetails('pending')"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
       <div class="kpi co" onclick="showCardDetails('fund')"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">${yrLabel()} closing${S.selectedYears.length > 1 ? ' combined' : ''}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ct" onclick="showCardDetails('tithes')"><div class="kpi-ic">🔟</div><div class="kpi-lbl">Total Tithes</div><div class="kpi-val" style="font-size:${s.tithes>9999999?'15px':s.tithes>999999?'18px':'22px'}">${fRM(s.tithes)}</div><div class="kpi-meta">Submitted to SAB Mission</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.tithes && s.fund ? Math.min(100, Math.round(s.tithes/s.fund*100)) : 0}%;background:var(--cyan)"></div></div></div>
+      <div class="kpi cv" onclick="showCardDetails('offerings')"><div class="kpi-ic">🙏</div><div class="kpi-lbl">Total Offerings</div><div class="kpi-val" style="font-size:${s.offerings>9999999?'15px':s.offerings>999999?'18px':'22px'}">${fRM(s.offerings)}</div><div class="kpi-meta">Submitted to SAB Mission</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.offerings && s.fund ? Math.min(100, Math.round(s.offerings/s.fund*100)) : 0}%;background:#f472b6"></div></div></div>
       <div class="kpi cp" onclick="showCardDetails('wilayah')"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
       <div class="kpi ck" onclick="showCardDetails('report')"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
@@ -790,6 +802,7 @@ function renderChurch(m) {
     <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)">&nbsp;— click to filter Daerah & table</span></div>
     <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#4ade80">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#fcd34d">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#fca5a5">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px;font-weight:600">No data for selected years</div>'}</div>
     ${topFunds(rows)}
+    ${topGivings(rows)}
     <div class="sec" style="margin-top:4px">Church Records</div>
     ${churchTbl(rows)}
   </div>`;
@@ -842,26 +855,37 @@ function topFunds(rows) {
   if (!data.length) return '';
   return `<div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Top Fund Balances</div><div class="card-s">Highest closing balances ${yrLabel()}</div><div class="cw" style="height:200px"><canvas id="cFund"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Leaders</div><div class="card-s">Top 8 by closing balance</div>${data.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval">${fRM(d.f)}</span></div>`).join('')}</div></div>`;
 }
+function topGivings(rows) {
+  if (S.mode !== 'church') return '';
+  const key = 'gereja';
+  const tData = rows.map(r => ({ n: getVal(r, key) || '—', v: getTithes(r) })).filter(d => d.v !== null && d.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
+  const oData = rows.map(r => ({ n: getVal(r, key) || '—', v: getOfferings(r) })).filter(d => d.v !== null && d.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
+  if (!tData.length && !oData.length) return '';
+  return `<div class="g2" style="margin-top:4px">
+    <div class="card"><div class="card-t" style="color:var(--cyan)">🔟 Top Tithes</div><div class="card-s">Highest tithes submitted ${yrLabel()}</div>${tData.length ? tData.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval" style="color:var(--cyan)">${fRM(d.v)}</span></div>`).join('') : '<div style="color:var(--muted);padding:16px;font-size:12px;font-weight:600">No tithes data</div>'}</div>
+    <div class="card"><div class="card-t" style="color:#f472b6">🙏 Top Offerings</div><div class="card-s">Highest offerings submitted ${yrLabel()}</div>${oData.length ? oData.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval" style="color:#f472b6">${fRM(d.v)}</span></div>`).join('') : '<div style="color:var(--muted);padding:16px;font-size:12px;font-weight:600">No offerings data</div>'}</div>
+  </div>`;
+}
 
 function churchTbl(rows) {
   const multi = S.selectedYears.length > 1;
   const wils = uniq(rows, 'wilayah');
-  const COLS = multi ? ['Year','Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Report Collection','Status']
-                    : ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Report Collection','Status'];
+  const COLS = multi ? ['Year','Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Tithes','Offerings','Report Collection','Status']
+                    : ['Wilayah','Daerah','Gereja','Type','Bank Record','Fund Balance','Tithes','Offerings','Report Collection','Status'];
   let filt = rows;
   if (S.search) { const q = S.search.toLowerCase(); filt = filt.filter(r => ['wilayah','daerah','gereja','type'].some(k => getVal(r, k).toLowerCase().includes(q))); }
   if (S.fSt) filt = filt.filter(r => getSt(r) === S.fSt);
   if (S.fWil) filt = filt.filter(r => getVal(r, 'wilayah') === S.fWil);
   if (S.sc >= 0) {
-    const keyMap = multi ? { 0:'_year',1:'wilayah',2:'daerah',3:'gereja',4:'type',5:'bank',6:'fund',7:'collection',8:'status' }
-                        : { 0:'wilayah',1:'daerah',2:'gereja',3:'type',4:'bank',5:'fund',6:'collection',7:'status' };
+    const keyMap = multi ? { 0:'_year',1:'wilayah',2:'daerah',3:'gereja',4:'type',5:'bank',6:'fund',7:'tithes',8:'offerings',9:'collection',10:'status' }
+                        : { 0:'wilayah',1:'daerah',2:'gereja',3:'type',4:'bank',5:'fund',6:'tithes',7:'offerings',8:'collection',9:'status' };
     const k = keyMap[S.sc] || ''; filt = [...filt].sort((a, b) => { const av = getVal(a, k).toLowerCase(); const bv = getVal(b, k).toLowerCase(); return av < bv ? -S.sd : av > bv ? S.sd : 0; });
   }
   const tot = filt.length; const pages = Math.max(1, Math.ceil(tot / S.perPage)); const pg = Math.min(S.page, pages); const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage); const sa = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
   const pNums = []; const used = new Set(); for (let i = 1; i <= pages; i++) { if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) { pNums.push(i); used.add(i); } else if (Math.abs(i-pg) === 2 && !used.has('…')) { pNums.push('…'); used.add('…'); } }
   const cols = COLS.length;
   return `<div class="tbl-ctrl"><div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search church, daerah, wilayah, type…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()"></div><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
-  <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year||'—'}</td>`:''}<td style="color:var(--sky);font-weight:700">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:800">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted);font-weight:600">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): `<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--muted);font-style:italic;font-weight:600">No records found</td></tr>`}</tbody></table>
+  <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year||'—'}</td>`:''}<td style="color:var(--sky);font-weight:700">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:800">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted);font-weight:600">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td class="tfund" style="color:var(--cyan)">${fRM(getTithes(r))}</td><td class="tfund" style="color:#f472b6">${fRM(getOfferings(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): `<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--muted);font-style:italic;font-weight:600">No records found</td></tr>`}</tbody></table>
   ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
 
@@ -910,6 +934,9 @@ function showCardDetails(key) {
       <div class="cd-sum-item"><div class="cd-sum-label">Audited</div><div class="cd-sum-val green">${s.a}</div></div>
       <div class="cd-sum-item"><div class="cd-sum-label">WIP</div><div class="cd-sum-val amber">${s.w}</div></div>
       <div class="cd-sum-item"><div class="cd-sum-label">Pending</div><div class="cd-sum-val red">${s.p}</div></div>
+      ${S.mode === 'church' ? `
+      <div class="cd-sum-item"><div class="cd-sum-label">Tithes</div><div class="cd-sum-val" style="color:var(--cyan)">${fRM(s.tithes)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Offerings</div><div class="cd-sum-val" style="color:#f472b6">${fRM(s.offerings)}</div></div>` : ''}
     </div>
     <table class="cd-table"><thead><tr>${multi?'<th>Year</th>':''}<th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th><th>Daerah</th>' : '<th>PIC</th>'}<th>Status</th></tr></thead><tbody>
     ${rows.length ? rows.map((r, i) => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year}</td>`:''}<td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td><span class="cd-badge ${getSt(r)==='Audited'?'g':getSt(r)==='WIP'?'y':'r'}">${getSt(r)}</span></td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No records</td></tr>'}
@@ -972,8 +999,8 @@ function showCardDetails(key) {
       <div class="cd-sum-item"><div class="cd-sum-label">Total Wilayah</div><div class="cd-sum-val blue">${wil.length}</div></div>
       <div class="cd-sum-item"><div class="cd-sum-label">Total Churches</div><div class="cd-sum-val green">${s.t}</div></div>
     </div>
-    <table class="cd-table"><thead><tr><th>Wilayah</th><th>Total</th><th>Audited</th><th>WIP</th><th>Pending</th><th>%</th><th>Fund</th></tr></thead><tbody>
-    ${wil.map(w => `<tr><td style="font-weight:700;color:var(--sky)">${w.n}</td><td>${w.t}</td><td style="color:#4ade80">${w.a}</td><td style="color:#fcd34d">${w.w}</td><td style="color:#fca5a5">${w.p}</td><td style="font-weight:700">${w.pct}%</td><td style="font-weight:800;color:var(--gold)">${fRM(w.fund)}</td></tr>`).join('')}
+    <table class="cd-table"><thead><tr><th>Wilayah</th><th>Total</th><th>Audited</th><th>WIP</th><th>Pending</th><th>%</th><th>Fund</th><th>Tithes</th><th>Offerings</th></tr></thead><tbody>
+    ${wil.map(w => `<tr><td style="font-weight:700;color:var(--sky)">${w.n}</td><td>${w.t}</td><td style="color:#4ade80">${w.a}</td><td style="color:#fcd34d">${w.w}</td><td style="color:#fca5a5">${w.p}</td><td style="font-weight:700">${w.pct}%</td><td style="font-weight:800;color:var(--gold)">${fRM(w.fund)}</td><td style="font-weight:800;color:var(--cyan)">${fRM(w.tithes)}</td><td style="font-weight:800;color:#f472b6">${fRM(w.offerings)}</td></tr>`).join('')}
     </tbody></table>`;
   } else if (key === 'report') {
     title.textContent = '📁 Report Collection Details';
@@ -989,6 +1016,36 @@ function showCardDetails(key) {
     </div>
     <table class="cd-table"><thead><tr><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Status</th><th>Collection</th></tr></thead><tbody>
     ${rows.length ? rows.map(r => `<tr><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${pill(getSt(r))}</td><td>${rcBadge(getRC(r))}</td></tr>`).join('') : '<tr><td colspan="4" class="cd-empty">No records</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'tithes' && S.mode === 'church') {
+    title.textContent = '🔟 Tithes Details';
+    const nameKey = 'gereja';
+    const withTithes = rows.filter(r => getTithes(r) !== null).sort((a, b) => (getTithes(b)||0) - (getTithes(a)||0));
+    const total = withTithes.reduce((sum, r) => sum + (getTithes(r)||0), 0);
+    const noData = rows.length - withTithes.length;
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Tithes</div><div class="cd-sum-val" style="color:var(--cyan)">${fRM(total)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Avg per Church</div><div class="cd-sum-val" style="color:var(--cyan)">${fRM(withTithes.length ? total/withTithes.length : 0)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">With Data</div><div class="cd-sum-val green">${withTithes.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">No Data</div><div class="cd-sum-val red">${noData}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>Gereja</th><th>Wilayah</th><th style="text-align:right">Tithes</th></tr></thead><tbody>
+    ${withTithes.length ? withTithes.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td><td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td style="text-align:right;font-weight:800;color:var(--cyan)">${fRM(getTithes(r))}</td></tr>`).join('') : '<tr><td colspan="4" class="cd-empty">No tithes data</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'offerings' && S.mode === 'church') {
+    title.textContent = '🙏 Offerings Details';
+    const nameKey = 'gereja';
+    const withOfferings = rows.filter(r => getOfferings(r) !== null).sort((a, b) => (getOfferings(b)||0) - (getOfferings(a)||0));
+    const total = withOfferings.reduce((sum, r) => sum + (getOfferings(r)||0), 0);
+    const noData = rows.length - withOfferings.length;
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Offerings</div><div class="cd-sum-val" style="color:#f472b6">${fRM(total)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Avg per Church</div><div class="cd-sum-val" style="color:#f472b6">${fRM(withOfferings.length ? total/withOfferings.length : 0)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">With Data</div><div class="cd-sum-val green">${withOfferings.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">No Data</div><div class="cd-sum-val red">${noData}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>Gereja</th><th>Wilayah</th><th style="text-align:right">Offerings</th></tr></thead><tbody>
+    ${withOfferings.length ? withOfferings.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td><td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td style="text-align:right;font-weight:800;color:#f472b6">${fRM(getOfferings(r))}</td></tr>`).join('') : '<tr><td colspan="4" class="cd-empty">No offerings data</td></tr>'}
     </tbody></table>`;
   }
 
@@ -1030,7 +1087,7 @@ function buildAndShowReport() {
   if (selectedYears.length === 0) { alert("Please select at least one audit year."); return; }
   if (selectedTypes.length === 0) { alert("Please select at least one facility type."); return; }
 
-  let agg = { total: 0, audited: 0, wip: 0, pending: 0 };
+  let agg = { total: 0, audited: 0, wip: 0, pending: 0, tithes: 0, offerings: 0 };
   let yearlyData = [];
   let tableRows = '';
 
@@ -1039,17 +1096,22 @@ function buildAndShowReport() {
     if (selectedTypes.includes('church')) {
       const rows = S.cData[yr] || [];
       let cA = 0, cW = 0, cP = 0;
+      let cTithes = 0, cOfferings = 0;
       rows.forEach(r => {
         const status = getSt(r);
         if (status === 'Audited') { cA++; agg.audited++; }
         else if (status === 'WIP') { cW++; agg.wip++; }
         else { cP++; agg.pending++; }
+        cTithes += getTithes(r) || 0;
+        cOfferings += getOfferings(r) || 0;
       });
+      agg.tithes += cTithes;
+      agg.offerings += cOfferings;
       agg.total += rows.length;
       yrTotal += rows.length;
       yrAudited += cA;
       if (rows.length > 0)
-        tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${cA}</td><td style="color:#f59e0b">${cW}</td><td style="color:#ef4444">${cP}</td><td style="font-weight:800">${Math.round(cA/rows.length*100)}%</td></tr>`;
+        tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${cA}</td><td style="color:#f59e0b">${cW}</td><td style="color:#ef4444">${cP}</td><td style="font-weight:800">${Math.round(cA/rows.length*100)}%</td><td style="font-weight:800">RM ${cTithes.toLocaleString('en-MY',{minimumFractionDigits:2})}</td><td style="font-weight:800">RM ${cOfferings.toLocaleString('en-MY',{minimumFractionDigits:2})}</td></tr>`;
     }
     if (selectedTypes.includes('school')) {
       const rows = S.sData[yr] || [];
@@ -1064,7 +1126,7 @@ function buildAndShowReport() {
       yrTotal += rows.length;
       yrAudited += sA;
       if (rows.length > 0)
-        tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${sA}</td><td style="color:#f59e0b">${sW}</td><td style="color:#ef4444">${sP}</td><td style="font-weight:800">${Math.round(sA/rows.length*100)}%</td></tr>`;
+        tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${sA}</td><td style="color:#f59e0b">${sW}</td><td style="color:#ef4444">${sP}</td><td style="font-weight:800">${Math.round(sA/rows.length*100)}%</td><td style="color:#94a3b8">—</td><td style="color:#94a3b8">—</td></tr>`;
     }
     if (yrTotal > 0) yearlyData.push({ yr, total: yrTotal, audited: yrAudited });
   });
@@ -1157,15 +1219,20 @@ function fmtNum(n) { return (n || 0).toLocaleString(); }
 function pct(a, t) { return t ? Math.round(a / t * 100) : 0; }
 function statusSummary(rows, label) {
   if (!rows.length) return `No ${label} data loaded.`;
+  const isChurch = /\bgereja\b/i.test(label) || /\bchurch\b/i.test(label);
   const a = rows.filter(r => getSt(r) === 'Audited').length;
   const w = rows.filter(r => getSt(r) === 'WIP').length;
   const p = rows.filter(r => getSt(r) === 'Pending').length;
   const funds = rows.reduce((s, r) => s + (getFund(r) || 0), 0);
+  const tithes = rows.reduce((s, r) => s + (getTithes(r) || 0), 0);
+  const offerings = rows.reduce((s, r) => s + (getOfferings(r) || 0), 0);
   return `<strong>${label}</strong> (${rows.length} total)\n` +
     `<div class="data-row"><span>✅ Audited</span><span class="data-val">${a} (${pct(a, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>🔄 WIP</span><span class="data-val">${w} (${pct(w, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>⏳ Pending</span><span class="data-val">${p} (${pct(p, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>💰 Total Funds</span><span class="data-val">RM ${fmtNum(Math.round(funds))}</span></div>` +
+    (isChurch ? `<div class="data-row"><span>🔟 Total Tithes</span><span class="data-val">RM ${fmtNum(Math.round(tithes))}</span></div>` +
+    `<div class="data-row"><span>🙏 Total Offerings</span><span class="data-val">RM ${fmtNum(Math.round(offerings))}</span></div>` : '') +
     `<div class="data-row"><span>📊 Completion</span><span class="data-val">${pct(a, rows.length)}%</span></div>`;
 }
 
@@ -1210,6 +1277,8 @@ function processQuery(q) {
   const statusAudit = /\b(audited|completed?|selesai|diaudit|lengkap|sudah)\b/.test(lq) && !/\b(pending|wip|tertunda|proses|submitted|hantar)\b/.test(lq);
   const statusWIP = /\b(wip|work.?in.?progress|dalam.?proses|sedang|berjalan)\b/.test(lq);
   const statusPend = /\b(pending|waiting|not.?start|tertunda|menunggu|belum|yet.?submitted|not.?submitted|missing|belum.?dihantar|belum.?submit)\b/.test(lq) && !/\b(wip|proses)\b/.test(lq);
+  const wantsTithes = /\b(tithe|persepuluhan|zakat)\b/.test(lq) && !wantsFund;
+  const wantsOfferings = /\b(offer|persembahan|kolekte)\b/.test(lq) && !wantsTithes;
 
   if (greets) {
     return '👋 Hai! Saya <strong>Auditor AI</strong>, pembantu data audit SAB Mission. Saya boleh jawab soalan tentang kiraan status, baki dana, kadar siap, pecahan wilayah/daerah, perbandingan tahun, analisis bank, kutipan laporan, dan banyak lagi. <em>(I can answer in English too!)</em>';
@@ -1231,10 +1300,13 @@ function processQuery(q) {
       '• "How many reports still need collection?"<br>' +
       '• "What is the average fund per facility?"<br>' +
       '• "Bank account summary for 2025"<br>' +
-      '• "Trend analysis for all years"';
+      '• "Trend analysis for all years"<br>' +
+      '• "Total tithes for 2025"<br>' +
+      '• "How much offerings were collected?"<br>' +
+      '• "Jumlah persepuluhan dan persembahan"';
   }
 
-  if (wantsSummary || (!wantsCount && !wantsFund && !wantsBreakdown && !wantsCompare && !wantsList && !wantsBank && !wantsWilayah && !wantsDaerah && !greets && !wantsHelp)) {
+  if (wantsSummary || (!wantsCount && !wantsFund && !wantsBreakdown && !wantsCompare && !wantsList && !wantsBank && !wantsWilayah && !wantsDaerah && !greets && !wantsHelp && !wantsTithes && !wantsOfferings)) {
     let out = '<strong>📊 Ringkasan Audit</strong><br><br>';
     const showType = type;
     years.forEach(yr => {
@@ -1571,6 +1643,24 @@ function processQuery(q) {
       });
     });
     return out || 'Tiada data.';
+  }
+
+  if (wantsTithes || wantsOfferings) {
+    const label = wantsTithes ? '🔟 Tithes' : '🙏 Offerings';
+    const getter = wantsTithes ? getTithes : getOfferings;
+    let out = `<strong>${label}</strong><br><br>`;
+    years.forEach(yr => {
+      if (type === 'both' || type === 'church') {
+        const rows = S.cData[yr] || [];
+        if (!rows.length) return;
+        const total = rows.reduce((s, r) => s + (getter(r) || 0), 0);
+        const withData = rows.filter(r => getter(r) !== null).length;
+        out += `<div class="data-row"><span>⛪ Gereja ${yr}</span><span class="data-val">${fRM(total)}</span></div>`;
+        if (withData < rows.length)
+          out += `<div style="font-size:11px;color:var(--muted2)">(${rows.length - withData} churches without data)</div>`;
+      }
+    });
+    return out || 'Tiada data tithes/persembahan.';
   }
 
   return 'Maaf, saya tidak faham soalan itu. Cuba tanya tentang kiraan, baki dana, kadar siap, pecahan wilayah, perbandingan, tren, atau kualiti data. Taip "bantuan" untuk contoh. <em>(I also understand English!)</em>';
