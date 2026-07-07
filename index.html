@@ -30,7 +30,8 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 #loader{position:fixed;inset:0;z-index:99999;background:#07111f;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
-#loader-logo{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin-bottom:24px;animation:loaderPulse 2s ease-in-out infinite;box-shadow:0 0 40px rgba(29,107,243,.3)}
+#loader-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:24px;animation:loaderPulse 2s ease-in-out infinite;box-shadow:0 0 40px rgba(29,107,243,.3)}
+.loader-logo-fallback{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:none;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin-bottom:24px;animation:loaderPulse 2s ease-in-out infinite;box-shadow:0 0 40px rgba(29,107,243,.3)}
 @keyframes loaderPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(29,107,243,.3)}50%{transform:scale(1.06);box-shadow:0 0 60px rgba(29,107,243,.5)}}
 #loader-ring{width:56px;height:56px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--blue2);border-radius:50%;animation:loaderSpin .9s linear infinite;margin-bottom:20px}
 @keyframes loaderSpin{to{transform:rotate(360deg)}}
@@ -49,7 +50,7 @@ header{position:sticky;top:0;z-index:200;background:rgba(7,17,31,.92);backdrop-f
 .hdr{max-width:1500px;margin:0 auto;padding:0 28px;height:66px;display:flex;align-items:center;gap:16px}
 .logo{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;flex-shrink:0}
 .logo-img{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(29,107,243,.3),rgba(34,211,238,.2));border:1px solid rgba(255,255,255,.15);object-fit:contain;padding:5px}
-.logo-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.logo-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;color:#fff}
 .logo-name{font-size:14px;font-weight:800;background:linear-gradient(120deg,#fff,var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-tagline{font-size:10px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
 .hdr-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -374,7 +375,9 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 </head>
 <body>
 <div id="loader">
-  <div id="loader-logo">SAB</div>
+  <img src="SDA-LOGO.png" alt="SDA Logo" id="loader-logo"
+       onerror="this.style.display='none';document.getElementById('loader-lf').style.display='flex'">
+  <div id="loader-lf" class="loader-logo-fallback">SDA</div>
   <div id="loader-ring"></div>
   <div id="loader-title">SAB Mission Dashboard</div>
   <div id="loader-sub">Loading audit data from Google Sheets…</div>
@@ -386,9 +389,9 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 <header>
   <div class="hdr">
     <a class="logo" href="#">
-      <img src="SDA-LOGO.png" alt="SAB" class="logo-img"
+      <img src="SDA-LOGO.png" alt="SDA Logo" class="logo-img"
            onerror="this.style.display='none';document.getElementById('lf').style.display='flex'">
-      <div id="lf" class="logo-fallback" style="display:none">SAB</div>
+      <div id="lf" class="logo-fallback" style="display:none">SDA</div>
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="logo-name">SAB Mission</span>
         <span class="logo-tagline">Audit Dashboard</span>
