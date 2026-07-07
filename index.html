@@ -28,6 +28,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
   background-size:56px 56px}
 
+/* Loader */
 #loader{position:fixed;inset:0;z-index:99999;background:#07111f;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
 #loader-logo{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:24px;animation:loaderPulse 2s ease-in-out infinite;box-shadow:0 0 40px rgba(29,107,243,.3)}
@@ -45,12 +46,13 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 #loader-dots span:nth-child(2){animation-delay:.2s}
 #loader-dots span:nth-child(3){animation-delay:.4s}
 @keyframes loaderDot{0%,80%,100%{opacity:.2;transform:scale(.7)}40%{opacity:1;transform:scale(1)}}
+
 .page{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
 header{position:sticky;top:0;z-index:200;background:rgba(7,17,31,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
 .hdr{max-width:1500px;margin:0 auto;padding:0 28px;height:66px;display:flex;align-items:center;gap:16px}
 .logo{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;flex-shrink:0}
-.logo-img{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(29,107,243,.3),rgba(34,211,238,.2));border:1px solid rgba(255,255,255,.15);object-fit:contain;padding:5px}
-.logo-fallback{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;color:#fff}
+.logo-img{height:40px;width:auto;object-fit:contain;flex-shrink:0;border-radius:6px;background:#fff;padding:4px;display:block}
+.logo-fallback{width:40px;height:40px;border-radius:6px;background:#1d6bf3;display:none;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;color:#fff}
 .logo-name{font-size:14px;font-weight:800;background:linear-gradient(120deg,#fff,var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-tagline{font-size:10px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
 .hdr-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -200,100 +202,12 @@ td{padding:11px 14px;color:var(--off);font-weight:500;white-space:nowrap}
 footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(--muted);border-top:1px solid var(--border)}
 .fade-in{animation:fi .45s ease both}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:1100px){.g2,.g3,.glh{grid-template-columns:1fr}}
-@media(max-width:768px){
-  .hdr{max-width:100%;padding:10px 14px;height:auto;flex-wrap:wrap;row-gap:10px}
-  .logo{flex:1 1 auto}
-  .logo-name{font-size:13px}
-  .logo-tagline{font-size:9px}
-  .logo-img,.logo-fallback{width:36px;height:36px}
-  .hdr-mid{display:flex;order:3;flex:1 1 100%;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:2px;scrollbar-width:none}
-  .hdr-mid::-webkit-scrollbar{display:none}
-  .yr-btn{flex-shrink:0;padding:6px 14px;font-size:12px}
-  .hdr-right{order:2;flex:0 0 auto;margin-left:auto;gap:6px}
-  .hdr-right button[onclick="showDebug()"]{display:none}
-  .icon-btn{padding:6px 10px;font-size:11px}
-  .mode-btn{padding:6px 12px;font-size:11px}
-  main{padding:18px 14px 60px}
-  .page-title{font-size:22px;line-height:1.25}
-  .page-sub{font-size:12px;line-height:1.5}
-  .mode-label{font-size:10px;padding:3px 10px}
-  .kpi-row{grid-template-columns:repeat(2,1fr);gap:10px}
-  .kpi{padding:14px 14px}
-  .kpi-val{font-size:24px}
-  .kpi-ic{font-size:17px;margin-bottom:5px}
-  .kpi-lbl{font-size:9px}
-  .kpi-meta{font-size:10px}
-  .g2,.g3,.glh{grid-template-columns:1fr;gap:14px}
-  .card{padding:16px 16px}
-  .card-t{font-size:13px}
-  .card-s{font-size:10px;margin-bottom:14px}
-  .donut-area{flex-direction:column;align-items:center;gap:16px}
-  .donut-box{width:140px;height:140px}
-  .d-pct{font-size:24px}
-  .legend{width:100%;min-width:0}
-  .cw{max-width:100%}
-  .wgrid{grid-template-columns:1fr;gap:10px}
-  .wcard{padding:14px 16px}
-  .wstats{flex-wrap:wrap;row-gap:8px}
-  .sgrid{grid-template-columns:1fr;gap:12px}
-  .scard{padding:18px}
-  .tbl-ctrl{flex-direction:column;align-items:stretch;gap:8px}
-  .srch{min-width:0;width:100%}
-  .flt{width:100%}
-  .twrap{border-radius:10px;-webkit-overflow-scrolling:touch;position:relative;background-image:linear-gradient(to right, var(--panel) 0%, transparent 2%, transparent 98%, var(--panel) 100%)}
-  .twrap::after{content:'';position:absolute;top:0;right:0;bottom:0;width:24px;background:linear-gradient(to right, transparent, rgba(7,17,31,.65));pointer-events:none;border-radius:0 10px 10px 0}
-  table{font-size:11px}
-  thead th{padding:9px 10px;font-size:9px}
-  td{padding:9px 10px;font-size:11px}
-  .pgn{padding:10px 12px;font-size:10px}
-  .pbtn{padding:4px 8px;font-size:10px}
-  .frow{padding:7px 10px;font-size:11px}
-  .fname{font-size:11px}
-  .sec{font-size:9px;margin-bottom:11px}
-  .bkrow{font-size:11px;padding:8px 0}
-  footer{font-size:10px;padding:14px}
-  #cTrend{height:140px!important}
-  #cWil{height:220px!important}
-  #cSchSt{height:190px!important}
-  #cSchFd{height:190px!important}
-  #cFund{height:170px!important}
-  body{overflow-x:hidden}
-  .cw canvas{max-width:100%}
-}
-@media(max-width:480px){
-  .hdr{padding:8px 12px}
-  main{padding:14px 10px 50px}
-  .page-title{font-size:19px}
-  .page-sub{font-size:11px}
-  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
-  .kpi{padding:12px 12px;border-radius:12px}
-  .kpi-val{font-size:21px}
-  .card{padding:14px 14px;border-radius:12px}
-  .donut-box{width:120px;height:120px}
-  .d-pct{font-size:21px}
-  .d-lbl{font-size:9px}
-  .li{font-size:11px}
-  .wgrid{grid-template-columns:1fr}
-  .sgrid{grid-template-columns:1fr}
-  .sname{font-size:13px}
-  .spic{font-size:10px}
-  table{font-size:10px}
-  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
-  td{padding:8px 8px;font-size:10px}
-  .mode-btn{padding:6px 10px;font-size:10px}
-  .mode-btn .icon{display:none}
-  .logo-tagline{display:none}
-  #cTrend{height:120px!important}
-  #cWil{height:200px!important}
-  #cSchSt{height:170px!important}
-  #cSchFd{height:170px!important}
-  #cFund{height:150px!important}
-}
 .yr-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}
 .yr-lbl{display:flex;align-items:center;gap:8px;font-size:13px;background:rgba(255,255,255,0.04);padding:10px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);transition:0.2s;font-weight:700;color:var(--off)}
 .yr-lbl:hover{border-color:var(--blue2);background:rgba(29,107,243,0.08)}
 .yr-lbl input{accent-color:var(--blue2);transform:scale(1.1);margin:0}
+
+/* Report */
 #reportOverlay{display:none;position:fixed;inset:0;z-index:9999;background:#f8fafc;color:#0f172a;overflow-y:auto;font-family:'Plus Jakarta Sans',sans-serif}
 .report-top-bar{background:#fff;padding:12px 24px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,0.03)}
 .rv-btn{padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;border:none;transition:0.2s;font-family:inherit}
@@ -333,7 +247,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
   @page{size:A4 landscape;margin:10mm}
 }
 
-/* ── AI CHAT WIDGET ── */
+/* Chat Widget */
 #chatWidget{font-family:'Plus Jakarta Sans',sans-serif}
 #chatFloatingBtn{position:fixed;bottom:24px;right:24px;z-index:9998;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#1d6bf3,#3b82f6);border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(29,107,243,.45);display:flex;align-items:center;justify-content:center;transition:all .25s;animation:chatPulse 3s ease-in-out infinite}
 #chatFloatingBtn:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(29,107,243,.55)}
@@ -346,7 +260,6 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 #chatHeader .title span{font-size:18px}
 #chatHeader .close-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted);width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;font-family:inherit}
 #chatHeader .close-btn:hover{color:var(--white);border-color:rgba(255,255,255,.25)}
-
 #chatMessages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
 #chatMessages::-webkit-scrollbar{width:4px}
 #chatMessages::-webkit-scrollbar-track{background:transparent}
@@ -370,7 +283,89 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 .chat-thinking span:nth-child(2){animation-delay:.2s}
 .chat-thinking span:nth-child(3){animation-delay:.4s}
 @keyframes chatDot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-@media(max-width:480px){#chatPanel{width:calc(100vw - 24px);right:12px;bottom:80px;max-height:70vh;height:70vh}#chatFloatingBtn{bottom:16px;right:16px;width:48px;height:48px;font-size:20px}}
+
+@media(max-width:1100px){.g2,.g3,.glh{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .hdr{max-width:100%;padding:10px 14px;height:auto;flex-wrap:wrap;row-gap:10px}
+  .logo{flex:1 1 auto}
+  .logo-name{font-size:13px}
+  .logo-tagline{font-size:9px}
+  .logo-img,.logo-fallback{height:34px}
+  .logo-img{width:auto}
+  .hdr-mid{display:flex;order:3;flex:1 1 100%;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:2px;scrollbar-width:none}
+  .hdr-mid::-webkit-scrollbar{display:none}
+  .yr-btn{flex-shrink:0;padding:6px 14px;font-size:12px}
+  .hdr-right{order:2;flex:0 0 auto;margin-left:auto;gap:6px}
+  .hdr-right button[onclick="showDebug()"]{display:none}
+  .icon-btn{padding:6px 10px;font-size:11px}
+  .mode-btn{padding:6px 12px;font-size:11px}
+  main{padding:18px 14px 60px}
+  .page-title{font-size:22px;line-height:1.25}
+  .page-sub{font-size:12px;line-height:1.5}
+  .mode-label{font-size:10px;padding:3px 10px}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:10px}
+  .kpi{padding:14px 14px}
+  .kpi-val{font-size:24px}
+  .kpi-ic{font-size:17px;margin-bottom:5px}
+  .kpi-lbl{font-size:9px}
+  .kpi-meta{font-size:10px}
+  .g2,.g3,.glh{grid-template-columns:1fr;gap:14px}
+  .card{padding:16px 16px}
+  .card-t{font-size:13px}
+  .card-s{font-size:10px;margin-bottom:14px}
+  .donut-area{flex-direction:column;align-items:center;gap:16px}
+  .donut-box{width:140px;height:140px}
+  .d-pct{font-size:24px}
+  .legend{width:100%;min-width:0}
+  .cw{max-width:100%}
+  .wgrid{grid-template-columns:1fr;gap:10px}
+  .wcard{padding:14px 16px}
+  .wstats{flex-wrap:wrap;row-gap:8px}
+  .sgrid{grid-template-columns:1fr;gap:12px}
+  .scard{padding:18px}
+  .tbl-ctrl{flex-direction:column;align-items:stretch;gap:8px}
+  .srch{min-width:0;width:100%}
+  .flt{width:100%}
+  .twrap{border-radius:10px}
+  table{font-size:11px}
+  thead th{padding:9px 10px;font-size:9px}
+  td{padding:9px 10px;font-size:11px}
+  .pgn{padding:10px 12px;font-size:10px}
+  .pbtn{padding:4px 8px;font-size:10px}
+  .frow{padding:7px 10px;font-size:11px}
+  .fname{font-size:11px}
+  .sec{font-size:9px;margin-bottom:11px}
+  .bkrow{font-size:11px;padding:8px 0}
+  footer{font-size:10px;padding:14px}
+  body{overflow-x:hidden}
+  .cw canvas{max-width:100%}
+  #chatPanel{width:calc(100vw - 24px);right:12px;bottom:80px;max-height:70vh;height:70vh}
+  #chatFloatingBtn{bottom:16px;right:16px;width:48px;height:48px;font-size:20px}
+}
+@media(max-width:480px){
+  .hdr{padding:8px 12px}
+  main{padding:14px 10px 50px}
+  .page-title{font-size:19px}
+  .page-sub{font-size:11px}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi{padding:12px 12px;border-radius:12px}
+  .kpi-val{font-size:21px}
+  .card{padding:14px 14px;border-radius:12px}
+  .donut-box{width:120px;height:120px}
+  .d-pct{font-size:21px}
+  .d-lbl{font-size:9px}
+  .li{font-size:11px}
+  .wgrid{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr}
+  .sname{font-size:13px}
+  .spic{font-size:10px}
+  table{font-size:10px}
+  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
+  td{padding:8px 8px;font-size:10px}
+  .mode-btn{padding:6px 10px;font-size:10px}
+  .mode-btn .icon{display:none}
+  .logo-tagline{display:none}
+}
 </style>
 </head>
 <body>
@@ -436,8 +431,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
     </div>
 
     <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:20px;margin-bottom:8px">2. Select Audit Years</div>
-    <div class="yr-check-grid" id="reportYrChecks">
-      </div>
+    <div class="yr-check-grid" id="reportYrChecks"></div>
 
     <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px">
       <button onclick="document.getElementById('reportModal').style.display='none'" style="padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--white);font-weight:700;cursor:pointer;font-family:inherit">Cancel</button>
@@ -498,8 +492,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
             <th>Completion %</th>
           </tr>
         </thead>
-        <tbody id="rvTableBody">
-          </tbody>
+        <tbody id="rvTableBody"></tbody>
       </table>
     </div>
   </div>
@@ -517,13 +510,12 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 </div>
 
 <div id="chatWidget">
-  <button id="chatFloatingBtn" onclick="toggleChat()" title="Ask AI about audit data">🤖</button>
+  <button id="chatFloatingBtn" onclick="toggleChat()" title="Ask about audit data">🤖</button>
   <div id="chatPanel">
     <div id="chatHeader">
       <div class="title"><span>🧠</span> Auditor AI</div>
       <button class="close-btn" onclick="toggleChat()">✕</button>
     </div>
-
     <div id="chatMessages">
       <div class="chat-msg chat-bot">
         👋 Hi! I'm <strong>Auditor AI</strong>, your SAB Mission audit assistant.<br><br>
@@ -553,7 +545,6 @@ const SCHOOL_GIDS = { 2023: '0', 2024: '308447492',  2025: '816919702', 2026: '1
 const YEARS = [2023, 2024, 2025, 2026];
 const PAL = ['#3b82f6','#10b981','#f0b429','#ef4444','#8b5cf6','#ec4899','#22d3ee','#f97316','#a3e635','#fb7185','#06b6d4','#84cc16'];
 
-
 const S = {
   mode: 'church', year: 2025,
   cData: {}, sData: {},
@@ -574,7 +565,6 @@ function fetchCSV(id, gid, label) {
       complete: r => {
         const rows = r.data;
         if (!rows.length) { S.debugLog[label] = { error: 'No rows' }; ok([]); return; }
-
         const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic'];
         let hIdx = -1, bestScore = 0;
         for (let i = 0; i < Math.min(rows.length, 8); i++) {
@@ -582,20 +572,16 @@ function fetchCSV(id, gid, label) {
           let score = 0; KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-
         S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore };
         if (hIdx === -1 || bestScore < 2) { ok([]); return; }
-
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
         const isChurchSheet = label.startsWith('church');
         const EXPECTED_ORDER = isChurchSheet
           ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection']
           : ['school','bank record','closing fund bal','status','school pic','report collection'];
-
         for (let i = 0; i < EXPECTED_ORDER.length && i < headers.length; i++) {
           if (headers[i] === '') headers[i] = EXPECTED_ORDER[i];
         }
-
         const data = [];
         for (let i = hIdx + 1; i < rows.length; i++) {
           const row = rows[i];
@@ -604,7 +590,6 @@ function fetchCSV(id, gid, label) {
           headers.forEach((h, j) => { if (h) obj[h] = (row[j] != null ? row[j].toString().trim() : ''); });
           data.push(obj);
         }
-
         const wilKey = headers.find(h => h.includes('wilayah'));
         if (wilKey) {
           let lastWil = '';
@@ -617,7 +602,6 @@ function fetchCSV(id, gid, label) {
             data.forEach(r => { if (r[wilKey]) r[wilKey] = 'Wilayah ' + r[wilKey]; });
           }
         }
-
         const daerKey = headers.find(h => h.includes('daerah'));
         if (daerKey) {
           let lastDaer = '';
@@ -656,7 +640,6 @@ function getVal(row, ...keys) {
 }
 function cur() { return S.mode === 'church' ? (S.cData[S.year] || []) : (S.sData[S.year] || []); }
 
-/* FIX #1: Recognizes both "WIP" and "Work in Progress" as WIP status */
 function getSt(r) {
   const v = getVal(r, 'status');
   return (/audit/i.test(v) ? 'Audited' : /wip|work\s*in\s*progress/i.test(v) ? 'WIP' : /pending/i.test(v) ? 'Pending' : v || 'Pending');
@@ -834,9 +817,7 @@ function fwil(w) { S.fWil = S.fWil === w ? '' : w; S.page = 1; renderAll(); if (
 function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function showDebug() { const label = `${S.mode}-${S.year}`; const info = S.debugLog[label]; const box = document.getElementById('debugContent'); if (!info) { box.textContent = `No data for "${label}".`; } else { box.textContent = JSON.stringify(info, null, 2); } document.getElementById('debugModal').style.display = 'block'; }
 
-/* ══════════════════════════════════════════════════
-   EXECUTIVE SUMMARY REPORT (FIXED)
-══════════════════════════════════════════════════ */
+/* Report */
 function openReportModal() {
   const yrContainer = document.getElementById('reportYrChecks');
   yrContainer.innerHTML = YEARS.map(y => `
@@ -851,10 +832,8 @@ function openReportModal() {
 function buildAndShowReport() {
   const yrCheckboxes = document.querySelectorAll('.yr-cb:checked');
   const typeCheckboxes = document.querySelectorAll('.type-cb:checked');
-
   const selectedYears = Array.from(yrCheckboxes).map(cb => parseInt(cb.value)).sort();
   const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value);
-
   if (selectedYears.length === 0) { alert("Please select at least one audit year."); return; }
   if (selectedTypes.length === 0) { alert("Please select at least one facility type."); return; }
 
@@ -862,10 +841,8 @@ function buildAndShowReport() {
   let yearlyData = [];
   let tableRows = '';
 
-  /* FIX #2: Separate counters per type so Church and School data never mix */
   selectedYears.forEach(yr => {
     let yrTotal = 0, yrAudited = 0;
-
     if (selectedTypes.includes('church')) {
       const rows = S.cData[yr] || [];
       let cA = 0, cW = 0, cP = 0;
@@ -881,7 +858,6 @@ function buildAndShowReport() {
       if (rows.length > 0)
         tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${cA}</td><td style="color:#f59e0b">${cW}</td><td style="color:#ef4444">${cP}</td><td style="font-weight:800">${Math.round(cA/rows.length*100)}%</td></tr>`;
     }
-
     if (selectedTypes.includes('school')) {
       const rows = S.sData[yr] || [];
       let sA = 0, sW = 0, sP = 0;
@@ -897,7 +873,6 @@ function buildAndShowReport() {
       if (rows.length > 0)
         tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${sA}</td><td style="color:#f59e0b">${sW}</td><td style="color:#ef4444">${sP}</td><td style="font-weight:800">${Math.round(sA/rows.length*100)}%</td></tr>`;
     }
-
     if (yrTotal > 0) yearlyData.push({ yr, total: yrTotal, audited: yrAudited });
   });
 
@@ -916,23 +891,17 @@ function buildAndShowReport() {
     data: { labels: ['Audited','WIP','Pending'], datasets: [{ data: [agg.audited||0.001, agg.wip||0.001, agg.pending||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#fff' }] },
     options: { responsive: true, maintainAspectRatio: false, cutout: '65%', animation: false, plugins: { legend: { position: 'bottom', labels: { color: '#334155', font: {size: 12, weight: '600'}, padding: 20 } }, tooltip: TT_LIGHT } }
   }, true);
-
   mkChart('rvBar', {
     type: 'bar',
     data: { labels: yearlyData.map(d => d.yr), datasets: [{ label: 'Audited', data: yearlyData.map(d => d.audited), backgroundColor: '#10b981', borderRadius: 4 }, { label: 'Total Planned', data: yearlyData.map(d => d.total), backgroundColor: '#cbd5e1', borderRadius: 4 }] },
     options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { x: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { display: false } }, y: { ticks: { color: '#64748b', font: {size: 11, weight:'600'} }, grid: { color: '#f1f5f9' } } }, plugins: { legend: { position: 'bottom', labels: { color: '#334155', font: {weight:'600'}, boxWidth: 12, padding: 20 } }, tooltip: TT_LIGHT } }
   }, true);
-
   document.getElementById('reportModal').style.display = 'none';
   document.getElementById('reportOverlay').style.display = 'block';
 }
 
-/* ══════════════════════════════════════════════════
-   AI CHAT — DATA QUERY ENGINE
-══════════════════════════════════════════════════ */
-
+/* Chat */
 function scrollChat() { const m = document.getElementById('chatMessages'); if (m) m.scrollTop = m.scrollHeight; }
-
 function addMsg(text, isUser) {
   const m = document.getElementById('chatMessages');
   if (!m) return;
@@ -942,7 +911,6 @@ function addMsg(text, isUser) {
   m.appendChild(d);
   scrollChat();
 }
-
 function showThinking() {
   const m = document.getElementById('chatMessages');
   if (!m) return;
@@ -953,12 +921,10 @@ function showThinking() {
   m.appendChild(d);
   scrollChat();
 }
-
 function removeThinking() {
   const el = document.getElementById('chatThinking');
   if (el) el.remove();
 }
-
 function toggleChat() {
   const p = document.getElementById('chatPanel');
   const b = document.getElementById('chatFloatingBtn');
@@ -969,9 +935,6 @@ function toggleChat() {
     scrollChat();
   }
 }
-
-
-
 function sendChat() {
   const inp = document.getElementById('chatInput');
   const q = inp.value.trim();
@@ -989,27 +952,16 @@ function sendChat() {
     scrollChat();
   }, 300 + Math.random() * 400);
 }
-
 function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 function getDataForYear(yr, type) {
-  if (type === 'church' || type === 'both') {
-    const c = S.cData[yr] || [];
-    if (type === 'church') return c;
-  }
-  if (type === 'school' || type === 'both') {
-    const s = S.sData[yr] || [];
-    if (type === 'school') return s;
-  }
+  if (type === 'church' || type === 'both') { const c = S.cData[yr] || []; if (type === 'church') return c; }
+  if (type === 'school' || type === 'both') { const s = S.sData[yr] || []; if (type === 'school') return s; }
   return (S.cData[yr] || []).concat(S.sData[yr] || []);
 }
-
 function fmtNum(n) { return (n || 0).toLocaleString(); }
-
 function pct(a, t) { return t ? Math.round(a / t * 100) : 0; }
-
 function statusSummary(rows, label) {
   if (!rows.length) return `No ${label} data loaded.`;
   const a = rows.filter(r => getSt(r) === 'Audited').length;
@@ -1026,14 +978,10 @@ function statusSummary(rows, label) {
 
 function processQuery(q) {
   const lq = q.toLowerCase().trim();
-
-  const refChurch = /\b(church|gereja|gereja)\b/.test(lq);
+  const refChurch = /\b(church|gereja)\b/.test(lq);
   const refSchool = /\b(school|sekolah)\b/.test(lq);
   const type = refChurch && !refSchool ? 'church' : refSchool && !refChurch ? 'school' : 'both';
-
   const matchedYears = [...lq.matchAll(/\b(202[3-6])\b/g)].map(m => parseInt(m[1]));
-
-  // Detect year RANGES like "2023 - 2025" or "2023 to 2025"
   const yrRange = lq.match(/\b(202[3-6])\s*[-–to]+\s*(202[3-6])\b/);
   if (yrRange) {
     const start = parseInt(yrRange[1]), end = parseInt(yrRange[2]);
@@ -1041,7 +989,6 @@ function processQuery(q) {
       if (!matchedYears.includes(y)) matchedYears.push(y);
     }
   }
-
   const years = matchedYears.length > 0 ? matchedYears.sort() : (() => {
     if (/\b(latest|current|this.?year|terkini|semasa|tahun.?ini)\b/.test(lq)) return [S.year];
     if (/\b(all|semua|setiap)\b/.test(lq) && !/\bspecific|khusus/.test(lq)) return YEARS;
@@ -1063,7 +1010,7 @@ function processQuery(q) {
   const wantsTrend = /\b(trend|pattern|improvement|decline|peningkatan|penurunan|over.?the.?years|sepanjang)\b/.test(lq);
   const wantsTypeCompare = /\b(church.*vs.*school|school.*vs.*church|compare.*type|banding.*jenis|gereja.*sekolah|sekolah.*gereja)\b/.test(lq) || (/\b(compare|banding)\b/.test(lq) && /\b(church|school|gereja|sekolah)\b/.test(lq) && /\b(type|jenis)\b/.test(lq));
   const wantsBestYear = /\b(best|worst|highest|lowest|top.?year|terbaik|terburuk|tertinggi|terendah|paling.?tinggi|paling.?rendah)\b/.test(lq) && /\b(year|tahun|completion|rate|siap|peratus)\b/.test(lq);
-  const wantsAvgFund = /\b(average|avg|mean|mean|purata|rata.?rata)\b/.test(lq) && /\b(fund|balance|dana|baki)\b/.test(lq);
+  const wantsAvgFund = /\b(average|avg|mean|purata|rata.?rata)\b/.test(lq) && /\b(fund|balance|dana|baki)\b/.test(lq);
   const wantsDataQuality = /\b(missing|incomplete|data.?quality|no.?data|empty|tiada.?data|kualiti.?data|lengkap)\b/.test(lq);
   const wantsWilayah = /\b(wilayah|region)\b/.test(lq) && !wantsBreakdown && !wantsRanking;
   const wantsDaerah = /\bdaerah\b/.test(lq) && !wantsBreakdown && !wantsRanking;
@@ -1071,12 +1018,10 @@ function processQuery(q) {
   const statusWIP = /\b(wip|work.?in.?progress|dalam.?proses|sedang|berjalan)\b/.test(lq);
   const statusPend = /\b(pending|waiting|not.?start|tertunda|menunggu|belum|yet.?submitted|not.?submitted|missing|belum.?dihantar|belum.?submit)\b/.test(lq) && !/\b(wip|proses)\b/.test(lq);
 
-  // ── GREETINGS ──
   if (greets) {
     return '👋 Hai! Saya <strong>Auditor AI</strong>, pembantu data audit SAB Mission. Saya boleh jawab soalan tentang kiraan status, baki dana, kadar siap, pecahan wilayah/daerah, perbandingan tahun, analisis bank, kutipan laporan, dan banyak lagi. <em>(I can answer in English too!)</em>';
   }
 
-  // ── HELP ──
   if (wantsHelp) {
     return '<strong>📌 Contoh soalan:</strong><br>' +
       '• "Berapa banyak gereja yang WIP?"<br>' +
@@ -1096,7 +1041,6 @@ function processQuery(q) {
       '• "Trend analysis for all years"';
   }
 
-  // ── SUMMARY ──
   if (wantsSummary || (!wantsCount && !wantsFund && !wantsBreakdown && !wantsCompare && !wantsList && !wantsBank && !wantsWilayah && !wantsDaerah && !greets && !wantsHelp)) {
     let out = '<strong>📊 Ringkasan Audit</strong><br><br>';
     const showType = type;
@@ -1114,7 +1058,6 @@ function processQuery(q) {
     return out;
   }
 
-  // ── COMPARE ──
   if (wantsCompare) {
     let out = '<strong>📈 Perbandingan Tahun</strong><br><br>';
     const yrs = years.length >= 2 ? years : YEARS;
@@ -1132,27 +1075,21 @@ function processQuery(q) {
     return out;
   }
 
-  // ── RANKING (most/least by wilayah/daerah) ──
   if (wantsRanking) {
     const isWil = /\b(wilayah|region)\b/.test(lq);
     const isDaer = /\bdaerah\b/.test(lq);
     const groupKey = isWil ? 'wilayah' : isDaer ? 'daerah' : 'wilayah';
     const groupLabel = groupKey === 'wilayah' ? 'Wilayah' : 'Daerah';
-
     let metric = 'pending';
     if (statusAudit) metric = 'audited';
     else if (statusWIP) metric = 'wip';
-
     const sortDesc = /\b(most|top|highest|terbanyak|tertinggi|paling)\b/.test(lq);
-
     let allRows = [];
     years.forEach(yr => {
       if (type === 'both' || type === 'church') allRows = allRows.concat(S.cData[yr] || []);
       if (type === 'both' || type === 'school') allRows = allRows.concat(S.sData[yr] || []);
     });
-
     if (!allRows.length) return `Tiada data untuk tahun-tahun tersebut.`;
-
     const groups = {};
     allRows.forEach(r => {
       const g = getVal(r, groupKey) || 'Tidak diketahui';
@@ -1163,18 +1100,14 @@ function processQuery(q) {
       else if (s === 'WIP') groups[g].w++;
       else groups[g].p++;
     });
-
-    const entries = Object.entries(groups).map(([name, d]) => ({ name, ...d, m: d[metric[0]] }));
-    entries.sort((a, b) => sortDesc ? b[metric[0]] - a[metric[0]] : a[metric[0]] - b[metric[0]]);
-
+    const entries = Object.entries(groups).map(([name, d]) => ({ name, ...d }));
+    entries.sort((a, b) => sortDesc ? b[metric] - a[metric] : a[metric] - b[metric]);
     const metricLabel = metric === 'audited' ? 'Siap' : metric === 'wip' ? 'WIP' : 'Tertunda';
     const direction = sortDesc ? 'terbanyak' : 'tersedikit';
-
     let out = `<strong>🏆 ${groupLabel} dengan ${metricLabel} ${direction}</strong><br><br>`;
-    const maxShow = 10;
-    entries.slice(0, maxShow).forEach((e, i) => {
+    entries.slice(0, 10).forEach((e, i) => {
       const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
-      out += `${medal} <strong>${e.name}</strong> — ${e[metric[0]]} ${metricLabel.toLowerCase()}`;
+      out += `${medal} <strong>${e.name}</strong> — ${e[metric]} ${metricLabel.toLowerCase()}`;
       if (metric !== 'audited') out += ` (daripada ${e.t} jumlah)`;
       out += `<br>`;
     });
@@ -1182,7 +1115,6 @@ function processQuery(q) {
     return out;
   }
 
-  // ── BREAKDOWN ──
   if (wantsBreakdown || wantsWilayah) {
     const yr = years[0];
     let rows = [];
@@ -1207,7 +1139,6 @@ function processQuery(q) {
     return out;
   }
 
-  // ── DAERAH ──
   if (wantsDaerah) {
     const yr = years[0];
     let rows = [];
@@ -1228,7 +1159,6 @@ function processQuery(q) {
     return out;
   }
 
-  // ── BANK ──
   if (wantsBank) {
     const yr = years[0];
     let rows = [];
@@ -1244,7 +1174,6 @@ function processQuery(q) {
     return out;
   }
 
-  // ── COUNT ──
   if (wantsCount) {
     let out = '';
     const showType = type;
@@ -1279,7 +1208,6 @@ function processQuery(q) {
     return out || 'Tiada data yang sepadan.';
   }
 
-  // ── FUND ──
   if (wantsFund) {
     let out = '<strong>💰 Baki Dana</strong><br><br>';
     const showType = type;
@@ -1302,35 +1230,30 @@ function processQuery(q) {
     return out || 'Tiada data dana.';
   }
 
-  // ── LIST ──
   if (wantsList) {
     const yr = years[0];
     let rows = [];
     if (type === 'both' || type === 'church') rows = rows.concat(S.cData[yr] || []);
     if (type === 'both' || type === 'school') rows = rows.concat(S.sData[yr] || []);
     if (!rows.length) return `Tiada data untuk ${yr}.`;
-
     let filtered = rows;
     if (statusAudit) filtered = filtered.filter(r => getSt(r) === 'Audited');
     else if (statusWIP) filtered = filtered.filter(r => getSt(r) === 'WIP');
     else if (statusPend) filtered = filtered.filter(r => getSt(r) === 'Pending');
-
     const nameKey = type === 'school' || refSchool ? 'school' : 'gereja';
     const label = statusAudit ? 'Siap' : statusWIP ? 'WIP' : statusPend ? 'Tertunda' : 'Semua';
     let out = `<strong>${label} (${yr})</strong><br>`;
-    const maxShow = 10;
-    filtered.slice(0, maxShow).forEach(r => {
+    filtered.slice(0, 10).forEach(r => {
       const n = getVal(r, nameKey) || getVal(r, 'school') || getVal(r, 'gereja') || 'Tidak diketahui';
       const s = getSt(r);
       const f = getFund(r);
       out += `• ${n} — ${s === 'WIP' ? 'Dalam Proses' : s === 'Pending' ? 'Tertunda' : 'Siap'}` + (f ? ` (${fRM(f)})` : '') + '<br>';
     });
-    if (filtered.length > maxShow) out += `<br>… dan ${filtered.length - maxShow} lagi.`;
+    if (filtered.length > 10) out += `<br>… dan ${filtered.length - 10} lagi.`;
     if (!filtered.length) out = `Tiada kemudahan ${label.toLowerCase()} untuk ${yr}.`;
     return out;
   }
 
-  // ── COLLECTION ANALYSIS ──
   if (wantsCollection) {
     let out = '<strong>📁 Analisis Kutipan Laporan</strong><br><br>';
     years.forEach(yr => {
@@ -1352,7 +1275,6 @@ function processQuery(q) {
     return out || 'Tiada data kutipan laporan.';
   }
 
-  // ── TREND ANALYSIS ──
   if (wantsTrend) {
     let out = '<strong>📈 Analisis Tren</strong><br><br>';
     ['church', 'school'].forEach(t => {
@@ -1374,7 +1296,6 @@ function processQuery(q) {
     return out || 'Tiada data untuk analisis tren.';
   }
 
-  // ── TYPE COMPARISON (Church vs School) ──
   if (wantsTypeCompare) {
     let out = '<strong>⚖️ Perbandingan Gereja vs Sekolah</strong><br><br>';
     years.forEach(yr => {
@@ -1384,15 +1305,11 @@ function processQuery(q) {
       out += `<strong>${yr}</strong><br>`;
       if (cRows.length) {
         const cA = cRows.filter(r => getSt(r) === 'Audited').length;
-        const cW = cRows.filter(r => getSt(r) === 'WIP').length;
-        const cP = cRows.filter(r => getSt(r) === 'Pending').length;
         const cF = cRows.reduce((s, r) => s + (getFund(r) || 0), 0);
         out += `<div class="data-row"><span>⛪ Gereja (${cRows.length})</span><span class="data-val">${pct(cA, cRows.length)}% siap | RM ${fmtNum(Math.round(cF))}</span></div>`;
       }
       if (sRows.length) {
         const sA = sRows.filter(r => getSt(r) === 'Audited').length;
-        const sW = sRows.filter(r => getSt(r) === 'WIP').length;
-        const sP = sRows.filter(r => getSt(r) === 'Pending').length;
         const sF = sRows.reduce((s, r) => s + (getFund(r) || 0), 0);
         out += `<div class="data-row"><span>🏫 Sekolah (${sRows.length})</span><span class="data-val">${pct(sA, sRows.length)}% siap | RM ${fmtNum(Math.round(sF))}</span></div>`;
       }
@@ -1401,7 +1318,6 @@ function processQuery(q) {
     return out || 'Tiada data untuk perbandingan.';
   }
 
-  // ── BEST/WORST YEAR ──
   if (wantsBestYear) {
     let out = '<strong>🏆 Analisis Tahun Terbaik</strong><br><br>';
     ['church', 'school'].forEach(t => {
@@ -1422,7 +1338,6 @@ function processQuery(q) {
     return out || 'Tiada data untuk analisis tahun.';
   }
 
-  // ── AVERAGE FUND ──
   if (wantsAvgFund) {
     let out = '<strong>💰 Purata Baki Dana</strong><br><br>';
     years.forEach(yr => {
@@ -1443,7 +1358,6 @@ function processQuery(q) {
     return out || 'Tiada data dana.';
   }
 
-  // ── DATA QUALITY ──
   if (wantsDataQuality) {
     let out = '<strong>🔍 Kualiti Data</strong><br><br>';
     years.forEach(yr => {
@@ -1472,5 +1386,3 @@ function processQuery(q) {
 renderYrs();
 loadAll();
 </script>
-</body>
-</html>
