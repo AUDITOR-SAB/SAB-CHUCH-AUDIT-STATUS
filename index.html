@@ -634,7 +634,7 @@ function fetchCSV(id, gid, label) {
         S.debugLog[label].fullFirstRow = rows[hIdx + 1] || null;
         const isChurchSheet = label.startsWith('church');
           const EXPECTED_ORDER = isChurchSheet
-            ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection','tithes','offerings']
+            ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','tithes','offerings','status','report collection']
             : ['school','bank record','closing fund bal','status','school pic','report collection'];
         for (let i = 0; i < EXPECTED_ORDER.length && i < headers.length; i++) {
           if (headers[i] === '') headers[i] = EXPECTED_ORDER[i];
