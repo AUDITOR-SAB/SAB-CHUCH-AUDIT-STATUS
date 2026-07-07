@@ -865,15 +865,26 @@ function renderSchool(m) {
 
 function topFunds(rows) {
   const key = S.mode === 'church' ? 'gereja' : 'school';
-  const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a, b) => b.f - a.f).slice(0, 8);
+  const fMap = {};
+  rows.forEach(r => {
+    const n = getVal(r, key) || '—';
+    const f = getFund(r); if (f !== null && f > 0) fMap[n] = (fMap[n] || 0) + f;
+  });
+  const data = Object.entries(fMap).map(([n,f]) => ({n,f})).sort((a,b) => b.f - a.f).slice(0, 8);
   if (!data.length) return '';
   return `<div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Top Fund Balances</div><div class="card-s">Highest closing balances ${yrLabel()}</div><div class="cw" style="height:200px"><canvas id="cFund"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Leaders</div><div class="card-s">Top 8 by closing balance</div>${data.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval">${fRM(d.f)}</span></div>`).join('')}</div></div>`;
 }
 function topGivings(rows) {
   if (S.mode !== 'church') return '';
   const key = 'gereja';
-  const tData = rows.map(r => ({ n: getVal(r, key) || '—', v: getTithes(r) })).filter(d => d.v !== null && d.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
-  const oData = rows.map(r => ({ n: getVal(r, key) || '—', v: getOfferings(r) })).filter(d => d.v !== null && d.v > 0).sort((a, b) => b.v - a.v).slice(0, 8);
+  const tMap = {}, oMap = {};
+  rows.forEach(r => {
+    const n = getVal(r, key) || '—';
+    const tv = getTithes(r); if (tv !== null && tv > 0) tMap[n] = (tMap[n] || 0) + tv;
+    const ov = getOfferings(r); if (ov !== null && ov > 0) oMap[n] = (oMap[n] || 0) + ov;
+  });
+  const tData = Object.entries(tMap).map(([n,v]) => ({n,v})).sort((a,b) => b.v - a.v).slice(0, 8);
+  const oData = Object.entries(oMap).map(([n,v]) => ({n,v})).sort((a,b) => b.v - a.v).slice(0, 8);
   if (!tData.length && !oData.length) return '';
   return `<div class="g2" style="margin-top:4px">
     <div class="card"><div class="card-t" style="color:var(--cyan)">🔟 Top Tithes</div><div class="card-s">Highest tithes submitted ${yrLabel()}</div>${tData.length ? tData.map((d,i) => `<div class="frow"><span class="fnum">${i+1}</span><span class="fname">${d.n}</span><span class="fval" style="color:var(--cyan)">${fRM(d.v)}</span></div>`).join('') : '<div style="color:var(--muted);padding:16px;font-size:12px;font-weight:600">No tithes data</div>'}</div>
