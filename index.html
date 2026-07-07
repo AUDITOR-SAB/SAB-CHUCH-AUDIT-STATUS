@@ -624,7 +624,7 @@ function fetchCSV(id, gid, label) {
           let score = 0; KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore };
+        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore, headers, sampleRow: rows[hIdx + 1] ? rows[hIdx + 1].slice(0, 12) : null };
         if (hIdx === -1 || bestScore < 2) { ok([]); return; }
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
         const isChurchSheet = label.startsWith('church');
