@@ -250,7 +250,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 .rv-kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px;margin-bottom:32px}
 @media(max-width:900px){.rv-kpi-grid{grid-template-columns:repeat(3,1fr);gap:14px}}
 @media(max-width:480px){.rv-kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}}
-.rv-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px 24px;box-shadow:0 4px 6px rgba(15,23,42,0.02);position:relative;overflow:hidden}
+.rv-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px 18px;box-shadow:0 4px 6px rgba(15,23,42,0.02);position:relative;overflow:hidden}
 .rv-kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
 .rv-kpi.b-gray::before{background:#94a3b8}
 .rv-kpi.b-blue::before{background:#3b82f6}
@@ -259,7 +259,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 .rv-kpi.b-cyan::before{background:#06b6d4}
 .rv-kpi.b-pink::before{background:#f472b6}
 .rv-kpi-lbl{font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:0.8px}
-.rv-kpi-val{font-size:36px;font-weight:800;color:#0f172a;line-height:1}
+.rv-kpi-val{font-size:clamp(15px,2.2vw,24px);font-weight:800;color:#0f172a;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rv-kpi-val.green{color:#10b981}
 .rv-kpi-val.blue{color:#3b82f6}
 .rv-kpi-val.red{color:#ef4444}
