@@ -624,11 +624,14 @@ function fetchCSV(id, gid, label) {
           let score = 0; KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore };
+        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore, csvUrl: csvUrl(id, gid) };
         if (hIdx === -1 || bestScore < 2) { ok([]); return; }
+        const rawHeaderRow = rows[hIdx].map(h => h || '').slice(0, 12);
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
         S.debugLog[label].headers = headers;
+        S.debugLog[label].rawHeaderRow = rawHeaderRow;
         S.debugLog[label].sampleRow = rows[hIdx + 1] ? rows[hIdx + 1].slice(0, 12) : null;
+        S.debugLog[label].fullFirstRow = rows[hIdx + 1] || null;
         const isChurchSheet = label.startsWith('church');
           const EXPECTED_ORDER = isChurchSheet
             ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection','tithes','offerings']
@@ -644,6 +647,7 @@ function fetchCSV(id, gid, label) {
           headers.forEach((h, j) => { if (h) obj[h] = (row[j] != null ? row[j].toString().trim() : ''); });
           data.push(obj);
         }
+        S.debugLog[label].allRowKeys = data.length ? Object.keys(data[0]) : [];
         const wilKey = headers.find(h => h.includes('wilayah'));
         if (wilKey) {
           let lastWil = '';
