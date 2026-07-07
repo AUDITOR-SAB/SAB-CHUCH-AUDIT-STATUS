@@ -617,16 +617,18 @@ function fetchCSV(id, gid, label) {
       complete: r => {
         const rows = r.data;
         if (!rows.length) { S.debugLog[label] = { error: 'No rows' }; ok([]); return; }
-        const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic'];
+        const KEYWORDS = ['wilayah','daerah','gereja','school','status','bank','fund','balance','type','collection','pic','tithes','tithe','offerings','offering'];
         let hIdx = -1, bestScore = 0;
         for (let i = 0; i < Math.min(rows.length, 8); i++) {
           const str = rows[i].map(c => (c||'').toString().toLowerCase()).join(' ');
           let score = 0; KEYWORDS.forEach(kw => { if (str.includes(kw)) score++; });
           if (score > bestScore) { bestScore = score; hIdx = i; }
         }
-        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore, headers, sampleRow: rows[hIdx + 1] ? rows[hIdx + 1].slice(0, 12) : null };
+        S.debugLog[label] = { totalRowsFetched: rows.length, hIdx, bestScore };
         if (hIdx === -1 || bestScore < 2) { ok([]); return; }
         const headers = rows[hIdx].map(h => (h || '').toString().toLowerCase().trim());
+        S.debugLog[label].headers = headers;
+        S.debugLog[label].sampleRow = rows[hIdx + 1] ? rows[hIdx + 1].slice(0, 12) : null;
         const isChurchSheet = label.startsWith('church');
           const EXPECTED_ORDER = isChurchSheet
             ? ['wilayah','daerah','gereja','type','bank record','closing fund bal','status','report collection','tithes','offerings']
