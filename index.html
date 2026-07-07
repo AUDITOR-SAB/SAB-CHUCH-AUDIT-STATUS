@@ -492,18 +492,21 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
   <button id="chatFloatingBtn" onclick="toggleChat()" title="Ask AI about audit data">🤖</button>
   <div id="chatPanel">
     <div id="chatHeader">
-      <div class="title"><span>🧠</span> Data AI Assistant</div>
+      <div class="title"><span>🧠</span> Auditor AI</div>
       <button class="close-btn" onclick="toggleChat()">✕</button>
     </div>
 
     <div id="chatMessages">
       <div class="chat-msg chat-bot">
-        👋 Hi! I can answer questions about the SAB Mission audit data.<br><br>
+        👋 Hi! I'm <strong>Auditor AI</strong>, your SAB Mission audit assistant.<br><br>
         <strong>Try asking:</strong><br>
         • "How many churches are WIP?"<br>
         • "What's the total fund balance for 2025?"<br>
         • "Show breakdown by wilayah"<br>
         • "Compare 2024 and 2025 completion"<br>
+        • "Which year had the highest completion rate?"<br>
+        • "What's the church vs school audit comparison?"<br>
+        • "How many reports are still pending collection?"<br>
         • "Give me a summary"
       </div>
     </div>
@@ -1027,6 +1030,12 @@ function processQuery(q) {
   const wantsList = /\b(list|show|which|what are|tell me|senarai|tunjuk|papar|nama)\b/.test(lq);
   const wantsRanking = /\b(most|least|top|highest|lowest|bottom|paling|tertinggi|terendah|terbanyak|tersedikit)\b/.test(lq);
   const wantsBank = /\bbank\b/.test(lq);
+  const wantsCollection = /\b(collection|report.?collection|kutipan|laporan.?dikutip|pick.?up|ambil)\b/.test(lq);
+  const wantsTrend = /\b(trend|pattern|improvement|decline|peningkatan|penurunan|over.?the.?years|sepanjang)\b/.test(lq);
+  const wantsTypeCompare = /\b(church.*vs.*school|school.*vs.*church|compare.*type|banding.*jenis|gereja.*sekolah|sekolah.*gereja)\b/.test(lq) || (/\b(compare|banding)\b/.test(lq) && /\b(church|school|gereja|sekolah)\b/.test(lq) && /\b(type|jenis)\b/.test(lq));
+  const wantsBestYear = /\b(best|worst|highest|lowest|top.?year|terbaik|terburuk|tertinggi|terendah|paling.?tinggi|paling.?rendah)\b/.test(lq) && /\b(year|tahun|completion|rate|siap|peratus)\b/.test(lq);
+  const wantsAvgFund = /\b(average|avg|mean|mean|purata|rata.?rata)\b/.test(lq) && /\b(fund|balance|dana|baki)\b/.test(lq);
+  const wantsDataQuality = /\b(missing|incomplete|data.?quality|no.?data|empty|tiada.?data|kualiti.?data|lengkap)\b/.test(lq);
   const wantsWilayah = /\b(wilayah|region)\b/.test(lq) && !wantsBreakdown && !wantsRanking;
   const wantsDaerah = /\bdaerah\b/.test(lq) && !wantsBreakdown && !wantsRanking;
   const statusAudit = /\b(audited|completed?|selesai|diaudit|lengkap|sudah)\b/.test(lq) && !/\b(pending|wip|tertunda|proses|submitted|hantar)\b/.test(lq);
@@ -1035,7 +1044,7 @@ function processQuery(q) {
 
   // ── GREETINGS ──
   if (greets) {
-    return '👋 Hai! Saya pembantu data SAB Mission. Saya boleh jawab soalan tentang data audit — kiraan status, baki dana, kadar siap, atau pecahan mengikut wilayah dan daerah. <em>(I can answer in English too!)</em>';
+    return '👋 Hai! Saya <strong>Auditor AI</strong>, pembantu data audit SAB Mission. Saya boleh jawab soalan tentang kiraan status, baki dana, kadar siap, pecahan wilayah/daerah, perbandingan tahun, analisis bank, kutipan laporan, dan banyak lagi. <em>(I can answer in English too!)</em>';
   }
 
   // ── HELP ──
@@ -1049,7 +1058,13 @@ function processQuery(q) {
       '• "Senarai audit yang tertunda"<br>' +
       '• "Wilayah paling banyak belum submit 2023-2025"<br>' +
       '• "Beri saya ringkasan"<br>' +
-      '• "How many churches are audited?"';
+      '• "How many churches are audited?"<br>' +
+      '• "Comparison between church and school"<br>' +
+      '• "Which year had the best completion rate?"<br>' +
+      '• "How many reports still need collection?"<br>' +
+      '• "What is the average fund per facility?"<br>' +
+      '• "Bank account summary for 2025"<br>' +
+      '• "Trend analysis for all years"';
   }
 
   // ── SUMMARY ──
@@ -1286,7 +1301,143 @@ function processQuery(q) {
     return out;
   }
 
-  return 'Maaf, saya tidak faham soalan itu. Cuba tanya tentang kiraan, baki dana, kadar siap, atau pecahan wilayah. Taip "bantuan" untuk contoh. <em>(I also understand English!)</em>';
+  // ── COLLECTION ANALYSIS ──
+  if (wantsCollection) {
+    let out = '<strong>📁 Analisis Kutipan Laporan</strong><br><br>';
+    years.forEach(yr => {
+      ['church', 'school'].forEach(t => {
+        if (type !== 'both' && type !== t) return;
+        const rows = t === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+        if (!rows.length) return;
+        const collected = rows.filter(r => /collect/i.test(getRC(r))).length;
+        const pending = rows.filter(r => /pending/i.test(getRC(r))).length;
+        const none = rows.filter(r => !getRC(r)).length;
+        const label = t === 'church' ? '⛪ Gereja' : '🏫 Sekolah';
+        out += `<strong>${label} ${yr}</strong> (${rows.length} jumlah)<br>`;
+        out += `<div class="data-row"><span>✅ Telah dikutip</span><span class="data-val">${collected} (${pct(collected, rows.length)}%)</span></div>`;
+        if (pending) out += `<div class="data-row"><span>⏳ Menunggu ambilan</span><span class="data-val">${pending} (${pct(pending, rows.length)}%)</span></div>`;
+        if (none) out += `<div class="data-row"><span>⬜ Tiada rekod</span><span class="data-val">${none} (${pct(none, rows.length)}%)</span></div>`;
+        out += '<br>';
+      });
+    });
+    return out || 'Tiada data kutipan laporan.';
+  }
+
+  // ── TREND ANALYSIS ──
+  if (wantsTrend) {
+    let out = '<strong>📈 Analisis Tren</strong><br><br>';
+    ['church', 'school'].forEach(t => {
+      if (type !== 'both' && type !== t) return;
+      const label = t === 'church' ? '⛪ Gereja' : '🏫 Sekolah';
+      let prevPct = null;
+      out += `<strong>${label}</strong><br>`;
+      const activeYears = YEARS.filter(yr => (t === 'church' ? S.cData[yr] : S.sData[yr])?.length);
+      activeYears.forEach(yr => {
+        const rows = t === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+        const a = rows.filter(r => getSt(r) === 'Audited').length;
+        const curPct = pct(a, rows.length);
+        const arrow = prevPct !== null ? (curPct > prevPct ? ' 📈' : curPct < prevPct ? ' 📉' : ' ➡️') : '';
+        out += `<div class="data-row"><span>${yr}</span><span class="data-val">${curPct}%${arrow}</span></div>`;
+        prevPct = curPct;
+      });
+      out += '<br>';
+    });
+    return out || 'Tiada data untuk analisis tren.';
+  }
+
+  // ── TYPE COMPARISON (Church vs School) ──
+  if (wantsTypeCompare) {
+    let out = '<strong>⚖️ Perbandingan Gereja vs Sekolah</strong><br><br>';
+    years.forEach(yr => {
+      const cRows = S.cData[yr] || [];
+      const sRows = S.sData[yr] || [];
+      if (!cRows.length && !sRows.length) return;
+      out += `<strong>${yr}</strong><br>`;
+      if (cRows.length) {
+        const cA = cRows.filter(r => getSt(r) === 'Audited').length;
+        const cW = cRows.filter(r => getSt(r) === 'WIP').length;
+        const cP = cRows.filter(r => getSt(r) === 'Pending').length;
+        const cF = cRows.reduce((s, r) => s + (getFund(r) || 0), 0);
+        out += `<div class="data-row"><span>⛪ Gereja (${cRows.length})</span><span class="data-val">${pct(cA, cRows.length)}% siap | RM ${fmtNum(Math.round(cF))}</span></div>`;
+      }
+      if (sRows.length) {
+        const sA = sRows.filter(r => getSt(r) === 'Audited').length;
+        const sW = sRows.filter(r => getSt(r) === 'WIP').length;
+        const sP = sRows.filter(r => getSt(r) === 'Pending').length;
+        const sF = sRows.reduce((s, r) => s + (getFund(r) || 0), 0);
+        out += `<div class="data-row"><span>🏫 Sekolah (${sRows.length})</span><span class="data-val">${pct(sA, sRows.length)}% siap | RM ${fmtNum(Math.round(sF))}</span></div>`;
+      }
+      out += '<br>';
+    });
+    return out || 'Tiada data untuk perbandingan.';
+  }
+
+  // ── BEST/WORST YEAR ──
+  if (wantsBestYear) {
+    let out = '<strong>🏆 Analisis Tahun Terbaik</strong><br><br>';
+    ['church', 'school'].forEach(t => {
+      if (type !== 'both' && type !== t) return;
+      const label = t === 'church' ? '⛪ Gereja' : '🏫 Sekolah';
+      const data = YEARS.map(yr => {
+        const rows = t === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+        if (!rows.length) return null;
+        return { yr, pct: pct(rows.filter(r => getSt(r) === 'Audited').length, rows.length) };
+      }).filter(Boolean);
+      if (data.length < 1) return;
+      data.sort((a, b) => b.pct - a.pct);
+      out += `<strong>${label}</strong><br>`;
+      out += `<div class="data-row"><span>🥇 Terbaik</span><span class="data-val">${data[0].yr} (${data[0].pct}%)</span></div>`;
+      out += `<div class="data-row"><span>🥉 Terendah</span><span class="data-val">${data[data.length-1].yr} (${data[data.length-1].pct}%)</span></div>`;
+      out += '<br>';
+    });
+    return out || 'Tiada data untuk analisis tahun.';
+  }
+
+  // ── AVERAGE FUND ──
+  if (wantsAvgFund) {
+    let out = '<strong>💰 Purata Baki Dana</strong><br><br>';
+    years.forEach(yr => {
+      ['church', 'school'].forEach(t => {
+        if (type !== 'both' && type !== t) return;
+        const rows = t === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+        if (!rows.length) return;
+        const withFund = rows.filter(r => getFund(r) !== null);
+        const totalFund = withFund.reduce((s, r) => s + (getFund(r) || 0), 0);
+        const avg = withFund.length ? totalFund / withFund.length : 0;
+        const label = t === 'church' ? '⛪ Gereja' : '🏫 Sekolah';
+        out += `<div class="data-row"><span>${label} ${yr}</span><span class="data-val">RM ${fmtNum(Math.round(avg))}</span></div>`;
+        if (withFund.length < rows.length) {
+          out += `<div style="font-size:11px;color:var(--muted2);margin:-4px 0 6px 0">(${rows.length - withFund.length} kemudahan tanpa data dana)</div>`;
+        }
+      });
+    });
+    return out || 'Tiada data dana.';
+  }
+
+  // ── DATA QUALITY ──
+  if (wantsDataQuality) {
+    let out = '<strong>🔍 Kualiti Data</strong><br><br>';
+    years.forEach(yr => {
+      ['church', 'school'].forEach(t => {
+        if (type !== 'both' && type !== t) return;
+        const rows = t === 'church' ? (S.cData[yr] || []) : (S.sData[yr] || []);
+        if (!rows.length) return;
+        const noFund = rows.filter(r => getFund(r) === null).length;
+        const noBank = rows.filter(r => !getVal(r, 'bank record', 'bank')).length;
+        const noStatus = rows.filter(r => !getSt(r)).length;
+        const label = t === 'church' ? '⛪ Gereja' : '🏫 Sekolah';
+        out += `<strong>${label} ${yr}</strong> (${rows.length} rekod)<br>`;
+        if (noFund) out += `<div class="data-row"><span>⚠️ Tiada data dana</span><span class="data-val">${noFund} (${pct(noFund, rows.length)}%)</span></div>`;
+        if (noBank) out += `<div class="data-row"><span>⚠️ Tiada rekod bank</span><span class="data-val">${noBank} (${pct(noBank, rows.length)}%)</span></div>`;
+        if (noStatus) out += `<div class="data-row"><span>⚠️ Tiada status</span><span class="data-val">${noStatus} (${pct(noStatus, rows.length)}%)</span></div>`;
+        if (!noFund && !noBank && !noStatus) out += `<div class="data-row"><span>✅ Semua lengkap</span></div>`;
+        out += '<br>';
+      });
+    });
+    return out || 'Tiada data.';
+  }
+
+  return 'Maaf, saya tidak faham soalan itu. Cuba tanya tentang kiraan, baki dana, kadar siap, pecahan wilayah, perbandingan, tren, atau kualiti data. Taip "bantuan" untuk contoh. <em>(I also understand English!)</em>';
 }
 
 renderYrs();
