@@ -80,7 +80,7 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .ac-gold{background:linear-gradient(120deg,var(--gold),#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .page-sub{color:var(--muted);font-size:13px;font-weight:600}
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:26px}
-.kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:pointer}
 .kpi:hover{transform:translateY(-2px);box-shadow:var(--sh)}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
 .kpi.cb::before{background:linear-gradient(90deg,var(--blue2),transparent)}
@@ -145,6 +145,33 @@ main{max-width:1500px;margin:0 auto;padding:32px 28px 80px;flex:1}
 .bc{background:rgba(96,165,250,.12);color:#93c5fd}
 .bn{background:rgba(239,68,68,.12);color:#fca5a5}
 .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:24px}
+/* Card Detail Modal */
+#cardDetailModal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto;padding:40px 20px}
+#cardDetailModal.open{display:flex;align-items:center;justify-content:center}
+.cd-wrap{width:100%;max-width:640px;background:#0c1a2e;border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.6);max-height:90vh;display:flex;flex-direction:column}
+.cd-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cd-hdr h3{font-size:18px;font-weight:800;color:var(--white)}
+.cd-hdr .cd-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+.cd-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;font-family:inherit}
+.cd-close:hover{color:var(--white);border-color:rgba(255,255,255,.25)}
+.cd-body{padding:18px 22px;overflow-y:auto;flex:1}
+.cd-body::-webkit-scrollbar{width:4px}
+.cd-body::-webkit-scrollbar-track{background:transparent}
+.cd-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
+.cd-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+.cd-sum-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center}
+.cd-sum-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
+.cd-sum-val{font-size:20px;font-weight:800;color:var(--off)}
+.cd-sum-val.green{color:var(--green)}.cd-sum-val.amber{color:var(--amber)}.cd-sum-val.red{color:var(--red)}.cd-sum-val.blue{color:var(--sky)}.cd-sum-val.gold{color:var(--gold)}
+.cd-table{width:100%;border-collapse:collapse;font-size:12px}
+.cd-table th{padding:9px 12px;text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);position:sticky;top:0}
+.cd-table td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--off);font-weight:500}
+.cd-table tr:last-child td{border-bottom:none}
+.cd-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.cd-empty{padding:24px;text-align:center;color:var(--muted);font-weight:600;font-size:13px}
+.cd-badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700}
+.cd-badge.g{background:rgba(16,185,129,.15);color:#4ade80}.cd-badge.y{background:rgba(245,158,11,.15);color:#fcd34d}.cd-badge.r{background:rgba(239,68,68,.15);color:#fca5a5}
+
 .wcard{background:var(--panel);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;cursor:pointer;transition:all .2s}
 .wcard:hover,.wcard.act{border-color:rgba(59,130,246,.45);background:rgba(59,130,246,.06);transform:translateY(-1px)}
 .wcard.act{box-shadow:0 0 0 1px rgba(59,130,246,.3)}
@@ -509,6 +536,19 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
   </div>
 </div>
 
+<div id="cardDetailModal">
+  <div class="cd-wrap">
+    <div class="cd-hdr">
+      <div>
+        <h3 id="cdTitle"></h3>
+        <div class="cd-sub" id="cdSub"></div>
+      </div>
+      <button class="cd-close" onclick="closeCardDetails()">✕</button>
+    </div>
+    <div class="cd-body" id="cdBody"></div>
+  </div>
+</div>
+
 <div id="chatWidget">
   <button id="chatFloatingBtn" onclick="toggleChat()" title="Ask about audit data">🤖</button>
   <div id="chatPanel">
@@ -714,13 +754,13 @@ function renderChurch(m) {
       <p class="page-sub">Tracking ${s.t} churches across SAB Mission · FY${S.year}${S.fWil ? ` &nbsp;·&nbsp; Filtered: <strong style="color:var(--white)">${S.fWil}</strong> <button onclick="fwil('')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit">✕ Clear</button>` : ''}</p>
     </div>
     <div class="kpi-row">
-      <div class="kpi cb"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
-      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
-      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-      <div class="kpi cp"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
-      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
+      <div class="kpi cb" onclick="showCardDetails('total')"><div class="kpi-ic">⛪</div><div class="kpi-lbl">Total Churches</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
+      <div class="kpi cg" onclick="showCardDetails('audited')"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca" onclick="showCardDetails('wip')"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr" onclick="showCardDetails('pending')"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
+      <div class="kpi co" onclick="showCardDetails('fund')"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi cp" onclick="showCardDetails('wilayah')"><div class="kpi-ic">📍</div><div class="kpi-lbl">Wilayah</div><div class="kpi-val">${wil.length}</div><div class="kpi-meta">${uniq(rows,'daerah').length} Daerah</div></div>
+      <div class="kpi ck" onclick="showCardDetails('report')"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
       <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
@@ -753,12 +793,12 @@ function renderSchool(m) {
       <p class="page-sub">Tracking ${s.t} SAB Mission schools · FY${S.year}</p>
     </div>
     <div class="kpi-row">
-      <div class="kpi cb"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
-      <div class="kpi cg"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-      <div class="kpi ca"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
-      <div class="kpi cr"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
-      <div class="kpi co"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
-      <div class="kpi ck"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
+      <div class="kpi cb" onclick="showCardDetails('total')"><div class="kpi-ic">🏫</div><div class="kpi-lbl">Total Schools</div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
+      <div class="kpi cg" onclick="showCardDetails('audited')"><div class="kpi-ic">✅</div><div class="kpi-lbl">Audited</div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ca" onclick="showCardDetails('wip')"><div class="kpi-ic">🔄</div><div class="kpi-lbl">Work in Progress</div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cr" onclick="showCardDetails('pending')"><div class="kpi-ic">⏳</div><div class="kpi-lbl">Pending</div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
+      <div class="kpi co" onclick="showCardDetails('fund')"><div class="kpi-ic">💰</div><div class="kpi-lbl">Fund Balance</div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">Closing FY${S.year}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
+      <div class="kpi ck" onclick="showCardDetails('report')"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
       <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">FY${S.year} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
@@ -815,6 +855,111 @@ function setYear(y) { S.year = y; S.page = 1; S.search = ''; S.fSt = ''; S.fWil 
 function srt(col) { if (S.sc === col) S.sd *= -1; else { S.sc = col; S.sd = 1; } renderAll(); }
 function fwil(w) { S.fWil = S.fWil === w ? '' : w; S.page = 1; renderAll(); if (w) { setTimeout(() => { const t = document.querySelector('.bar-list'); if (t) t.closest('.card')?.scrollIntoView({ behavior:'smooth', block:'start' }); }, 120); } }
 function escQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+/* Card Detail Popup */
+function showCardDetails(key) {
+  const rows = cur();
+  const s = stats(rows);
+  const modeLabel = S.mode === 'church' ? 'Church' : 'School';
+  document.getElementById('cdSub').textContent = `${modeLabel} · FY${S.year}`;
+  const body = document.getElementById('cdBody');
+  const title = document.getElementById('cdTitle');
+
+  if (key === 'total') {
+    title.textContent = S.mode === 'church' ? '⛪ All Churches' : '🏫 All Schools';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const otherKeys = S.mode === 'church' ? ['Wilayah','Daerah','Type'] : ['School PIC'];
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Total</div><div class="cd-sum-val blue">${s.t}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Audited</div><div class="cd-sum-val green">${s.a}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">WIP</div><div class="cd-sum-val amber">${s.w}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Pending</div><div class="cd-sum-val red">${s.p}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th><th>Daerah</th>' : '<th>PIC</th>'}<th>Status</th></tr></thead><tbody>
+    ${rows.length ? rows.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td><span class="cd-badge ${getSt(r)==='Audited'?'g':getSt(r)==='WIP'?'y':'r'}">${getSt(r)}</span></td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No records</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'audited') {
+    title.textContent = '✅ Audited Facilities';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const audited = rows.filter(r => getSt(r) === 'Audited');
+    const totalFund = audited.reduce((sum, r) => sum + (getFund(r) || 0), 0);
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Audited</div><div class="cd-sum-val green">${audited.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Completion</div><div class="cd-sum-val blue">${s.t ? Math.round(audited.length/s.t*100) : 0}%</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Fund</div><div class="cd-sum-val gold">${fRM(totalFund)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Avg Fund</div><div class="cd-sum-val gold">${fRM(audited.length ? totalFund/audited.length : 0)}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Bank</th><th>Fund</th></tr></thead><tbody>
+    ${audited.length ? audited.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No audited facilities</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'wip') {
+    title.textContent = '🔄 Work in Progress';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const wip = rows.filter(r => getSt(r) === 'WIP');
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">WIP</div><div class="cd-sum-val amber">${wip.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">% of Total</div><div class="cd-sum-val blue">${s.t ? Math.round(wip.length/s.t*100) : 0}%</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Bank</th><th>Fund</th></tr></thead><tbody>
+    ${wip.length ? wip.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No WIP facilities</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'pending') {
+    title.textContent = '⏳ Pending Audits';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const pend = rows.filter(r => getSt(r) === 'Pending');
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Pending</div><div class="cd-sum-val red">${pend.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">% of Total</div><div class="cd-sum-val blue">${s.t ? Math.round(pend.length/s.t*100) : 0}%</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th><th>Daerah</th>' : '<th>PIC</th>'}<th>Bank</th></tr></thead><tbody>
+    ${pend.length ? pend.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td>${bank(getBank(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No pending facilities</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'fund') {
+    title.textContent = '💰 Fund Balance Details';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const withFund = rows.filter(r => getFund(r) !== null).sort((a, b) => (getFund(b)||0) - (getFund(a)||0));
+    const totalFund = withFund.reduce((sum, r) => sum + (getFund(r)||0), 0);
+    const noFund = rows.length - withFund.length;
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Fund</div><div class="cd-sum-val gold">${fRM(totalFund)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Avg per Facility</div><div class="cd-sum-val gold">${fRM(withFund.length ? totalFund/withFund.length : 0)}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">With Data</div><div class="cd-sum-val green">${withFund.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">No Data</div><div class="cd-sum-val red">${noFund}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Bank</th><th style="text-align:right">Fund Balance</th></tr></thead><tbody>
+    ${withFund.length ? withFund.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${bank(getBank(r))}</td><td style="text-align:right;font-weight:800;color:var(--gold)">${fRM(getFund(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No fund data</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'wilayah' && S.mode === 'church') {
+    title.textContent = '📍 Wilayah Overview';
+    const wil = wilStats(rows);
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Wilayah</div><div class="cd-sum-val blue">${wil.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Total Churches</div><div class="cd-sum-val green">${s.t}</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>Wilayah</th><th>Total</th><th>Audited</th><th>WIP</th><th>Pending</th><th>%</th><th>Fund</th></tr></thead><tbody>
+    ${wil.map(w => `<tr><td style="font-weight:700;color:var(--sky)">${w.n}</td><td>${w.t}</td><td style="color:#4ade80">${w.a}</td><td style="color:#fcd34d">${w.w}</td><td style="color:#fca5a5">${w.p}</td><td style="font-weight:700">${w.pct}%</td><td style="font-weight:800;color:var(--gold)">${fRM(w.fund)}</td></tr>`).join('')}
+    </tbody></table>`;
+  } else if (key === 'report') {
+    title.textContent = '📁 Report Collection Details';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const collected = rows.filter(r => /collect/i.test(getRC(r)));
+    const pendRc = rows.filter(r => /pending/i.test(getRC(r)));
+    const noneRc = rows.filter(r => !getRC(r));
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Collected</div><div class="cd-sum-val green">${collected.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Pending Pickup</div><div class="cd-sum-val amber">${pendRc.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">No Record</div><div class="cd-sum-val red">${noneRc.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">Collection Rate</div><div class="cd-sum-val blue">${s.t ? Math.round(collected.length/s.t*100) : 0}%</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Status</th><th>Collection</th></tr></thead><tbody>
+    ${rows.length ? rows.map(r => `<tr><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${pill(getSt(r))}</td><td>${rcBadge(getRC(r))}</td></tr>`).join('') : '<tr><td colspan="4" class="cd-empty">No records</td></tr>'}
+    </tbody></table>`;
+  }
+
+  document.getElementById('cardDetailModal').style.display = 'flex';
+}
+function closeCardDetails() { document.getElementById('cardDetailModal').style.display = 'none'; }
+
 function showDebug() { const label = `${S.mode}-${S.year}`; const info = S.debugLog[label]; const box = document.getElementById('debugContent'); if (!info) { box.textContent = `No data for "${label}".`; } else { box.textContent = JSON.stringify(info, null, 2); } document.getElementById('debugModal').style.display = 'block'; }
 
 /* Report */
