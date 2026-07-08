@@ -654,26 +654,25 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
   <button id="chatFloatingBtn" onclick="toggleChat()" title="Ask about audit data">🤖</button>
   <div id="chatPanel">
     <div id="chatHeader">
-      <div class="title"><span>🧠</span> Auditor AI</div>
+      <div class="title"><span>🧠</span> Auditor AI <span id="chatBadge" style="font-size:9px;padding:2px 7px;border-radius:6px;font-weight:700;background:rgba(34,211,238,.15);color:#22d3ee;margin-left:4px">AI</span></div>
       <button class="close-btn" onclick="toggleChat()">✕</button>
     </div>
     <div id="chatMessages">
       <div class="chat-msg chat-bot">
         👋 Hi! I'm <strong>Auditor AI</strong>, your SAB Mission audit assistant.<br><br>
-        <strong>Try asking:</strong><br>
-        • "How many churches are WIP?"<br>
-        • "What's the total fund balance for 2025?"<br>
-        • "Show breakdown by wilayah"<br>
-        • "Compare 2024 and 2025 completion"<br>
-        • "Which year had the highest completion rate?"<br>
-        • "What's the church vs school audit comparison?"<br>
-        • "How many reports are still pending collection?"<br>
-        • "Total tithes and offerings for 2025"<br>
-        • "Give me a summary"
+        <strong>💡 Try asking:</strong><br>
+        • "Which wilayah has the most tithes?"<br>
+        • "Total offerings for Wilayah 3"<br>
+        • "How many churches are WIP in 2025?"<br>
+        • "Compare 2023 and 2024 completion rates"<br>
+        • "What's the total fund balance for all years?"<br>
+        • "Give me a summary of everything"<br>
+        • "Daerah mana paling tinggi persepuluhan?"<br>
+        • "Berapa jumlah persembahan Wilayah 1?"
       </div>
     </div>
     <div id="chatInputArea">
-      <input id="chatInput" type="text" placeholder="Ask about the audit data…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
+      <input id="chatInput" type="text" placeholder="Ask anything about the audit data…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
       <button id="chatSendBtn" onclick="sendChat()">Ask</button>
     </div>
   </div>
@@ -695,6 +694,7 @@ const S = {
   charts: {}, repCharts: {},
   wilMap: {}, debugLog: {},
 };
+const GEMINI_KEY = 'AQ.Ab8RN6Jq1LWm4Ny2KbWKoRHD9OizUsLV04m_IeSfkLHigTKuVQ';
 
 function csvUrl(id, gid) {
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
@@ -1322,6 +1322,8 @@ function toggleChat() {
   if (open) {
     setTimeout(() => document.getElementById('chatInput').focus(), 300);
     scrollChat();
+    const badge = document.getElementById('chatBadge');
+    if (badge) badge.textContent = (GEMINI_KEY && navigator.onLine) ? 'AI' : 'LOCAL';
   }
 }
 function sendChat() {
@@ -1332,17 +1334,92 @@ function sendChat() {
   inp.value = '';
   document.getElementById('chatSendBtn').disabled = true;
   showThinking();
-  setTimeout(() => {
-    removeThinking();
-    const answer = processQuery(q);
-    addMsg(answer);
-    document.getElementById('chatSendBtn').disabled = false;
-    inp.focus();
-    scrollChat();
-  }, 300 + Math.random() * 400);
+  if (GEMINI_KEY && navigator.onLine) {
+    queryAI(q).then(answer => {
+      removeThinking();
+      addMsg(answer || '<em>No answer available.</em>');
+      document.getElementById('chatSendBtn').disabled = false;
+      inp.focus();
+      scrollChat();
+    }).catch(err => {
+      removeThinking();
+      addMsg('⚠️ AI request failed. Falling back to local engine...<br><br>' + processQuery(q));
+      document.getElementById('chatSendBtn').disabled = false;
+      inp.focus();
+      scrollChat();
+    });
+  } else {
+    const badge = document.getElementById('chatBadge');
+    if (badge) badge.textContent = 'LOCAL';
+    setTimeout(() => {
+      removeThinking();
+      const answer = processQuery(q);
+      addMsg(answer);
+      document.getElementById('chatSendBtn').disabled = false;
+      inp.focus();
+      scrollChat();
+    }, 300 + Math.random() * 400);
+  }
 }
 function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function buildAIContext() {
+  const years = Object.keys(S.cData).filter(y => S.cData[y] && S.cData[y].length).map(Number).sort();
+  const totalRows = [], perYear = {};
+  years.forEach(yr => {
+    const rows = S.cData[yr] || [];
+    perYear[yr] = { count: rows.length };
+    totalRows.push(...rows);
+  });
+  const s = stats(totalRows);
+  const wil = wilStats(totalRows);
+  const wilArr = Object.entries(wil).map(([name, d]) => ({
+    name, churches: d.t, audited: d.a, wip: d.w, pending: d.p,
+    fund: Math.round(d.fund), tithes: Math.round(d.tithes), offerings: Math.round(d.offerings)
+  }));
+  const topTithes = totalRows.map(r => ({ n: getVal(r,'gereja')||'—', w: getVal(r,'wilayah')||'', v: getTithes(r) })).filter(d => d.v).sort((a,b) => b.v - a.v).slice(0,5);
+  const topOfferings = totalRows.map(r => ({ n: getVal(r,'gereja')||'—', w: getVal(r,'wilayah')||'', v: getOfferings(r) })).filter(d => d.v).sort((a,b) => b.v - a.v).slice(0,5);
+  return {
+    app: 'SAB Mission Church Audit Dashboard',
+    dataFields: ['wilayah','daerah','gereja','type','bank record','closing fund bal','tithes','offerings','status','report collection'],
+    selectedYears: S.selectedYears,
+    totalChurches: s.t,
+    summary: {
+      totalTithes: Math.round(s.tithes), totalOfferings: Math.round(s.offerings),
+      totalFundBalance: Math.round(s.fund), audited: s.a, wip: s.w, pending: s.p,
+      completionPct: s.pct, reportsCollected: s.rc_c, reportsPendingPickup: s.rc_p
+    },
+    perWilayah: wilArr,
+    top5ByTithes: topTithes.map(d => ({ church: d.n, wilayah: d.w, total: Math.round(d.v) })),
+    top5ByOfferings: topOfferings.map(d => ({ church: d.n, wilayah: d.w, total: Math.round(d.v) })),
+    perYear: Object.fromEntries(years.map(yr => { const ys = stats(S.cData[yr]||[]); return [yr, { churches: perYear[yr].count, tithes: Math.round(ys.tithes), offerings: Math.round(ys.offerings), fund: Math.round(ys.fund), audited: ys.a, wip: ys.w, pending: ys.p, completionPct: ys.pct }]; }))
+  };
+}
+async function queryAI(question) {
+  const ctx = buildAIContext();
+  const badge = document.getElementById('chatBadge');
+  if (badge) badge.textContent = 'AI';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+  const prompt = `You are SAB Mission's church audit analytics assistant. Answer in the user's language (English or Bahasa Malaysia).
+
+DATA (JSON):
+${JSON.stringify(ctx, null, 2)}
+
+RULES:
+- Answer ONLY based on the data above
+- Amounts are in Malaysian Ringgit (RM)
+- Be concise, use bullet points when helpful
+- Use emojis: 📍 wilayah, 💰 fund, 🔟 tithes, 🙏 offerings, ✅ audited, 🔄 WIP, ⏳ pending
+- If data is insufficient, say so clearly
+- Do NOT make up numbers
+
+QUESTION: ${question}`;
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 800 } }) });
+  if (!res.ok) throw new Error('API error: ' + res.status);
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return text || 'No answer available.';
 }
 function getDataForYear(yr, type) {
   if (type === 'church' || type === 'both') { const c = S.cData[yr] || []; if (type === 'church') return c; }
