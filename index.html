@@ -694,7 +694,7 @@ const S = {
   charts: {}, repCharts: {},
   wilMap: {}, debugLog: {},
 };
-const GEMINI_KEY = 'AQ.Ab8RN6Jq1LWm4Ny2KbWKoRHD9OizUsLV04m_IeSfkLHigTKuVQ';
+const GEMINI_KEY = 'AQ.Ab8RN6KT1wDKvQZ7oaHlHf7J3_y5XVC2vGf5E4L_6PiJuoYVKA';
 
 function csvUrl(id, gid) {
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
@@ -1400,7 +1400,7 @@ async function queryAI(question) {
   const ctx = buildAIContext();
   const badge = document.getElementById('chatBadge');
   if (badge) badge.textContent = 'AI';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
   const prompt = `You are SAB Mission's church audit analytics assistant. Answer in the user's language (English or Bahasa Malaysia).
 
 DATA (JSON):
@@ -1415,8 +1415,11 @@ RULES:
 - Do NOT make up numbers
 
 QUESTION: ${question}`;
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 800 } }) });
-  if (!res.ok) throw new Error('API error: ' + res.status);
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 800 } }) });
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
+  }
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
   return text || 'No answer available.';
