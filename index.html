@@ -376,60 +376,106 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
   #chatFloatingBtn{bottom:16px;right:16px;width:48px;height:48px;font-size:20px}
 }
 @media(max-width:480px){
-  .hdr{padding:8px 12px}
+  .hdr{padding:8px 10px}
   main{padding:14px 10px 50px}
-  .page-title{font-size:19px}
-  .page-sub{font-size:11px}
+  .page-title{font-size:20px}
+  .page-sub{font-size:12px}
   .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
   .kpi-row .kpi{grid-column:span 1!important}
-  .kpi{padding:12px 12px;border-radius:12px}
-  .kpi-val{font-size:21px}
+  .kpi{padding:12px 10px;border-radius:12px}
+  .kpi-val{font-size:22px}
+  .kpi-ic{font-size:18px}
+  .kpi-lbl{font-size:10px}
+  .kpi-meta{font-size:11px}
   .card{padding:14px 14px;border-radius:12px}
-  .donut-box{width:120px;height:120px}
-  .d-pct{font-size:21px}
-  .d-lbl{font-size:9px}
-  .li{font-size:11px}
+  .card-t{font-size:14px}
+  .card-s{font-size:12px}
+  .donut-box{width:130px;height:130px}
+  .d-pct{font-size:22px}
+  .d-lbl{font-size:10px}
+  .li{font-size:12px}
   .wgrid{grid-template-columns:1fr}
+  .wcard{padding:14px}
+  .wname{font-size:14px}
+  .wsv{font-size:18px}
+  .wsl{font-size:10px}
   .sgrid{grid-template-columns:1fr}
-  .sname{font-size:13px}
-  .spic{font-size:10px}
-  table{font-size:10px}
-  thead th{padding:8px 8px;font-size:8.5px;letter-spacing:.4px}
-  td{padding:8px 8px;font-size:10px}
-  .mode-btn{padding:6px 10px;font-size:10px}
+  .sname{font-size:14px}
+  .spic{font-size:11px}
+  table{font-size:12px}
+  thead th{padding:8px 8px;font-size:10px;letter-spacing:.4px}
+  td{padding:8px 8px;font-size:12px}
+  .tfund{font-size:12px}
+  .mode-btn{padding:8px 12px;font-size:12px}
   .mode-btn .icon{display:none}
   .logo-tagline{display:none}
+  .logo-name{font-size:14px}
+  .yr-btn{padding:7px 14px;font-size:13px}
+  .icon-btn{padding:8px 12px;font-size:12px}
+  .frow{padding:10px 12px;font-size:13px}
+  .fname{font-size:13px}
+  .fnum{font-size:12px}
+  .sec{font-size:11px;margin-bottom:12px}
+  .bkrow{font-size:12px;padding:9px 0}
+  .pill{font-size:12px;padding:4px 10px}
+  .rc{font-size:12px;padding:3px 9px}
+  .bb{font-size:12px;padding:3px 9px}
+  .bname{font-size:13px}
+  .bstat{font-size:12px}
+  #chatFloatingBtn{bottom:16px;right:16px;width:54px;height:54px;font-size:22px}
+  #chatPanel{width:calc(100vw - 16px);right:8px;bottom:80px;max-height:75vh;height:75vh}
   /* Report mobile */
-  .rv-container{padding:16px 12px;margin:20px 8px}
-  .rv-header{flex-direction:column;align-items:flex-start;gap:12px}
-  .rv-title{font-size:22px}
-  .rv-charts{grid-template-columns:1fr;gap:16px}
+  .rv-container{padding:16px 12px;margin:16px 6px}
+  .rv-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .rv-title{font-size:24px}
+  .rv-subtitle{font-size:12px}
+  .rv-charts{grid-template-columns:1fr;gap:14px}
   .rv-card{padding:16px}
+  .rv-card-title{font-size:13px}
   .report-top-bar{flex-direction:column;gap:10px;padding:10px 14px}
   .report-top-bar>div:last-child{display:flex;gap:8px;width:100%}
-  .report-top-bar .rv-btn{flex:1;text-align:center;font-size:12px;padding:8px 10px}
+  .report-top-bar .rv-btn{flex:1;text-align:center;font-size:12px;padding:10px 10px}
   .rv-kpi-grid{gap:8px}
   .rv-kpi{padding:12px 10px}
-  .rv-kpi-lbl{font-size:9px;margin-bottom:6px}
+  .rv-kpi-lbl{font-size:10px;margin-bottom:7px}
+  .rv-kpi-val{font-size:clamp(14px,4.5vw,20px)}
   .rv-table-wrapper,.rv-table-wrapper td,.rv-table-wrapper th{font-size:11px}
   .rv-table-wrapper th,.rv-table-wrapper td{padding:10px 8px}
   /* Modals mobile */
-  #reportModal>div{padding:20px 14px;margin:20px 12px;max-width:100%}
+  #reportModal>div{padding:20px 14px;margin:16px 10px;max-width:100%}
   #reportModal .yr-check-grid{grid-template-columns:1fr}
-  #cardDetailModal{padding:20px 10px}
+  #reportModal .yr-lbl{font-size:14px;padding:12px 14px}
+  #cardDetailModal{padding:16px 8px}
   .cd-wrap{max-width:100%}
   .cd-hdr{padding:14px 16px}
-  .cd-hdr h3{font-size:15px}
+  .cd-hdr h3{font-size:16px}
   .cd-body{padding:14px 16px}
   .cd-summary{grid-template-columns:1fr;gap:8px}
-  .cd-sum-val{font-size:17px}
-  .cd-table{font-size:11px}
-  .cd-table th,.cd-table td{padding:7px 8px}
+  .cd-sum-val{font-size:18px}
+  .cd-sum-label{font-size:10px}
+  .cd-table{font-size:12px}
+  .cd-table th,.cd-table td{padding:8px 10px}
+  .cd-table th{font-size:10px}
   /* Loader mobile */
-  #loader-logo{width:60px;height:60px}
-  #loader-title{font-size:17px}
-  #loader-sub{font-size:12px}
-  #loader-bar{width:160px}
+  #loader-logo{width:64px;height:64px}
+  #loader-title{font-size:18px}
+  #loader-sub{font-size:13px}
+  #loader-bar{width:170px}
+}
+@media(max-width:360px){
+  .hdr{padding:6px 8px}
+  .hdr-mid{gap:4px}
+  .yr-btn{padding:6px 10px;font-size:12px}
+  main{padding:12px 8px 50px}
+  .kpi-row{gap:6px}
+  .kpi{padding:10px 8px}
+  .kpi-val{font-size:19px}
+  .kpi-ic{font-size:16px}
+  .page-title{font-size:18px}
+  table{font-size:11px}
+  td{padding:6px 6px;font-size:11px}
+  .mode-btn{padding:6px 10px;font-size:11px}
+  #chatFloatingBtn{width:48px;height:48px;font-size:20px;bottom:12px;right:12px}
 }
 </style>
 </head>
