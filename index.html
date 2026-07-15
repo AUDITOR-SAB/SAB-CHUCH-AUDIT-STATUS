@@ -66,27 +66,47 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sidebar-bottom{border-top:1px solid var(--border);padding:8px;flex-shrink:0}
 
 /* Collapsed sidebar */
-.sidebar.collapsed{width:56px}
+.sidebar.collapsed{width:60px}
 .sidebar.collapsed .sidebar-logo-text,.sidebar.collapsed .sidebar-logo-sub,
-.sidebar.collapsed .sidebar-item span:not(.icon),.sidebar.collapsed .sidebar-section{opacity:0;width:0;height:0;overflow:hidden;padding:0;margin:0}
-.sidebar.collapsed .sidebar-item{justify-content:center;padding:10px}
-.sidebar.collapsed .sidebar-item .icon{font-size:18px;width:auto}
-.sidebar.collapsed .sidebar-logo{padding:14px 10px;justify-content:center}
-.sidebar.collapsed .sidebar-toggle{transform:rotate(180deg)}
-.sidebar.collapsed .sidebar-nav{padding:10px 4px}
-.sidebar.collapsed .yr-btn{font-size:0;padding:4px;width:28px;height:28px;border-radius:50%;display:block;margin:2px auto}
-.sidebar.collapsed .yr-btn::after{content:attr(data-yr);font-size:9px;font-weight:800}
+.sidebar.collapsed .sidebar-item span:not(.icon),.sidebar.collapsed .sidebar-section{display:none}
+.sidebar.collapsed .sidebar-item{justify-content:center;padding:8px;border-radius:0}
+.sidebar.collapsed .sidebar-item .icon{font-size:20px;width:auto;display:flex;align-items:center;justify-content:center}
+.sidebar.collapsed .sidebar-item .icon svg{width:20px;height:20px}
+.sidebar.collapsed .sidebar-logo{padding:12px 8px;justify-content:center}
+.sidebar.collapsed .sidebar-logo-img,.sidebar.collapsed .sidebar-logo-fallback{width:28px;height:28px}
+.sidebar.collapsed .sidebar-toggle{display:none}
+.sidebar.collapsed .sidebar-nav{padding:12px 4px;align-items:center;gap:2px}
+.sidebar.collapsed .sidebar-nav .sidebar-item{width:44px;height:44px;border-radius:10px}
+.sidebar.collapsed .sidebar-bottom{padding:4px;display:flex;flex-direction:column;align-items:center}
+.sidebar.collapsed .sidebar-bottom .sidebar-item{width:44px;height:44px;border-radius:10px;justify-content:center;padding:8px}
+.sidebar.collapsed .sidebar-bottom .sidebar-item .icon{font-size:20px;width:auto;display:flex;align-items:center;justify-content:center}
+.sidebar.collapsed .sidebar-bottom .sidebar-item .icon svg{width:20px;height:20px}
+.sidebar.collapsed .yr-btn{display:none}
+.sidebar.collapsed #yrSelSidebar .yr-trig{display:flex}
+.yr-trig{display:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;align-items:center;justify-content:center;margin:4px auto;transition:all .12s;font-family:inherit}
+.yr-trig:hover{background:rgba(255,255,255,.08);color:var(--off);border-color:var(--border2)}
+.yr-trig svg{width:16px;height:16px}
+
+/* Year popup */
+.yr-popup{position:fixed;left:66px;top:50%;transform:translateY(-50%);z-index:200;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;min-width:160px;box-shadow:0 8px 40px rgba(0,0,0,.5);animation:popIn .15s ease}
+@keyframes popIn{from{opacity:0;transform:translateY(-50%) scale(.95)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+.yr-popup-hdr{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.yr-popup-body{display:flex;flex-direction:column;gap:4px}
+.yr-popup-body .yr-btn{display:block;width:100%;text-align:left;padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .12s}
+.yr-popup-body .yr-btn:hover{background:var(--sidebar-hover);color:var(--off)}
+.yr-popup-body .yr-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.yr-popup-body .yr-btn .yr-popup-dot{display:inline-block;width:8px;height:8px;border-radius:50%;border:2px solid var(--muted2);margin-right:8px;vertical-align:middle;transition:all .12s}
+.yr-popup-body .yr-btn.on .yr-popup-dot{border-color:#fff;background:#fff}
 
 /* Main area */
 .main-wrap{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column;transition:margin-left .25s ease}
-.sidebar.collapsed ~ .main-wrap{margin-left:56px}
+.sidebar.collapsed ~ .main-wrap{margin-left:60px}
 .sidebar-reopen{display:none}
 .sidebar.collapsed ~ .main-wrap .sidebar-reopen{display:flex}
 .topbar{display:flex;align-items:center;gap:12px;padding:0 28px;height:56px;background:rgba(8,12,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:10px;flex:1}
 .topbar-title{font-size:13px;font-weight:700;color:var(--off)}
 .topbar-badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;background:rgba(99,102,241,.15);color:var(--primary2)}
-.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .tbar-srch{position:relative;flex:1;max-width:280px}
 .tbar-srch input{width:100%;padding:6px 10px 6px 30px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--off);font-family:inherit;font-size:12px;font-weight:600;outline:none;transition:all .15s}
 .tbar-srch input:focus{border-color:var(--primary);background:rgba(99,102,241,.08);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
@@ -97,8 +117,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .tbar-srch input:not(:placeholder-shown) ~ .srch-clr{display:flex}
 .topbar-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
 .topbar-btn:hover{color:var(--off);border-color:var(--border2)}
-.topbar-btn.primary{border-color:rgba(16,185,129,.35);color:#4ade80}
-.topbar-btn.danger{border-color:rgba(239,68,68,.35);color:#fca5a5}
+
 main{flex:1;padding:24px 28px 60px;max-width:1400px;width:100%}
 .center-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;color:var(--muted);font-size:13px;text-align:center;font-weight:600}
 .spin{width:36px;height:36px;border:3px solid rgba(255,255,255,.06);border-top-color:var(--primary2);border-radius:50%;animation:spin .7s linear infinite}
@@ -395,16 +414,31 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 /* Responsive */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr)}.g2,.g3,.glh{grid-template-columns:1fr}}
 @media(max-width:768px){
-  .sidebar{width:56px}
+  .sidebar{width:60px}
   .sidebar-logo-text,.sidebar-logo-sub,.sidebar-item span:not(.icon),.sidebar-section{display:none}
-  .sidebar-reopen{display:none!important}
   .sidebar-toggle{display:none}
-  .sidebar-logo{padding:14px 10px;justify-content:center}
-  .sidebar-item{justify-content:center;padding:10px}
-  .sidebar-item .icon{font-size:18px}
-  .main-wrap{margin-left:56px}
-  .topbar{padding:0 12px;height:48px}
-  main{padding:16px 12px 40px}
+  .sidebar-logo{padding:12px 8px;justify-content:center}
+  .sidebar-logo-img,.sidebar-logo-fallback{width:28px;height:28px}
+  .sidebar-item{justify-content:center;padding:8px;border-radius:0}
+  .sidebar-item .icon{font-size:20px;width:auto;display:flex;align-items:center;justify-content:center}
+  .sidebar-item .icon svg{width:20px;height:20px}
+  .sidebar-nav{padding:12px 4px;align-items:center;gap:2px}
+  .sidebar-nav .sidebar-item{width:44px;height:44px;border-radius:10px}
+  #yrSelSidebar{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+  #yrSelSidebar .yr-btn{display:none}
+  #yrSelSidebar .yr-trig{display:flex}
+  .sidebar-bottom{padding:4px;display:flex;flex-direction:column;align-items:center}
+  .sidebar-bottom .sidebar-item{width:44px;height:44px;border-radius:10px;justify-content:center;padding:8px}
+  .sidebar-bottom .sidebar-item .icon svg{width:20px;height:20px}
+  .main-wrap{margin-left:60px}
+  .topbar{gap:8px;padding:0 10px;height:48px}
+  .topbar-title{font-size:12px}
+  .topbar-badge{font-size:8px;padding:1px 6px}
+  .tbar-srch{max-width:none;min-width:0;flex:0 1 160px}
+  .tbar-srch input{font-size:11px;padding:5px 8px 5px 26px}
+  .tbar-srch .srch-ic{left:6px}
+  .tbar-srch .srch-clr{display:none!important}
+  main{padding:14px 10px 40px}
   .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px}
   .kpi{padding:12px 14px}
   .kpi-val{font-size:22px}
@@ -413,45 +447,59 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
   .donut-box{width:130px;height:130px}
   .wgrid{grid-template-columns:1fr 1fr}
   .tbl-ctrl{flex-direction:column;align-items:stretch}
-  .srch{min-width:0}
   .page-row{flex-direction:column;align-items:flex-start}
+  .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .twrap table{min-width:600px}
   #chatFloatingBtn{bottom:14px;right:14px;width:44px;height:44px;font-size:18px}
   #chatPanel{width:calc(100vw - 16px);right:8px;bottom:66px;max-height:70vh;height:70vh}
+  .modal-wrap{max-width:95%!important;margin:8px!important}
+  #cardDetailModal{padding:16px 8px}
+  .yr-popup{left:68px;top:auto;bottom:60px;transform:none;max-height:50vh;overflow-y:auto}
 }
 @media(max-width:480px){
-  .sidebar{width:48px}
-  .main-wrap{margin-left:48px}
-  .topbar{padding:0 8px}
+  .sidebar{width:52px}
+  .sidebar-nav .sidebar-item{width:40px;height:40px;border-radius:8px}
+  .sidebar-logo-img,.sidebar-logo-fallback{width:24px;height:24px}
+  .sidebar-item .icon svg{width:18px;height:18px}
+  #yrSelSidebar .yr-trig{width:32px;height:32px}
+  .sidebar-bottom .sidebar-item{width:36px;height:36px;border-radius:8px}
+  .sidebar-bottom .sidebar-item .icon svg{width:16px;height:16px}
+  .main-wrap{margin-left:52px}
+  .topbar{height:44px;padding:0 6px;gap:4px}
   .topbar-title{font-size:11px}
-  .topbar-btn{padding:5px 8px;font-size:10px}
-  main{padding:12px 8px 32px}
-  .kpi-row{grid-template-columns:repeat(2,1fr);gap:6px}
+  .tbar-srch{flex:0 1 120px}
+  .tbar-srch input{font-size:10px;padding:4px 6px 4px 22px}
+  main{padding:10px 6px 32px}
+  .kpi-row{grid-template-columns:repeat(2,1fr);gap:5px}
   .kpi{padding:10px 10px}
-  .kpi-val{font-size:20px}
-  .kpi-ic{font-size:16px}
-  .card{padding:14px;border-radius:10px}
-  .card-t{font-size:12px}
+  .kpi-val{font-size:18px}
+  .kpi-ic{font-size:14px}
+  .kpi-lbl{font-size:8px}
+  .card{padding:12px;border-radius:8px}
+  .card-t{font-size:11px}
+  .card-s{font-size:10px}
+  .donut-box{width:110px;height:110px}
   .wgrid{grid-template-columns:1fr}
   .sgrid{grid-template-columns:1fr}
-  table{font-size:10px}
-  thead th{padding:6px 6px;font-size:8px}
-  td{padding:6px 6px;font-size:10px}
-  .tfund{font-size:10px}
-  .frow{padding:6px 8px;font-size:10px}
-  .fname{font-size:10px}
+  table{font-size:9px}
+  thead th{padding:5px 4px;font-size:7px}
+  td{padding:5px 4px;font-size:9px}
+  .tfund{font-size:9px}
+  .frow{padding:5px 6px;font-size:9px}
+  .fname{font-size:9px}
   .cd-wrap{max-width:100%}
-  .cd-hdr{padding:12px 14px}
-  .cd-body{padding:12px 14px}
+  .cd-hdr{padding:10px 12px}
+  .cd-body{padding:10px 12px}
   .cd-summary{grid-template-columns:1fr}
   #cardDetailModal{padding:10px 4px}
-  #reportModal>div{padding:20px 14px;margin:14px 8px}
-  #reportModal .yr-check-grid{grid-template-columns:1fr}
-  .rv-container{padding:12px}
-  .rv-header{flex-direction:column;align-items:flex-start;gap:8px}
-  .rv-title{font-size:20px}
+  #reportModal>div{padding:16px;margin:4px}
+  .rv-container{padding:10px}
+  .rv-header{flex-direction:column;align-items:flex-start;gap:6px}
+  .rv-title{font-size:18px}
   .rv-charts{grid-template-columns:1fr}
   #chatFloatingBtn{bottom:10px;right:10px;width:42px;height:42px;font-size:16px}
   #chatPanel{width:calc(100vw - 10px);right:5px;bottom:60px;max-height:75vh;height:75vh}
+  .yr-popup{left:58px;bottom:50px;min-width:140px;padding:12px}
 }
 </style>
 </head>
@@ -480,31 +528,26 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
     <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">◀</button>
   </div>
   <div class="sidebar-nav">
-    <div class="sidebar-section">Navigation</div>
-    <div class="sidebar-item active" id="navDashboard" onclick="showDebug()" style="display:none">
-      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span><span>Dashboard</span>
-    </div>
     <div class="sidebar-item" onclick="openReportModal()">
       <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span>Generate Report</span>
     </div>
     <div class="sidebar-item" onclick="showDebug()">
-      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span>Data Diagnostics</span>
-    </div>
-    <div class="sidebar-section">View Mode</div>
-    <div class="sidebar-item active" id="btnC" onclick="setMode('church')">
-      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span><span>Churches</span>
-    </div>
-    <div class="sidebar-item" id="btnS" onclick="setMode('school')">
-      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.2 2 6 2s6-.9 6-2v-5"/></svg></span><span>Schools</span>
+      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span>Debug</span>
     </div>
     <div class="sidebar-section">Audit Year</div>
     <div id="yrSelSidebar"></div>
   </div>
   <div class="sidebar-bottom">
     <div class="sidebar-item" onclick="doRefresh()">
-      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span><span>Refresh Data</span>
+      <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span><span>Refresh</span>
     </div>
   </div>
+</div>
+
+<!-- Year popup for collapsed sidebar -->
+<div id="yrPopup" class="yr-popup" style="display:none">
+  <div class="yr-popup-hdr">Select Audit Year</div>
+  <div id="yrPopupBody"></div>
 </div>
 
 <!-- Main area -->
@@ -513,19 +556,12 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
     <div class="topbar-left">
       <button class="topbar-btn sidebar-reopen" onclick="toggleSidebar()" title="Open sidebar">☰</button>
       <span class="topbar-title">SAB Mission Audit</span>
-      <span class="topbar-badge" id="modeBadge">⛪ Church</span>
-      <span id="yrSelTop"></span>
+      <span class="topbar-badge" id="modeBadge" onclick="setMode(S.mode==='church'?'school':'church');renderAll()" style="cursor:pointer">⛪ Church</span>
     </div>
     <div class="tbar-srch">
       <span class="srch-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
       <input type="text" id="tbarSearch" placeholder="Search churches, schools, wilayah…" value="" oninput="S.search=this.value;S.page=1;renderAll()" autocomplete="off">
       <button class="srch-clr" onclick="document.getElementById('tbarSearch').value='';S.search='';S.page=1;renderAll()">✕</button>
-    </div>
-    <div class="topbar-right">
-      <button class="topbar-btn primary" onclick="openReportModal()">📄 Report</button>
-      <button class="topbar-btn" onclick="doRefresh()">🔄 Refresh</button>
-      <button class="topbar-btn danger" onclick="showDebug()">🔍 Debug</button>
-      <button class="topbar-btn" onclick="toggleChat()">🤖 AI Chat</button>
     </div>
   </div>
 
@@ -851,11 +887,23 @@ function renderYrs() {
     `<button class="yr-btn${S.selectedYears.includes(y) ? ' on' : ''}" data-yr="${y}" onclick="toggleYear(${y})">${y}</button>`
   ).join('');
   const yrSidebar = document.getElementById('yrSelSidebar');
-  if (yrSidebar) yrSidebar.innerHTML = html;
-  const yrTop = document.getElementById('yrSelTop');
-  if (yrTop) yrTop.innerHTML = html;
+  if (yrSidebar) yrSidebar.innerHTML = html + `<button class="yr-trig" onclick="toggleYrPopup()" title="Select year"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>`;
+  const popupBody = document.getElementById('yrPopupBody');
+  if (popupBody) popupBody.innerHTML = YEARS.map(y =>
+    `<button class="yr-btn${S.selectedYears.includes(y) ? ' on' : ''}" data-yr="${y}" onclick="toggleYear(${y});document.getElementById('yrPopup').style.display='none'"><span class="yr-popup-dot"></span>Audit ${y}</button>`
+  ).join('');
 }
-function renderAll() { const tb = document.getElementById('tbarSearch'); if (tb) tb.value = S.search; destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); const badge = document.getElementById('modeBadge'); if (badge) badge.textContent = S.mode === 'church' ? '⛪ Church' : '🏫 School'; ['btnC','btnS'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('active', (id === 'btnC' && S.mode === 'church') || (id === 'btnS' && S.mode === 'school')); }); }
+function toggleYrPopup() {
+  const p = document.getElementById('yrPopup');
+  p.style.display = p.style.display === 'none' ? '' : 'none';
+}
+document.addEventListener('click', function(e) {
+  const p = document.getElementById('yrPopup');
+  if (p && p.style.display !== 'none' && !p.contains(e.target) && !e.target.closest('.yr-trig')) {
+    p.style.display = 'none';
+  }
+});
+function renderAll() { const tb = document.getElementById('tbarSearch'); if (tb) tb.value = S.search; destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); const badge = document.getElementById('modeBadge'); if (badge) badge.textContent = S.mode === 'church' ? '⛪ Church' : '🏫 School'; }
 
 function renderChurch(m) {
   const rows = cur(); const s = stats(rows); const wil = wilStats(rows); const dae = daerStats(rows, S.fWil || null); const tr = trends();
@@ -1026,6 +1074,8 @@ function setMode(m) {
 }
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('collapsed');
+  const p = document.getElementById('yrPopup');
+  if (p) p.style.display = 'none';
 }
 function toggleYear(y) {
   const idx = S.selectedYears.indexOf(y);
