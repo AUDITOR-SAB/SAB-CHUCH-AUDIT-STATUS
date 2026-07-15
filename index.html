@@ -1349,10 +1349,13 @@ function sendChat() {
       scrollChat();
     }).catch(err => {
       removeThinking();
-      addMsg('⚠️ AI request failed — <code style="font-size:11px;color:#fca5a5">' + escapeHtml(err.message) + '</code><br><br>Falling back to local engine...<br><br>' + processQuery(q));
-      document.getElementById('chatSendBtn').disabled = false;
-      inp.focus();
-      scrollChat();
+      addMsg('⚠️ AI request failed — <code style="font-size:11px;color:#fca5a5">' + escapeHtml(err.message) + '</code><br><br><em>Switching to local engine...</em>');
+      setTimeout(() => {
+        addMsg(processQuery(q));
+        document.getElementById('chatSendBtn').disabled = false;
+        inp.focus();
+        scrollChat();
+      }, 150);
     });
   } else if (!GEMINI_KEY) {
     const badge = document.getElementById('chatBadge');
