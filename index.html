@@ -696,7 +696,7 @@ const S = {
 };
 // ⚠️ SECURITY: This API key is exposed client-side. Anyone viewing the page source can
 //    use it. For production, proxy requests through a backend server or use restricted keys.
-const GEMINI_KEY = 'AQ.Ab8RN6KT1wDKvQZ7oaHlHf7J3_y5XVC2vGf5E4L_6PiJuoYVKA';
+const GEMINI_KEY = 'AQ.Ab8RN6L8AP9ClJATdClf5HMoUXsKaVtYW5KzztcNFXHbODUnjQ';
 
 function csvUrl(id, gid) {
   return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
@@ -1340,7 +1340,7 @@ function sendChat() {
   inp.value = '';
   document.getElementById('chatSendBtn').disabled = true;
   showThinking();
-  if (GEMINI_KEY && navigator.onLine) {
+  if (GEMINI_KEY && navigator.onLine && !/^AQ\.\s*$/i.test(GEMINI_KEY)) {
     queryAI(q).then(answer => {
       removeThinking();
       addMsg(answer || '<em>No answer available.</em>');
@@ -1349,14 +1349,24 @@ function sendChat() {
       scrollChat();
     }).catch(err => {
       removeThinking();
-      addMsg('⚠️ AI request failed. Falling back to local engine...<br><br>' + processQuery(q));
+      addMsg('⚠️ AI request failed — <code style="font-size:11px;color:#fca5a5">' + escapeHtml(err.message) + '</code><br><br>Falling back to local engine...<br><br>' + processQuery(q));
       document.getElementById('chatSendBtn').disabled = false;
       inp.focus();
       scrollChat();
     });
+  } else if (!GEMINI_KEY) {
+    const badge = document.getElementById('chatBadge');
+    if (badge) badge.textContent = 'NO KEY';
+    setTimeout(() => {
+      removeThinking();
+      addMsg('⚠️ No API key configured. Using local engine instead.<br><br>' + processQuery(q));
+      document.getElementById('chatSendBtn').disabled = false;
+      inp.focus();
+      scrollChat();
+    }, 200);
   } else {
     const badge = document.getElementById('chatBadge');
-    if (badge) badge.textContent = 'LOCAL';
+    if (badge) badge.textContent = GEMINI_KEY && !navigator.onLine ? 'OFFLINE' : 'LOCAL';
     setTimeout(() => {
       removeThinking();
       const answer = processQuery(q);
