@@ -87,6 +87,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .topbar-title{font-size:13px;font-weight:700;color:var(--off)}
 .topbar-badge{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;background:rgba(99,102,241,.15);color:var(--primary2)}
 .topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tbar-srch{position:relative;flex:1;max-width:280px}
+.tbar-srch input{width:100%;padding:6px 10px 6px 30px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--off);font-family:inherit;font-size:12px;font-weight:600;outline:none;transition:all .15s}
+.tbar-srch input:focus{border-color:var(--primary);background:rgba(99,102,241,.08);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.tbar-srch input::placeholder{color:var(--muted2);font-weight:500}
+.tbar-srch .srch-ic{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--muted2);pointer-events:none;display:flex}
+.tbar-srch .srch-clr{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted2);cursor:pointer;display:none;padding:2px;border-radius:4px;font-family:inherit;font-size:11px}
+.tbar-srch .srch-clr:hover{color:var(--off);background:rgba(255,255,255,.06)}
+.tbar-srch input:not(:placeholder-shown) ~ .srch-clr{display:flex}
 .topbar-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
 .topbar-btn:hover{color:var(--off);border-color:var(--border2)}
 .topbar-btn.primary{border-color:rgba(16,185,129,.35);color:#4ade80}
@@ -508,6 +516,11 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
       <span class="topbar-badge" id="modeBadge">⛪ Church</span>
       <span id="yrSelTop"></span>
     </div>
+    <div class="tbar-srch">
+      <span class="srch-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" id="tbarSearch" placeholder="Search churches, schools, wilayah…" value="" oninput="S.search=this.value;S.page=1;renderAll()" autocomplete="off">
+      <button class="srch-clr" onclick="document.getElementById('tbarSearch').value='';S.search='';S.page=1;renderAll()">✕</button>
+    </div>
     <div class="topbar-right">
       <button class="topbar-btn primary" onclick="openReportModal()">📄 Report</button>
       <button class="topbar-btn" onclick="doRefresh()">🔄 Refresh</button>
@@ -842,7 +855,7 @@ function renderYrs() {
   const yrTop = document.getElementById('yrSelTop');
   if (yrTop) yrTop.innerHTML = html;
 }
-function renderAll() { destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); const badge = document.getElementById('modeBadge'); if (badge) badge.textContent = S.mode === 'church' ? '⛪ Church' : '🏫 School'; ['btnC','btnS'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('active', (id === 'btnC' && S.mode === 'church') || (id === 'btnS' && S.mode === 'school')); }); }
+function renderAll() { const tb = document.getElementById('tbarSearch'); if (tb) tb.value = S.search; destroyCharts(); renderYrs(); applyChartDefaults(false); const m = document.getElementById('main'); S.mode === 'church' ? renderChurch(m) : renderSchool(m); document.getElementById('ft').style.display = ''; document.getElementById('ftT').textContent = new Date().toLocaleString('en-MY'); const badge = document.getElementById('modeBadge'); if (badge) badge.textContent = S.mode === 'church' ? '⛪ Church' : '🏫 School'; ['btnC','btnS'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('active', (id === 'btnC' && S.mode === 'church') || (id === 'btnS' && S.mode === 'school')); }); }
 
 function renderChurch(m) {
   const rows = cur(); const s = stats(rows); const wil = wilStats(rows); const dae = daerStats(rows, S.fWil || null); const tr = trends();
@@ -911,7 +924,6 @@ function renderSchool(m) {
     <div class="g2" style="margin-top:4px"><div class="card"><div class="card-t">Individual School Progress</div><div class="card-s">Audit status per school</div><div class="cw" style="height:220px"><canvas id="cSchSt"></canvas></div></div><div class="card"><div class="card-t">Fund Balance Comparison</div><div class="card-s">Closing fund balance per school</div><div class="cw" style="height:220px"><canvas id="cSchFd"></canvas></div></div></div>
     <div class="sec" style="margin-top:4px">School Overview</div>
     <div class="tbl-ctrl">
-      <div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search school or PIC…" value="${S.search}" oninput="S.search=this.value;renderAll()"></div>
       <select class="flt" onchange="S.fSt=this.value;renderAll()">
         <option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
       </select>
@@ -985,7 +997,7 @@ function churchTbl(rows) {
   const tot = filt.length; const pages = Math.max(1, Math.ceil(tot / S.perPage)); const pg = Math.min(S.page, pages); const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage); const sa = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
   const pNums = []; const used = new Set(); for (let i = 1; i <= pages; i++) { if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) { pNums.push(i); used.add(i); } else if (Math.abs(i-pg) === 2 && !used.has('…')) { pNums.push('…'); used.add('…'); } }
   const cols = COLS.length;
-  return `<div class="tbl-ctrl"><div class="srch"><span class="sic">🔍</span><input type="text" placeholder="Search church, daerah, wilayah, type…" value="${S.search}" oninput="S.search=this.value;S.page=1;renderAll()"></div><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
+  return `<div class="tbl-ctrl"><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
   <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year||'—'}</td>`:''}<td style="color:var(--sky);font-weight:700">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:800">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted);font-weight:600">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td class="tfund" style="color:var(--cyan)">${fRM(getTithes(r))}</td><td class="tfund" style="color:#f472b6">${fRM(getOfferings(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): `<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--muted);font-style:italic;font-weight:600">No records found</td></tr>`}</tbody></table>
   ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
