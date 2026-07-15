@@ -543,7 +543,7 @@ footer{text-align:center;padding:16px;font-size:11px;font-weight:600;color:var(-
 </footer>
 </div>
 
-<div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
+<div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
   <div style="width:100%;max-width:440px;background:#0c1a2e;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 12px 48px rgba(0,0,0,0.6);">
     <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;color:var(--white)">Executive Summary Setup</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:600">Select the data you want to include in the printable report.</p>
@@ -694,6 +694,8 @@ const S = {
   charts: {}, repCharts: {},
   wilMap: {}, debugLog: {},
 };
+// ⚠️ SECURITY: This API key is exposed client-side. Anyone viewing the page source can
+//    use it. For production, proxy requests through a backend server or use restricted keys.
 const GEMINI_KEY = 'AQ.Ab8RN6KT1wDKvQZ7oaHlHf7J3_y5XVC2vGf5E4L_6PiJuoYVKA';
 
 function csvUrl(id, gid) {
@@ -767,10 +769,11 @@ function fetchCSV(id, gid, label) {
 
 async function loadAll() {
   document.getElementById('main').innerHTML = '<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
-  for (const yr of YEARS) {
-    try { S.cData[yr] = await fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`); } catch(e) { S.cData[yr] = []; }
-    try { S.sData[yr] = await fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`); } catch(e) { S.sData[yr] = []; }
-  }
+  const fetches = YEARS.flatMap(yr => [
+    fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`).then(d => { S.cData[yr] = d; }).catch(() => { S.cData[yr] = []; }),
+    fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`).then(d => { S.sData[yr] = d; }).catch(() => { S.sData[yr] = []; }),
+  ]);
+  await Promise.all(fetches);
   document.getElementById('reportModal').style.display = 'none';
   document.getElementById('loader').classList.add('hide');
   renderAll();
@@ -797,7 +800,10 @@ function cur() {
 
 function getSt(r) {
   const v = getVal(r, 'status');
-  return (/audit/i.test(v) ? 'Audited' : /wip|work\s*in\s*progress/i.test(v) ? 'WIP' : /pending/i.test(v) ? 'Pending' : v || 'Pending');
+  if (/audit/i.test(v)) return 'Audited';
+  if (/wip|work\s*in\s*progress/i.test(v)) return 'WIP';
+  if (/pending/i.test(v)) return 'Pending';
+  return v || 'Unknown';
 }
 
 function getBank(r) { return getVal(r, 'bank record', 'bank') || 'No data'; }
@@ -806,19 +812,19 @@ function getFund(r) { const n = parseFloat(getVal(r, 'closing fund bal', 'fund',
 function getTithes(r) { const n = parseFloat(getVal(r, 'tithes', 'tithe').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
 function getOfferings(r) { const n = parseFloat(getVal(r, 'offerings', 'offering').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
 function fRM(n) { return n === null || n === undefined ? '—' : 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2 }); }
-function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s}</span>`; }
+function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp', Unknown: 'pp' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s === 'Unknown' ? 'Unknown' : s}</span>`; }
 function rcBadge(v) { if (!v) return `<span class="rc rc-na">—</span>`; return `<span class="rc ${/collect/i.test(v)?'rc-col':/pending/i.test(v)?'rc-pend':'rc-na'}">${v}</span>`; }
 function bank(b) { return `<span class="bb ${/active/i.test(b)?'ba':/dormant/i.test(b)?'bd':'bn'}">${b}</span>`; }
 function uniq(rows, key) { return [...new Set(rows.map(r => getVal(r, key)).filter(Boolean))].sort(); }
 
 function stats(rows) {
-  const t = rows.length, a = rows.filter(r => getSt(r) === 'Audited').length, w = rows.filter(r => getSt(r) === 'WIP').length, p = rows.filter(r => getSt(r) === 'Pending').length;
+  const t = rows.length, a = rows.filter(r => getSt(r) === 'Audited').length, w = rows.filter(r => getSt(r) === 'WIP').length, p = rows.filter(r => getSt(r) === 'Pending').length, u = rows.filter(r => getSt(r) === 'Unknown').length;
   const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length, rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
   const bk = {}; rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
   const fund = rows.reduce((acc, r) => acc + (getFund(r) || 0), 0);
   const tithes = rows.reduce((acc, r) => acc + (getTithes(r) || 0), 0);
   const offerings = rows.reduce((acc, r) => acc + (getOfferings(r) || 0), 0);
-  return { t, a, w, p, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p, tithes, offerings };
+  return { t, a, w, p, u, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p, tithes, offerings };
 }
 
 function wilStats(rows) {
@@ -895,7 +901,7 @@ function renderChurch(m) {
       <div class="kpi ck" style="grid-column:span 2" onclick="showCardDetails('report')"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
-      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % vs total churches</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
       <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches ${yrLabel()}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
@@ -934,7 +940,7 @@ function renderSchool(m) {
       <div class="kpi ck" style="grid-column:span 8" onclick="showCardDetails('report')"><div class="kpi-ic">📁</div><div class="kpi-lbl">Reports Collected</div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
-      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444']].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % across years</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
       <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools ${yrLabel()}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
@@ -1021,7 +1027,7 @@ function churchTbl(rows) {
   ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
 
-function bDonut(s) { mkChart('cDnt', { type: 'doughnut', data: { labels: ['Audited','Work in Progress','Pending'], datasets: [{ data: [s.a||0.001, s.w||0.001, s.p||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
+function bDonut(s) { const segs = [['Audited', s.a||0.001, '#10b981'], ['Work in Progress', s.w||0.001, '#f59e0b'], ['Pending', s.p||0.001, '#ef4444']]; if (s.u) segs.push(['Unknown', s.u, '#94a3b8']); mkChart('cDnt', { type: 'doughnut', data: { labels: segs.map(x => x[0]), datasets: [{ data: segs.map(x => x[1]), backgroundColor: segs.map(x => x[2]), borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
 function bTrend(tr) { mkChart('cTrend', { type: 'line', data: { labels: tr.map(t => t.yr), datasets: [{ label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }, { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } }, x: { ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:10 } }, tooltip: TT_DARK } } }); }
 function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
 function bFund(rows) { const key = S.mode === 'church' ? 'gereja' : 'school'; const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a,b) => b.f - a.f).slice(0, 8); if (!data.length) return; mkChart('cFund', { type: 'bar', data: { labels: data.map(d => d.n), datasets: [{ label: 'Fund Balance', data: data.map(d => d.f), backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'), borderColor: data.map((_,i) => PAL[i%PAL.length]), borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
@@ -1374,8 +1380,8 @@ function buildAIContext() {
   });
   const s = stats(totalRows);
   const wil = wilStats(totalRows);
-  const wilArr = Object.entries(wil).map(([name, d]) => ({
-    name, churches: d.t, audited: d.a, wip: d.w, pending: d.p,
+  const wilArr = wil.map(d => ({
+    name: d.n, churches: d.t, audited: d.a, wip: d.w, pending: d.p,
     fund: Math.round(d.fund), tithes: Math.round(d.tithes), offerings: Math.round(d.offerings)
   }));
   const topTithes = totalRows.map(r => ({ n: getVal(r,'gereja')||'—', w: getVal(r,'wilayah')||'', v: getTithes(r) })).filter(d => d.v).sort((a,b) => b.v - a.v).slice(0,5);
@@ -1400,7 +1406,7 @@ async function queryAI(question) {
   const ctx = buildAIContext();
   const badge = document.getElementById('chatBadge');
   if (badge) badge.textContent = 'AI';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(GEMINI_KEY)}`;
   const prompt = `You are SAB Mission's church audit analytics assistant. Answer in the user's language (English or Bahasa Malaysia).
 
 DATA (JSON):
@@ -1415,7 +1421,7 @@ RULES:
 - Do NOT make up numbers
 
 QUESTION: ${question}`;
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_KEY }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 800 } }) });
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 800 } }) });
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
     throw new Error(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
@@ -1470,7 +1476,7 @@ function processQuery(q) {
   })();
 
   const greets = /^(hi|hello|hey|halo|hai|greetings|selamat|assalam)/.test(lq);
-  const wantsSummary = /^(summary|overview|report|status|ringkasan|gambaran|laporan|what.c?an.you)/.test(lq);
+  const wantsSummary = /^(summary|overview|ringkasan|gambaran|laporan|what.c?an.you)/.test(lq);
   const wantsHelp = /^(help|command|bantuan|what can i ask|what can you|apa boleh)/.test(lq);
   const wantsCount = /\b(how many|count|number of|total|jumlah|berapa|kiraan|banyak)\b/.test(lq);
   const wantsFund = /\b(fund|balance|money|rm|dana|baki|wang)\b/.test(lq);
