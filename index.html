@@ -411,6 +411,20 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 #debugModal>div{max-width:860px;margin:0 auto;background:var(--bg2);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:24px}
 #debugModal h2{font-size:16px;font-weight:800;color:#fca5a5}
 
+/* Password gate */
+.pw-overlay{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+.pw-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:360px;width:100%;text-align:center}
+.pw-logo{width:48px;height:48px;border-radius:12px;background:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-weight:800;font-size:14px;color:#fff}
+.pw-title{font-size:16px;font-weight:800;color:var(--off);margin-bottom:4px}
+.pw-sub{font-size:11px;color:var(--muted2);font-weight:600;margin-bottom:20px}
+.pw-input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--off);font-family:inherit;font-size:14px;font-weight:700;text-align:center;outline:none;transition:all .15s;letter-spacing:4px}
+.pw-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.pw-btn{width:100%;margin-top:12px;padding:10px;border-radius:8px;border:none;background:var(--primary);color:#fff;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:all .12s}
+.pw-btn:hover{background:var(--primary2)}
+.pw-btn:disabled{opacity:.4;cursor:not-allowed}
+.pw-err{font-size:11px;color:var(--red);font-weight:700;margin-top:10px;min-height:20px;transition:all .15s}
+.pw-hid{display:none!important}
+
 /* Responsive */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr)}.g2,.g3,.glh{grid-template-columns:1fr}}
 @media(max-width:768px){
@@ -513,6 +527,18 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
   <div id="loader-sub">Loading audit data from Google Sheets…</div>
   <div id="loader-bar"><div id="loader-bar-fill"></div></div>
   <div id="loader-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- Password gate -->
+<div class="pw-overlay" id="pwGate">
+  <div class="pw-box">
+    <div class="pw-logo">SDA</div>
+    <div class="pw-title">SAB Mission Audit</div>
+    <div class="pw-sub">Enter password to access dashboard</div>
+    <input type="password" class="pw-input" id="pwInput" placeholder="•••" maxlength="10" autocomplete="off">
+    <button class="pw-btn" id="pwBtn" onclick="checkPw()">Unlock</button>
+    <div class="pw-err" id="pwErr"></div>
+  </div>
 </div>
 
 <!-- Sidebar -->
@@ -1939,6 +1965,33 @@ function processQuery(q) {
   return 'Maaf, saya tidak faham soalan itu. Cuba tanya tentang kiraan, baki dana, kadar siap, pecahan wilayah, perbandingan, tren, atau kualiti data. Taip "bantuan" untuk contoh. <em>(I also understand English!)</em>';
 }
 
-renderYrs();
-loadAll();
+function checkPw() {
+  const input = document.getElementById('pwInput');
+  const err = document.getElementById('pwErr');
+  const btn = document.getElementById('pwBtn');
+  const val = input.value.trim();
+  if (!val) { err.textContent = 'Please enter a password.'; return; }
+  if (val !== '777') {
+    err.textContent = 'Incorrect password.';
+    input.value = '';
+    input.focus();
+    return;
+  }
+  localStorage.setItem('sab_auth', '1');
+  document.getElementById('pwGate').classList.add('pw-hid');
+  document.getElementById('pwInput').value = '';
+  renderYrs();
+  loadAll();
+}
+document.getElementById('pwInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPw();
+});
+const AUTH_KEY = localStorage.getItem('sab_auth');
+if (AUTH_KEY === '1') {
+  document.getElementById('pwGate').classList.add('pw-hid');
+  renderYrs();
+  loadAll();
+} else {
+  document.getElementById('pwGate').style.display = '';
+}
 </script>
