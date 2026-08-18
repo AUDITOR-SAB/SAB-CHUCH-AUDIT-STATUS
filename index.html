@@ -759,19 +759,19 @@ const S = {
   search: '', fSt: '', fWil: '',
   page: 1, perPage: 25, sc: -1, sd: 1,
   charts: {}, repCharts: {},
-  wilMap: {}, debugLog: {},
+  wilMap: {}, debugLog: {}, _hardRefresh: false,
 };
 // ⚠️ SECURITY: This API key is exposed client-side. Anyone viewing the page source can
 //    use it. For production, proxy requests through a backend server or use restricted keys.
 const GEMINI_KEY = 'AQ.Ab8RN6L8AP9ClJATdClf5HMoUXsKaVtYW5KzztcNFXHbODUnjQ';
 
-function csvUrl(id, gid) {
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0&cb=${Date.now()}`;
+function csvUrl(id, gid, bust) {
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}&headers=0${bust ? `&cb=${Date.now()}` : ''}`;
 }
 
-function fetchCSV(id, gid, label) {
+function fetchCSV(id, gid, label, bust) {
   return new Promise((ok, fail) => {
-    Papa.parse(csvUrl(id, gid), {
+    Papa.parse(csvUrl(id, gid, bust), {
       download: true, header: false, skipEmptyLines: true,
       complete: r => {
         const rows = r.data;
@@ -837,16 +837,17 @@ function fetchCSV(id, gid, label) {
 async function loadAll() {
   document.getElementById('main').innerHTML = '<div class="center-state"><div class="spin"></div><div>Loading data from Google Sheets…</div></div>';
   const fetches = YEARS.flatMap(yr => [
-    fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`).then(d => { S.cData[yr] = d; }).catch(() => { S.cData[yr] = []; }),
-    fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`).then(d => { S.sData[yr] = d; }).catch(() => { S.sData[yr] = []; }),
+    fetchCSV(CHURCH_ID, CHURCH_GIDS[yr], `church-${yr}`, S._hardRefresh).then(d => { S.cData[yr] = d; }).catch(() => { S.cData[yr] = []; }),
+    fetchCSV(SCHOOL_ID, SCHOOL_GIDS[yr], `school-${yr}`, S._hardRefresh).then(d => { S.sData[yr] = d; }).catch(() => { S.sData[yr] = []; }),
   ]);
   await Promise.all(fetches);
+  S._hardRefresh = false;
   document.getElementById('reportModal').style.display = 'none';
   document.getElementById('loader').classList.add('hide');
   renderAll();
 }
 
-async function doRefresh() { destroyCharts(); S.cData = {}; S.sData = {}; await loadAll(); }
+async function doRefresh() { destroyCharts(); S.cData = {}; S.sData = {}; S._hardRefresh = true; await loadAll(); }
 
 function getVal(row, ...keys) {
   const rKeys = Object.keys(row);
