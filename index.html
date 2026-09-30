@@ -152,15 +152,16 @@ main{flex:1;padding:24px 28px 60px;max-width:1400px;width:100%}
 .kpi.ck::before{background:var(--pink)}
 .kpi.ct::before{background:var(--cyan)}
 .kpi.cv::before{background:#f472b6}
+.kpi.cs::before{background:#38bdf8}
 .kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .kpi-ic{font-size:18px}
 .kpi-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
 .kpi-val{font-size:28px;font-weight:800;line-height:1.1;margin-bottom:2px}
-.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}.kpi.ct .kpi-val{color:var(--cyan)}.kpi.cv .kpi-val{color:#f472b6}
+.kpi.cb .kpi-val{color:var(--sky)}.kpi.cg .kpi-val{color:var(--green)}.kpi.ca .kpi-val{color:var(--amber)}.kpi.cr .kpi-val{color:var(--red)}.kpi.co .kpi-val{color:var(--gold)}.kpi.cp .kpi-val{color:var(--purple)}.kpi.ck .kpi-val{color:var(--pink)}.kpi.ct .kpi-val{color:var(--cyan)}.kpi.cv .kpi-val{color:#f472b6}.kpi.cs .kpi-val{color:#38bdf8}
 .kpi-meta{font-size:10px;color:var(--muted2);font-weight:600}
 .kpi-bar{height:3px;background:rgba(255,255,255,.04);border-radius:2px;margin-top:10px;overflow:hidden}
 .kpi-bar-fill{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
-.kpi.cg .kpi-bar-fill{background:var(--green)}.kpi.ca .kpi-bar-fill{background:var(--amber)}.kpi.co .kpi-bar-fill{background:var(--gold)}.kpi.ct .kpi-bar-fill{background:var(--cyan)}.kpi.cv .kpi-bar-fill{background:#f472b6}
+.kpi.cg .kpi-bar-fill{background:var(--green)}.kpi.ca .kpi-bar-fill{background:var(--amber)}.kpi.co .kpi-bar-fill{background:var(--gold)}.kpi.ct .kpi-bar-fill{background:var(--cyan)}.kpi.cv .kpi-bar-fill{background:#f472b6}.kpi.cs .kpi-bar-fill{background:#38bdf8}
 
 /* Cards */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
@@ -204,6 +205,7 @@ main{flex:1;padding:24px 28px 60px;max-width:1400px;width:100%}
 .pa{background:rgba(16,185,129,.12);color:#4ade80}.pa::before{background:var(--green);box-shadow:0 0 4px var(--green)}
 .pw{background:rgba(245,158,11,.12);color:#fcd34d}.pw::before{background:var(--amber);animation:blink 1.6s infinite}
 .pp{background:rgba(239,68,68,.12);color:#fca5a5}.pp::before{background:var(--red)}
+.paw{background:rgba(56,189,248,.12);color:#7dd3fc}.paw::before{background:#38bdf8;box-shadow:0 0 4px #38bdf8}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 .rc{padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700}
 .rc-col{background:rgba(34,211,238,.1);color:#67e8f9}
@@ -330,11 +332,12 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 .rv-table-wrapper th{text-align:left;padding:12px 14px;background:#f8fafc;border-bottom:2px solid #e2e8f0;color:#475569;font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.4px}
 .rv-table-wrapper td{padding:12px 14px;border-bottom:1px solid #f1f5f9;color:#334155;font-weight:500}
 .rv-table-wrapper tbody tr:last-child td{border-bottom:none}
-.rv-status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rv-status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .rv-status-col{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;background:#fff}
 .rv-status-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:11px;font-weight:800;color:#0f172a;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0}
 .rv-status-hdr.st-a{background:#ecfdf5;color:#047857}
 .rv-status-hdr.st-w{background:#fffbeb;color:#b45309}
+.rv-status-hdr.st-ar{background:#f0f9ff;color:#0369a1}
 .rv-status-hdr.st-p{background:#fef2f2;color:#b91c1c}
 .rv-status-cnt{background:#fff;border-radius:999px;padding:2px 10px;font-size:11px;border:1px solid #e2e8f0}
 .rv-status-body{max-height:340px;overflow-y:auto;padding:8px 0}
@@ -373,7 +376,7 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 .cd-sum-item{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
 .cd-sum-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:3px}
 .cd-sum-val{font-size:18px;font-weight:800;color:var(--off)}
-.cd-sum-val.green{color:var(--green)}.cd-sum-val.amber{color:var(--amber)}.cd-sum-val.red{color:var(--red)}.cd-sum-val.blue{color:var(--sky)}.cd-sum-val.gold{color:var(--gold)}
+.cd-sum-val.green{color:var(--green)}.cd-sum-val.amber{color:var(--amber)}.cd-sum-val.red{color:var(--red)}.cd-sum-val.blue{color:var(--sky)}.cd-sum-val.gold{color:var(--gold)}.cd-sum-val.sky{color:#38bdf8}
 .cd-table{width:100%;border-collapse:collapse;font-size:11px}
 .cd-table th{padding:8px 10px;text-align:left;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);background:rgba(255,255,255,.015);border-bottom:1px solid var(--border);position:sticky;top:0}
 .cd-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--off);font-weight:500}
@@ -381,7 +384,7 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 .cd-table tbody tr:hover{background:rgba(255,255,255,.02)}
 .cd-empty{padding:20px;text-align:center;color:var(--muted);font-weight:600;font-size:12px}
 .cd-badge{display:inline-block;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:700}
-.cd-badge.g{background:rgba(16,185,129,.12);color:#4ade80}.cd-badge.y{background:rgba(245,158,11,.12);color:#fcd34d}.cd-badge.r{background:rgba(239,68,68,.12);color:#fca5a5}
+.cd-badge.g{background:rgba(16,185,129,.12);color:#4ade80}.cd-badge.y{background:rgba(245,158,11,.12);color:#fcd34d}.cd-badge.r{background:rgba(239,68,68,.12);color:#fca5a5}.cd-badge.b{background:rgba(56,189,248,.12);color:#7dd3fc}
 
 /* Report modal */
 #reportModal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center}
@@ -670,7 +673,7 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
     </div>
     <div class="rv-card" style="padding:0;overflow:hidden;border:none">
       <table class="rv-table-wrapper">
-        <thead><tr><th>Audit Year</th><th>Facility Type</th><th>Total</th><th>Audited</th><th>WIP</th><th>Pending</th><th>Completion %</th></tr></thead>
+        <thead><tr><th>Audit Year</th><th>Facility Type</th><th>Total</th><th>Audited</th><th>WIP</th><th>Await</th><th>Pending</th><th>Completion %</th></tr></thead>
         <tbody id="rvTableBody"></tbody>
       </table>
     </div>
@@ -684,6 +687,10 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
         <div class="rv-status-col">
           <div class="rv-status-hdr st-w"><span>🔄 Work in Progress</span><span class="rv-status-cnt" id="rvCntWIP">0</span></div>
           <div class="rv-status-body" id="rvListWIP"></div>
+        </div>
+        <div class="rv-status-col">
+          <div class="rv-status-hdr st-ar"><span>📨 Awaiting Response</span><span class="rv-status-cnt" id="rvCntAwaiting">0</span></div>
+          <div class="rv-status-body" id="rvListAwaiting"></div>
         </div>
         <div class="rv-status-col">
           <div class="rv-status-hdr st-p"><span>⏳ Pending</span><span class="rv-status-cnt" id="rvCntPending">0</span></div>
@@ -870,6 +877,7 @@ function getSt(r) {
   const v = getVal(r, 'status');
   if (/audit/i.test(v)) return 'Audited';
   if (/wip|work\s*in\s*progress/i.test(v)) return 'WIP';
+  if (/await/i.test(v)) return 'Awaiting Response';
   if (/pending/i.test(v)) return 'Pending';
   return v || 'Unknown';
 }
@@ -880,27 +888,27 @@ function getFund(r) { const n = parseFloat(getVal(r, 'closing fund bal', 'fund',
 function getTithes(r) { const n = parseFloat(getVal(r, 'tithes', 'tithe').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
 function getOfferings(r) { const n = parseFloat(getVal(r, 'offerings', 'offering').replace(/[^0-9.-]/g, '')); return isNaN(n) ? null : n; }
 function fRM(n) { return n === null || n === undefined ? '—' : 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2 }); }
-function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp', Unknown: 'pp' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s === 'Unknown' ? 'Unknown' : s}</span>`; }
+function pill(s) { const m = { Audited: 'pa', WIP: 'pw', Pending: 'pp', Unknown: 'pp', 'Awaiting Response': 'paw' }; return `<span class="pill ${m[s] || 'pp'}">${s === 'WIP' ? 'Work in Progress' : s === 'Unknown' ? 'Unknown' : s}</span>`; }
 function rcBadge(v) { if (!v) return `<span class="rc rc-na">—</span>`; return `<span class="rc ${/collect/i.test(v)?'rc-col':/pending/i.test(v)?'rc-pend':'rc-na'}">${v}</span>`; }
 function bank(b) { return `<span class="bb ${/active/i.test(b)?'ba':/dormant/i.test(b)?'bd':'bn'}">${b}</span>`; }
 function uniq(rows, key) { return [...new Set(rows.map(r => getVal(r, key)).filter(Boolean))].sort(); }
 
 function stats(rows) {
-  const t = rows.length, a = rows.filter(r => getSt(r) === 'Audited').length, w = rows.filter(r => getSt(r) === 'WIP').length, p = rows.filter(r => getSt(r) === 'Pending').length, u = rows.filter(r => getSt(r) === 'Unknown').length;
+  const t = rows.length, a = rows.filter(r => getSt(r) === 'Audited').length, w = rows.filter(r => getSt(r) === 'WIP').length, p = rows.filter(r => getSt(r) === 'Pending').length, ar = rows.filter(r => getSt(r) === 'Awaiting Response').length, u = rows.filter(r => getSt(r) === 'Unknown').length;
   const rc_c = rows.filter(r => /collect/i.test(getRC(r))).length, rc_p = rows.filter(r => /pending/i.test(getRC(r))).length;
   const bk = {}; rows.forEach(r => { const b = getBank(r); bk[b] = (bk[b] || 0) + 1; });
   const fund = rows.reduce((acc, r) => acc + (getFund(r) || 0), 0);
   const tithes = rows.reduce((acc, r) => acc + (getTithes(r) || 0), 0);
   const offerings = rows.reduce((acc, r) => acc + (getOfferings(r) || 0), 0);
-  return { t, a, w, p, u, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p, tithes, offerings };
+  return { t, a, w, p, ar, u, pct: t ? Math.round(a / t * 100) : 0, bk, fund, rc_c, rc_p, tithes, offerings };
 }
 
 function wilStats(rows) {
   const m = {};
   rows.forEach(r => {
     const w = getVal(r, 'wilayah') || 'Unknown';
-    if (!m[w]) m[w] = { t:0, a:0, w:0, p:0, fund:0, tithes:0, offerings:0 };
-    m[w].t++; const s = getSt(r); if (s === 'Audited') m[w].a++; else if (s === 'WIP') m[w].w++; else m[w].p++;
+    if (!m[w]) m[w] = { t:0, a:0, w:0, p:0, ar:0, fund:0, tithes:0, offerings:0 };
+    m[w].t++; const s = getSt(r); if (s === 'Audited') m[w].a++; else if (s === 'WIP') m[w].w++; else if (s === 'Awaiting Response') m[w].ar++; else m[w].p++;
     const f = getFund(r); if (f) m[w].fund += f;
     const ti = getTithes(r); if (ti) m[w].tithes += ti;
     const of = getOfferings(r); if (of) m[w].offerings += of;
@@ -911,8 +919,8 @@ function daerStats(rows, wilFilter) {
   const m = {}; const subset = wilFilter ? rows.filter(r => getVal(r, 'wilayah') === wilFilter) : rows;
   subset.forEach(r => {
     const d = getVal(r, 'daerah') || 'Unknown';
-    if (!m[d]) m[d] = { t:0, a:0, w:0, p:0 };
-    m[d].t++; const s = getSt(r); if(s==='Audited')m[d].a++; else if(s==='WIP')m[d].w++; else m[d].p++;
+    if (!m[d]) m[d] = { t:0, a:0, w:0, p:0, ar:0 };
+    m[d].t++; const s = getSt(r); if(s==='Audited')m[d].a++; else if(s==='WIP')m[d].w++; else if(s==='Awaiting Response')m[d].ar++; else m[d].p++;
   });
   return Object.entries(m).map(([n, d]) => ({ n, ...d, pct: d.t ? Math.round(d.a / d.t * 100) : 0 })).sort((a, b) => b.t - a.t).slice(0, 20);
 }
@@ -977,6 +985,7 @@ function renderChurch(m) {
       <div class="kpi cb" onclick="showCardDetails('total')"><div class="kpi-top"><span class="kpi-ic">⛪</span><span class="kpi-lbl">Total</span></div><div class="kpi-val">${s.t}</div><div class="kpi-meta">Across all Wilayah</div></div>
       <div class="kpi cg" onclick="showCardDetails('audited')"><div class="kpi-top"><span class="kpi-ic">✅</span><span class="kpi-lbl">Audited</span></div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
       <div class="kpi ca" onclick="showCardDetails('wip')"><div class="kpi-top"><span class="kpi-ic">🔄</span><span class="kpi-lbl">WIP</span></div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t ? Math.round(s.w/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cs" onclick="showCardDetails('awaiting')"><div class="kpi-top"><span class="kpi-ic">📨</span><span class="kpi-lbl">Awaiting</span></div><div class="kpi-val">${s.ar}</div><div class="kpi-meta">${s.t ? Math.round(s.ar/s.t*100) : 0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.ar/s.t*100):0}%"></div></div></div>
       <div class="kpi cr" onclick="showCardDetails('pending')"><div class="kpi-top"><span class="kpi-ic">⏳</span><span class="kpi-lbl">Pending</span></div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t ? Math.round(s.p/s.t*100) : 0}% of total</div></div>
       <div class="kpi co" onclick="showCardDetails('fund')"><div class="kpi-top"><span class="kpi-ic">💰</span><span class="kpi-lbl">Fund Balance</span></div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">${yrLabel()} closing${S.selectedYears.length > 1 ? ' combined' : ''}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
       <div class="kpi ct" onclick="showCardDetails('tithes')"><div class="kpi-top"><span class="kpi-ic">🔟</span><span class="kpi-lbl">Tithes</span></div><div class="kpi-val" style="font-size:${s.tithes>9999999?'15px':s.tithes>999999?'18px':'22px'}">${fRM(s.tithes)}</div><div class="kpi-meta">Submitted to SAB Mission</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.tithes && s.fund ? Math.min(100, Math.round(s.tithes/s.fund*100)) : 0}%;background:var(--cyan)"></div></div></div>
@@ -985,16 +994,16 @@ function renderChurch(m) {
       <div class="kpi ck" style="grid-column:1/-1" onclick="showCardDetails('report')"><div class="kpi-top"><span class="kpi-ic">📁</span><span class="kpi-lbl">Reports Collected</span></div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
-      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Awaiting Response',s.ar,'#38bdf8'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % vs total churches</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
       <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All churches ${yrLabel()}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
     <div class="glh">
       <div class="card"><div class="card-t">Progress by Daerah${S.fWil ? ` — <span style="color:var(--sky)">${S.fWil}</span>` : ''}</div><div class="card-s">Click a Wilayah card below to filter · showing ${dae.length} daerah</div><div class="bar-list">${dae.length? dae.map((d,i)=>`<div class="brow"><div class="bhdr"><span class="bname">${d.n}</span><span class="bstat">${d.a}/${d.t} &nbsp;·&nbsp; <span style="color:var(--white);font-weight:700">${d.pct}%</span></span></div><div class="btrack"><div class="bfill" style="width:${d.pct}%;background:${PAL[i%PAL.length]}"></div></div></div>`).join(''): '<div style="color:var(--muted);font-size:12px;font-weight:600;text-align:center;padding:20px">No data</div>'}</div></div>
-      <div class="card"><div class="card-t">Wilayah Stacked Status</div><div class="card-s">Audited · WIP · Pending per Wilayah</div><div class="cw" style="height:260px"><canvas id="cWil"></canvas></div></div>
+      <div class="card"><div class="card-t">Wilayah Stacked Status</div><div class="card-s">Audited · WIP · Awaiting · Pending per Wilayah</div><div class="cw" style="height:260px"><canvas id="cWil"></canvas></div></div>
     </div>
     <div class="sec">Wilayah Cards <span style="font-size:10px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)">&nbsp;— click to filter Daerah & table</span></div>
-    <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#4ade80">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#fcd34d">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#fca5a5">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px;font-weight:600">No data for selected years</div>'}</div>
+    <div class="wgrid">${wil.length? wil.map(w => `<div class="wcard${S.fWil === w.n ? ' act' : ''}" onclick="fwil('${escQ(w.n)}')"><div class="wname">📍 ${w.n}</div><div class="wstats"><div class="ws"><span class="wsv" style="color:#4ade80">${w.a}</span><span class="wsl">Audited</span></div><div class="ws"><span class="wsv" style="color:#fcd34d">${w.w}</span><span class="wsl">WIP</span></div><div class="ws"><span class="wsv" style="color:#7dd3fc">${w.ar||0}</span><span class="wsl">Awaiting</span></div><div class="ws"><span class="wsv" style="color:#fca5a5">${w.p}</span><span class="wsl">Pending</span></div><div class="ws"><span class="wsv" style="color:var(--sky)">${w.t}</span><span class="wsl">Total</span></div></div><div class="wprog"><div class="wfill" style="width:${w.pct}%"></div></div><div class="wpct">${w.pct}% audited &nbsp;·&nbsp; ${fRM(w.fund)}</div></div>`).join(''): '<div style="color:var(--muted);padding:20px;font-size:13px;font-weight:600">No data for selected years</div>'}</div>
     ${topFunds(rows)}
     ${topGivings(rows)}
     <div class="sec" style="margin-top:4px">Church Records</div>
@@ -1019,12 +1028,13 @@ function renderSchool(m) {
       <div class="kpi cb" onclick="showCardDetails('total')"><div class="kpi-top"><span class="kpi-ic">🏫</span><span class="kpi-lbl">Total</span></div><div class="kpi-val">${s.t}</div><div class="kpi-meta">SAB Mission</div></div>
       <div class="kpi cg" onclick="showCardDetails('audited')"><div class="kpi-top"><span class="kpi-ic">✅</span><span class="kpi-lbl">Audited</span></div><div class="kpi-val">${s.a}</div><div class="kpi-meta">${s.pct}% completion</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
       <div class="kpi ca" onclick="showCardDetails('wip')"><div class="kpi-top"><span class="kpi-ic">🔄</span><span class="kpi-lbl">WIP</span></div><div class="kpi-val">${s.w}</div><div class="kpi-meta">${s.t?Math.round(s.w/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.w/s.t*100):0}%"></div></div></div>
+      <div class="kpi cs" onclick="showCardDetails('awaiting')"><div class="kpi-top"><span class="kpi-ic">📨</span><span class="kpi-lbl">Awaiting</span></div><div class="kpi-val">${s.ar}</div><div class="kpi-meta">${s.t?Math.round(s.ar/s.t*100):0}% of total</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.t?Math.round(s.ar/s.t*100):0}%"></div></div></div>
       <div class="kpi cr" onclick="showCardDetails('pending')"><div class="kpi-top"><span class="kpi-ic">⏳</span><span class="kpi-lbl">Pending</span></div><div class="kpi-val">${s.p}</div><div class="kpi-meta">${s.t?Math.round(s.p/s.t*100):0}% of total</div></div>
       <div class="kpi co" onclick="showCardDetails('fund')"><div class="kpi-top"><span class="kpi-ic">💰</span><span class="kpi-lbl">Fund Balance</span></div><div class="kpi-val" style="font-size:${s.fund>9999999?'15px':s.fund>999999?'18px':'22px'}">${fRM(s.fund)}</div><div class="kpi-meta">${yrLabel()} closing${S.selectedYears.length > 1 ? ' combined' : ''}</div><div class="kpi-bar"><div class="kpi-bar-fill" style="width:${s.pct}%"></div></div></div>
       <div class="kpi ck" style="grid-column:1/-1" onclick="showCardDetails('report')"><div class="kpi-top"><span class="kpi-ic">📁</span><span class="kpi-lbl">Reports Collected</span></div><div class="kpi-val">${s.rc_c}</div><div class="kpi-meta">${s.rc_p} Pending Pickup</div></div>
     </div>
     <div class="g3">
-      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
+      <div class="card"><div class="card-t">Audit Status Overview</div><div class="card-s">${yrLabel()} distribution</div><div class="donut-area"><div class="donut-box"><canvas id="cDnt"></canvas><div class="donut-center"><div class="d-pct" id="dPct">0%</div><div class="d-lbl">Audited</div></div></div><div class="legend">${[['Audited',s.a,'#10b981'],['Work in Progress',s.w,'#f59e0b'],['Awaiting Response',s.ar,'#38bdf8'],['Pending',s.p,'#ef4444'], ...(s.u ? [['Unknown', s.u, '#94a3b8']] : [])].map(([l,v,c])=>`<div class="li"><div class="ldot" style="background:${c}"></div><span class="ll">${l}</span><span class="lv">${v}</span><span class="lp">&nbsp;(${s.t?Math.round(v/s.t*100):0}%)</span></div>`).join('')}</div></div></div>
       <div class="card"><div class="card-t">Year-over-Year Trend</div><div class="card-s">Completion % across years</div><div class="cw" style="height:165px"><canvas id="cTrend"></canvas></div></div>
       <div class="card"><div class="card-t">Bank Record Breakdown</div><div class="card-s">All schools ${yrLabel()}</div>${Object.entries(s.bk).map(([b,cnt])=>`<div class="bkrow">${bank(b)}<span class="bkct">${cnt} <span style="color:var(--muted);font-weight:600">(${s.t?Math.round(cnt/s.t*100):0}%)</span></span></div>`).join('') || '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0">No records loaded.</div>'}</div>
     </div>
@@ -1033,7 +1043,7 @@ function renderSchool(m) {
     <div class="sec" style="margin-top:4px">School Overview</div>
     <div class="tbl-ctrl">
       <select class="flt" onchange="S.fSt=this.value;renderAll()">
-        <option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
+        <option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>Work in Progress</option><option value="Awaiting Response"${S.fSt==='Awaiting Response'?' selected':''}>Awaiting Response</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option>
       </select>
       <span style="font-size:11px;color:var(--muted);font-weight:600">${filt.length} school${filt.length!==1?'s':''}</span>
     </div>
@@ -1105,16 +1115,16 @@ function churchTbl(rows) {
   const tot = filt.length; const pages = Math.max(1, Math.ceil(tot / S.perPage)); const pg = Math.min(S.page, pages); const slice = filt.slice((pg-1)*S.perPage, pg*S.perPage); const sa = i => S.sc === i ? (S.sd === 1 ? ' ↑' : ' ↓') : '';
   const pNums = []; const used = new Set(); for (let i = 1; i <= pages; i++) { if (pages <= 7 || i === 1 || i === pages || Math.abs(i-pg) <= 1) { pNums.push(i); used.add(i); } else if (Math.abs(i-pg) === 2 && !used.has('…')) { pNums.push('…'); used.add('…'); } }
   const cols = COLS.length;
-  return `<div class="tbl-ctrl"><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
+  return `<div class="tbl-ctrl"><select class="flt" onchange="S.fWil=this.value;S.page=1;renderAll()"><option value="">All Wilayah</option>${wils.map(w=>`<option value="${w}"${S.fWil===w?' selected':''}>${w}</option>`).join('')}</select><select class="flt" onchange="S.fSt=this.value;S.page=1;renderAll()"><option value="">All Status</option><option value="Audited"${S.fSt==='Audited'?' selected':''}>Audited</option><option value="WIP"${S.fSt==='WIP'?' selected':''}>WIP</option><option value="Awaiting Response"${S.fSt==='Awaiting Response'?' selected':''}>Awaiting</option><option value="Pending"${S.fSt==='Pending'?' selected':''}>Pending</option></select><span style="font-size:11px;color:var(--muted);font-weight:600">${tot} record${tot!==1?'s':''}</span></div>
   <div class="twrap"><table><thead><tr>${COLS.map((c,i) => `<th onclick="srt(${i})">${c}${sa(i)}</th>`).join('')}</tr></thead><tbody>${slice.length? slice.map(r => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year||'—'}</td>`:''}<td style="color:var(--sky);font-weight:700">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td><td style="font-weight:800">${getVal(r,'gereja')||'—'}</td><td style="color:var(--muted);font-weight:600">${getVal(r,'type')||'—'}</td><td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td><td class="tfund" style="color:var(--cyan)">${fRM(getTithes(r))}</td><td class="tfund" style="color:#f472b6">${fRM(getOfferings(r))}</td><td>${rcBadge(getRC(r))}</td><td>${pill(getSt(r))}</td></tr>`).join(''): `<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--muted);font-style:italic;font-weight:600">No records found</td></tr>`}</tbody></table>
   ${pages > 1 ? `<div class="pgn"><span>${(pg-1)*S.perPage+1}–${Math.min(pg*S.perPage,tot)} of ${tot}</span><div class="pbtns"><button class="pbtn" onclick="S.page=Math.max(1,S.page-1);renderAll()" ${pg===1?'disabled':''}>‹</button>${pNums.map(n => n==='…'? `<button class="pbtn" disabled>…</button>`: `<button class="pbtn${n===pg?' on':''}" onclick="S.page=${n};renderAll()">${n}</button>`).join('')}<button class="pbtn" onclick="S.page=Math.min(${pages},S.page+1);renderAll()" ${pg===pages?'disabled':''}>›</button></div></div>` : ''}</div>`;
 }
 
-function bDonut(s) { const segs = [['Audited', s.a||0.001, '#10b981'], ['Work in Progress', s.w||0.001, '#f59e0b'], ['Pending', s.p||0.001, '#ef4444']]; if (s.u) segs.push(['Unknown', s.u, '#94a3b8']); mkChart('cDnt', { type: 'doughnut', data: { labels: segs.map(x => x[0]), datasets: [{ data: segs.map(x => x[1]), backgroundColor: segs.map(x => x[2]), borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
+function bDonut(s) { const segs = [['Audited', s.a||0.001, '#10b981'], ['Work in Progress', s.w||0.001, '#f59e0b'], ['Awaiting Response', s.ar||0.001, '#38bdf8'], ['Pending', s.p||0.001, '#ef4444']]; if (s.u) segs.push(['Unknown', s.u, '#94a3b8']); mkChart('cDnt', { type: 'doughnut', data: { labels: segs.map(x => x[0]), datasets: [{ data: segs.map(x => x[1]), backgroundColor: segs.map(x => x[2]), borderWidth: 0, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', animation: { duration: 900, easing: 'easeInOutQuart' }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } } } } }); }
 function bTrend(tr) { mkChart('cTrend', { type: 'line', data: { labels: tr.map(t => t.yr), datasets: [{ label: 'Audited %', data: tr.map(t => t.pct), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.1)', fill: true, tension: .4, pointBackgroundColor: '#10b981', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }, { label: 'Total', data: tr.map(t => t.t), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: .4, yAxisID: 'y2', pointBackgroundColor: '#3b82f6', pointRadius: 3, borderWidth: 2, borderDash: [4,3] }] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index' }, animation: { duration: 800 }, scales: { y: { min: 0, max: 100, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'}, callback: v => v+'%' }, grid: { color:'rgba(255,255,255,.04)' } }, y2: { position: 'right', min: 0, ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } }, x: { ticks: { color:'#cbd5e1', font:{size:10, weight:'600'} }, grid: { display: false } } }, plugins: { legend: { position:'bottom', labels: { color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:10 } }, tooltip: TT_DARK } } }); }
-function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
+function bWil(wil) { if (!wil.length) return; const top = wil.slice(0, 12); mkChart('cWil', { type: 'bar', data: { labels: top.map(w => w.n), datasets: [{ label:'Audited', data: top.map(w=>w.a), backgroundColor:'rgba(16,185,129,.8)', stack:'s' }, { label:'WIP', data: top.map(w=>w.w), backgroundColor:'rgba(245,158,11,.8)', stack:'s' }, { label:'Awaiting', data: top.map(w=>w.ar||0), backgroundColor:'rgba(56,189,248,.8)', stack:'s' }, { label:'Pending', data: top.map(w=>w.p), backgroundColor:'rgba(239,68,68,.8)', stack:'s' }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { stacked:true, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'} }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { position:'bottom', labels:{ color:'#cbd5e1', font:{size:10, weight:'600'}, boxWidth:10, padding:8 } }, tooltip: { ...TT_DARK, stacked: true } } } }); }
 function bFund(rows) { const key = S.mode === 'church' ? 'gereja' : 'school'; const data = rows.map(r => ({ n: getVal(r, key) || '—', f: getFund(r) })).filter(d => d.f !== null && d.f > 0).sort((a,b) => b.f - a.f).slice(0, 8); if (!data.length) return; mkChart('cFund', { type: 'bar', data: { labels: data.map(d => d.n), datasets: [{ label: 'Fund Balance', data: data.map(d => d.f), backgroundColor: data.map((_,i) => PAL[i%PAL.length]+'bb'), borderColor: data.map((_,i) => PAL[i%PAL.length]), borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, animation: { duration: 800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, maxRotation:40 }, grid:{ display:false } }, y: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } } }, plugins: { legend: { display: false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
-function bSchool(rows) { const names = rows.map(r => getVal(r,'school') || '—'); const sts = rows.map(r => getSt(r)); const stMap = { Audited:100, WIP:50, Pending:0 }; const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', Pending:'rgba(239,68,68,.8)' }; mkChart('cSchSt', { type: 'bar', data: { labels: names, datasets: [{ label: 'Progress', data: sts.map(s => stMap[s] ?? 0), backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'), borderRadius: 5, borderSkipped: false }] }, options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { min:0, max:100, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } } } } }); const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 })); mkChart('cSchFd', { type: 'bar', data: { labels: fdata.map(d => d.n), datasets: [{ label: 'Fund', data: fdata.map(d => d.f), backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'), borderColor: PAL.slice(0, fdata.length), borderWidth:1, borderRadius:5, borderSkipped:false }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
+function bSchool(rows) { const names = rows.map(r => getVal(r,'school') || '—'); const sts = rows.map(r => getSt(r)); const stMap = { Audited:100, WIP:50, 'Awaiting Response':25, Pending:0 }; const stCol = { Audited:'rgba(16,185,129,.8)', WIP:'rgba(245,158,11,.8)', 'Awaiting Response':'rgba(56,189,248,.8)', Pending:'rgba(239,68,68,.8)' }; mkChart('cSchSt', { type: 'bar', data: { labels: names, datasets: [{ label: 'Progress', data: sts.map(s => stMap[s] ?? 0), backgroundColor: sts.map(s => stCol[s] || 'rgba(239,68,68,.8)'), borderRadius: 5, borderSkipped: false }] }, options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { min:0, max:100, ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>v+'%' }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => sts[ctx.dataIndex]==='WIP'?'Work in Progress':sts[ctx.dataIndex] } } } } }); const fdata = rows.map(r => ({ n: getVal(r,'school')||'—', f: getFund(r)||0 })); mkChart('cSchFd', { type: 'bar', data: { labels: fdata.map(d => d.n), datasets: [{ label: 'Fund', data: fdata.map(d => d.f), backgroundColor: PAL.slice(0, fdata.length).map(c => c+'bb'), borderColor: PAL.slice(0, fdata.length), borderWidth:1, borderRadius:5, borderSkipped:false }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, animation: { duration:800 }, scales: { x: { ticks:{ color:'#cbd5e1', font:{size:9, weight:'600'}, callback: v=>'RM'+v.toLocaleString() }, grid:{ color:'rgba(255,255,255,.04)' } }, y: { ticks:{ color:'#cbd5e1', font:{size:10, weight:'600'} }, grid:{ display:false } } }, plugins: { legend: { display:false }, tooltip: { ...TT_DARK, callbacks: { label: ctx => 'RM '+ctx.raw.toLocaleString('en-MY',{minimumFractionDigits:2}) } } } } }); }
 
 function animB() { document.querySelectorAll('.bfill,.wfill,.kpi-bar-fill').forEach(el => { const w = el.style.width; el.style.width = '0'; requestAnimationFrame(() => setTimeout(() => { el.style.width = w; }, 20)); }); }
 function aniPct(id, target) { const el = document.getElementById(id); if (!el) return; let c = 0; const step = () => { if (c < target) { c++; el.textContent = c + '%'; requestAnimationFrame(step); } else el.textContent = target + '%'; }; step(); }
@@ -1177,7 +1187,7 @@ function showCardDetails(key) {
       <div class="cd-sum-item"><div class="cd-sum-label">Offerings</div><div class="cd-sum-val" style="color:#f472b6">${fRM(s.offerings)}</div></div>` : ''}
     </div>
     <table class="cd-table"><thead><tr>${multi?'<th>Year</th>':''}<th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th><th>Daerah</th>' : '<th>PIC</th>'}<th>Status</th></tr></thead><tbody>
-    ${rows.length ? rows.map((r, i) => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year}</td>`:''}<td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td><span class="cd-badge ${getSt(r)==='Audited'?'g':getSt(r)==='WIP'?'y':'r'}">${getSt(r)}</span></td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No records</td></tr>'}
+    ${rows.length ? rows.map((r, i) => `<tr>${multi?`<td style="color:var(--cyan);font-weight:700">${r._year}</td>`:''}<td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td><span class="cd-badge ${getSt(r)==='Audited'?'g':getSt(r)==='WIP'?'y':getSt(r)==='Awaiting Response'?'b':'r'}">${getSt(r)}</span></td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No records</td></tr>'}
     </tbody></table>`;
   } else if (key === 'audited') {
     title.textContent = '✅ Audited Facilities';
@@ -1203,6 +1213,17 @@ function showCardDetails(key) {
     </div>
     <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th>' : ''}<th>Bank</th><th>Fund</th></tr></thead><tbody>
     ${wip.length ? wip.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td>` : ''}<td>${bank(getBank(r))}</td><td class="tfund">${fRM(getFund(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No WIP facilities</td></tr>'}
+    </tbody></table>`;
+  } else if (key === 'awaiting') {
+    title.textContent = '📨 Awaiting Response';
+    const nameKey = S.mode === 'church' ? 'gereja' : 'school';
+    const awt = rows.filter(r => getSt(r) === 'Awaiting Response');
+    body.innerHTML = `<div class="cd-summary">
+      <div class="cd-sum-item"><div class="cd-sum-label">Awaiting</div><div class="cd-sum-val sky">${awt.length}</div></div>
+      <div class="cd-sum-item"><div class="cd-sum-label">% of Total</div><div class="cd-sum-val blue">${s.t ? Math.round(awt.length/s.t*100) : 0}%</div></div>
+    </div>
+    <table class="cd-table"><thead><tr><th>#</th><th>${S.mode === 'church' ? 'Gereja' : 'School'}</th>${S.mode === 'church' ? '<th>Wilayah</th><th>Daerah</th>' : '<th>PIC</th>'}<th>Bank</th></tr></thead><tbody>
+    ${awt.length ? awt.map((r, i) => `<tr><td style="color:var(--muted)">${i+1}</td><td style="font-weight:700">${getVal(r, nameKey) || '—'}</td>${S.mode === 'church' ? `<td style="color:var(--sky)">${getVal(r,'wilayah')||'—'}</td><td>${getVal(r,'daerah')||'—'}</td>` : `<td>${getVal(r,'school pic','pic')||'—'}</td>`}<td>${bank(getBank(r))}</td></tr>`).join('') : '<tr><td colspan="5" class="cd-empty">No awaiting facilities</td></tr>'}
     </tbody></table>`;
   } else if (key === 'pending') {
     title.textContent = '⏳ Pending Audits';
@@ -1237,8 +1258,8 @@ function showCardDetails(key) {
       <div class="cd-sum-item"><div class="cd-sum-label">Total Wilayah</div><div class="cd-sum-val blue">${wil.length}</div></div>
       <div class="cd-sum-item"><div class="cd-sum-label">Total Churches</div><div class="cd-sum-val green">${s.t}</div></div>
     </div>
-    <table class="cd-table"><thead><tr><th>Wilayah</th><th>Total</th><th>Audited</th><th>WIP</th><th>Pending</th><th>%</th><th>Fund</th><th>Tithes</th><th>Offerings</th></tr></thead><tbody>
-    ${wil.map(w => `<tr><td style="font-weight:700;color:var(--sky)">${w.n}</td><td>${w.t}</td><td style="color:#4ade80">${w.a}</td><td style="color:#fcd34d">${w.w}</td><td style="color:#fca5a5">${w.p}</td><td style="font-weight:700">${w.pct}%</td><td style="font-weight:800;color:var(--gold)">${fRM(w.fund)}</td><td style="font-weight:800;color:var(--cyan)">${fRM(w.tithes)}</td><td style="font-weight:800;color:#f472b6">${fRM(w.offerings)}</td></tr>`).join('')}
+    <table class="cd-table"><thead><tr><th>Wilayah</th><th>Total</th><th>Audited</th><th>WIP</th><th>Awaiting</th><th>Pending</th><th>%</th><th>Fund</th><th>Tithes</th><th>Offerings</th></tr></thead><tbody>
+    ${wil.map(w => `<tr><td style="font-weight:700;color:var(--sky)">${w.n}</td><td>${w.t}</td><td style="color:#4ade80">${w.a}</td><td style="color:#fcd34d">${w.w}</td><td style="color:#7dd3fc">${w.ar||0}</td><td style="color:#fca5a5">${w.p}</td><td style="font-weight:700">${w.pct}%</td><td style="font-weight:800;color:var(--gold)">${fRM(w.fund)}</td><td style="font-weight:800;color:var(--cyan)">${fRM(w.tithes)}</td><td style="font-weight:800;color:#f472b6">${fRM(w.offerings)}</td></tr>`).join('')}
     </tbody></table>`;
   } else if (key === 'report') {
     title.textContent = '📁 Report Collection Details';
@@ -1325,20 +1346,21 @@ function buildAndShowReport() {
   if (selectedYears.length === 0) { alert("Please select at least one audit year."); return; }
   if (selectedTypes.length === 0) { alert("Please select at least one facility type."); return; }
 
-  let agg = { total: 0, audited: 0, wip: 0, pending: 0 };
+  let agg = { total: 0, audited: 0, wip: 0, awaiting: 0, pending: 0 };
   let yearlyData = [];
   let tableRows = '';
-  let statusList = { Audited: [], WIP: [], Pending: [] };
+  let statusList = { Audited: [], WIP: [], 'Awaiting Response': [], Pending: [] };
 
   selectedYears.forEach(yr => {
     let yrTotal = 0, yrAudited = 0;
     if (selectedTypes.includes('church')) {
       const rows = S.cData[yr] || [];
-      let cA = 0, cW = 0, cP = 0;
+      let cA = 0, cW = 0, cAr = 0, cP = 0;
       rows.forEach(r => {
         const status = getSt(r);
         if (status === 'Audited') { cA++; agg.audited++; }
         else if (status === 'WIP') { cW++; agg.wip++; }
+        else if (status === 'Awaiting Response') { cAr++; agg.awaiting++; }
         else { cP++; agg.pending++; }
         if (statusList[status] !== undefined) statusList[status].push({ name: getVal(r,'gereja') || '—', wil: getVal(r,'wilayah') || '', daer: getVal(r,'daerah') || '' });
       });
@@ -1346,22 +1368,23 @@ function buildAndShowReport() {
       yrTotal += rows.length;
       yrAudited += cA;
       if (rows.length > 0)
-        tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${cA}</td><td style="color:#f59e0b">${cW}</td><td style="color:#ef4444">${cP}</td><td style="font-weight:800">${Math.round(cA/rows.length*100)}%</td></tr>`;
+        tableRows += `<tr><td>${yr}</td><td>Church</td><td>${rows.length}</td><td style="color:#10b981">${cA}</td><td style="color:#f59e0b">${cW}</td><td style="color:#0284c7">${cAr}</td><td style="color:#ef4444">${cP}</td><td style="font-weight:800">${Math.round(cA/rows.length*100)}%</td></tr>`;
     }
     if (selectedTypes.includes('school')) {
       const rows = S.sData[yr] || [];
-      let sA = 0, sW = 0, sP = 0;
+      let sA = 0, sW = 0, sAr = 0, sP = 0;
       rows.forEach(r => {
         const status = getSt(r);
         if (status === 'Audited') { sA++; agg.audited++; }
         else if (status === 'WIP') { sW++; agg.wip++; }
+        else if (status === 'Awaiting Response') { sAr++; agg.awaiting++; }
         else { sP++; agg.pending++; }
       });
       agg.total += rows.length;
       yrTotal += rows.length;
       yrAudited += sA;
       if (rows.length > 0)
-        tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${sA}</td><td style="color:#f59e0b">${sW}</td><td style="color:#ef4444">${sP}</td><td style="font-weight:800">${Math.round(sA/rows.length*100)}%</td></tr>`;
+        tableRows += `<tr><td>${yr}</td><td>School</td><td>${rows.length}</td><td style="color:#10b981">${sA}</td><td style="color:#f59e0b">${sW}</td><td style="color:#0284c7">${sAr}</td><td style="color:#ef4444">${sP}</td><td style="font-weight:800">${Math.round(sA/rows.length*100)}%</td></tr>`;
     }
     if (yrTotal > 0) yearlyData.push({ yr, total: yrTotal, audited: yrAudited });
   });
@@ -1373,13 +1396,13 @@ function buildAndShowReport() {
   document.getElementById('rvAudited').textContent = agg.audited;
   document.getElementById('rvComp').textContent = overallPct + '%';
   document.getElementById('rvPend').textContent = agg.pending;
-  document.getElementById('rvTableBody').innerHTML = tableRows || '<tr><td colspan="7">No data available for selected filters.</td></tr>';
+  document.getElementById('rvTableBody').innerHTML = tableRows || '<tr><td colspan="8">No data available for selected filters.</td></tr>';
 
-  ['Audited','WIP','Pending'].forEach(st => {
+  [['Audited','Audited'],['WIP','WIP'],['Awaiting Response','Awaiting'],['Pending','Pending']].forEach(([st, id]) => {
     const items = (statusList[st] || []).sort((a, b) => a.name.localeCompare(b.name));
-    document.getElementById('rvCnt' + st).textContent = items.length;
+    document.getElementById('rvCnt' + id).textContent = items.length;
     const loc = (it) => [it.wil, it.daer].filter(Boolean).join(', ');
-    document.getElementById('rvList' + st).innerHTML = items.length
+    document.getElementById('rvList' + id).innerHTML = items.length
       ? items.map((it, i) => `<div class="rv-status-item"><span class="st-num">${i + 1}.</span><span class="st-name">${it.name}</span>${loc(it) ? `<span class="st-loc">— ${loc(it)}</span>` : ''}</div>`).join('')
       : '<div class="rv-status-empty">None</div>';
   });
@@ -1387,7 +1410,7 @@ function buildAndShowReport() {
   applyChartDefaults(true);
   mkChart('rvDonut', {
     type: 'doughnut',
-    data: { labels: ['Audited','WIP','Pending'], datasets: [{ data: [agg.audited||0.001, agg.wip||0.001, agg.pending||0.001], backgroundColor: ['#10b981','#f59e0b','#ef4444'], borderWidth: 2, borderColor: '#fff' }] },
+    data: { labels: ['Audited','WIP','Awaiting','Pending'], datasets: [{ data: [agg.audited||0.001, agg.wip||0.001, agg.awaiting||0.001, agg.pending||0.001], backgroundColor: ['#10b981','#f59e0b','#38bdf8','#ef4444'], borderWidth: 2, borderColor: '#fff' }] },
     options: { responsive: true, maintainAspectRatio: false, cutout: '65%', animation: false, plugins: { legend: { position: 'bottom', labels: { color: '#334155', font: {size: 12, weight: '600'}, padding: 20 } }, tooltip: TT_LIGHT } }
   }, true);
   mkChart('rvBar', {
@@ -1498,7 +1521,7 @@ function buildAIContext() {
   const s = stats(totalRows);
   const wil = wilStats(totalRows);
   const wilArr = wil.map(d => ({
-    name: d.n, churches: d.t, audited: d.a, wip: d.w, pending: d.p,
+    name: d.n, churches: d.t, audited: d.a, wip: d.w, awaiting: d.ar||0, pending: d.p,
     fund: Math.round(d.fund), tithes: Math.round(d.tithes), offerings: Math.round(d.offerings)
   }));
   const topTithes = totalRows.map(r => ({ n: getVal(r,'gereja')||'—', w: getVal(r,'wilayah')||'', v: getTithes(r) })).filter(d => d.v).sort((a,b) => b.v - a.v).slice(0,5);
@@ -1510,13 +1533,13 @@ function buildAIContext() {
     totalChurches: s.t,
     summary: {
       totalTithes: Math.round(s.tithes), totalOfferings: Math.round(s.offerings),
-      totalFundBalance: Math.round(s.fund), audited: s.a, wip: s.w, pending: s.p,
+      totalFundBalance: Math.round(s.fund), audited: s.a, wip: s.w, awaiting: s.ar, pending: s.p,
       completionPct: s.pct, reportsCollected: s.rc_c, reportsPendingPickup: s.rc_p
     },
     perWilayah: wilArr,
     top5ByTithes: topTithes.map(d => ({ church: d.n, wilayah: d.w, total: Math.round(d.v) })),
     top5ByOfferings: topOfferings.map(d => ({ church: d.n, wilayah: d.w, total: Math.round(d.v) })),
-    perYear: Object.fromEntries(years.map(yr => { const ys = stats(S.cData[yr]||[]); return [yr, { churches: perYear[yr].count, tithes: Math.round(ys.tithes), offerings: Math.round(ys.offerings), fund: Math.round(ys.fund), audited: ys.a, wip: ys.w, pending: ys.p, completionPct: ys.pct }]; }))
+    perYear: Object.fromEntries(years.map(yr => { const ys = stats(S.cData[yr]||[]); return [yr, { churches: perYear[yr].count, tithes: Math.round(ys.tithes), offerings: Math.round(ys.offerings), fund: Math.round(ys.fund), audited: ys.a, wip: ys.w, awaiting: ys.ar, pending: ys.p, completionPct: ys.pct }]; }))
   };
 }
 async function queryAI(question) {
@@ -1533,7 +1556,7 @@ RULES:
 - Answer ONLY based on the data above
 - Amounts are in Malaysian Ringgit (RM)
 - Be concise, use bullet points when helpful
-- Use emojis: 📍 wilayah, 💰 fund, 🔟 tithes, 🙏 offerings, ✅ audited, 🔄 WIP, ⏳ pending
+- Use emojis: 📍 wilayah, 💰 fund, 🔟 tithes, 🙏 offerings, ✅ audited, 🔄 WIP, 📨 awaiting response, ⏳ pending
 - If data is insufficient, say so clearly
 - Do NOT make up numbers
 
@@ -1559,6 +1582,7 @@ function statusSummary(rows, label) {
   const isChurch = /\bgereja\b/i.test(label) || /\bchurch\b/i.test(label);
   const a = rows.filter(r => getSt(r) === 'Audited').length;
   const w = rows.filter(r => getSt(r) === 'WIP').length;
+  const ar = rows.filter(r => getSt(r) === 'Awaiting Response').length;
   const p = rows.filter(r => getSt(r) === 'Pending').length;
   const funds = rows.reduce((s, r) => s + (getFund(r) || 0), 0);
   const tithes = rows.reduce((s, r) => s + (getTithes(r) || 0), 0);
@@ -1566,6 +1590,7 @@ function statusSummary(rows, label) {
   return `<strong>${label}</strong> (${rows.length} total)\n` +
     `<div class="data-row"><span>✅ Audited</span><span class="data-val">${a} (${pct(a, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>🔄 WIP</span><span class="data-val">${w} (${pct(w, rows.length)}%)</span></div>` +
+    `<div class="data-row"><span>📨 Awaiting Response</span><span class="data-val">${ar} (${pct(ar, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>⏳ Pending</span><span class="data-val">${p} (${pct(p, rows.length)}%)</span></div>` +
     `<div class="data-row"><span>💰 Total Funds</span><span class="data-val">RM ${fmtNum(Math.round(funds))}</span></div>` +
     (isChurch ? `<div class="data-row"><span>🔟 Total Tithes</span><span class="data-val">RM ${fmtNum(Math.round(tithes))}</span></div>` +
@@ -1613,7 +1638,8 @@ function processQuery(q) {
   const wantsDaerah = /\bdaerah\b/.test(lq) && !wantsBreakdown && !wantsRanking;
   const statusAudit = /\b(audited|completed?|selesai|diaudit|lengkap|sudah)\b/.test(lq) && !/\b(pending|wip|tertunda|proses|submitted|hantar)\b/.test(lq);
   const statusWIP = /\b(wip|work.?in.?progress|dalam.?proses|sedang|berjalan)\b/.test(lq);
-  const statusPend = /\b(pending|waiting|not.?start|tertunda|menunggu|belum|yet.?submitted|not.?submitted|missing|belum.?dihantar|belum.?submit)\b/.test(lq) && !/\b(wip|proses)\b/.test(lq);
+  const statusAwait = /\b(awaiting|await|menunggu.?maklum|letter.?submitted)\b/.test(lq);
+  const statusPend = /\b(pending|waiting|not.?start|tertunda|menunggu|belum|yet.?submitted|not.?submitted|missing|belum.?dihantar|belum.?submit)\b/.test(lq) && !/\b(wip|proses)\b/.test(lq) && !statusAwait;
   const wantsTithes = /\b(tithe|persepuluhan|zakat)\b/.test(lq) && !wantsFund;
   const wantsOfferings = /\b(offer|persembahan|kolekte)\b/.test(lq) && !wantsTithes;
 
@@ -1624,6 +1650,7 @@ function processQuery(q) {
   if (wantsHelp) {
     return '<strong>📌 Contoh soalan:</strong><br>' +
       '• "Berapa banyak gereja yang WIP?"<br>' +
+      '• "How many are awaiting response?"<br>' +
       '• "Jumlah baki dana untuk 2025"<br>' +
       '• "Kadar siap untuk sekolah"<br>' +
       '• "Pecahan mengikut wilayah"<br>' +
@@ -1670,9 +1697,10 @@ function processQuery(q) {
       if (showType === 'both' || showType === 'school') rows = rows.concat(S.sData[yr] || []);
       const a = rows.filter(r => getSt(r) === 'Audited').length;
       const w = rows.filter(r => getSt(r) === 'WIP').length;
+      const ar = rows.filter(r => getSt(r) === 'Awaiting Response').length;
       const p = rows.filter(r => getSt(r) === 'Pending').length;
       const f = rows.reduce((s, r) => s + (getFund(r) || 0), 0);
-      out += `<strong>${yr}</strong> — ${rows.length} kemudahan | ✅ Siap ${a} (${pct(a, rows.length)}%) | 🔄 WIP ${w} | ⏳ Tertunda ${p} | 💰 RM ${fmtNum(Math.round(f))}<br>`;
+      out += `<strong>${yr}</strong> — ${rows.length} kemudahan | ✅ Siap ${a} (${pct(a, rows.length)}%) | 🔄 WIP ${w} | 📨 Menunggu ${ar} | ⏳ Tertunda ${p} | 💰 RM ${fmtNum(Math.round(f))}<br>`;
     });
     return out;
   }
@@ -1685,6 +1713,7 @@ function processQuery(q) {
     let metric = 'pending';
     if (statusAudit) metric = 'audited';
     else if (statusWIP) metric = 'wip';
+    else if (statusAwait) metric = 'awaiting';
     const sortDesc = /\b(most|top|highest|terbanyak|tertinggi|paling)\b/.test(lq);
     let allRows = [];
     years.forEach(yr => {
@@ -1695,16 +1724,17 @@ function processQuery(q) {
     const groups = {};
     allRows.forEach(r => {
       const g = getVal(r, groupKey) || 'Tidak diketahui';
-      if (!groups[g]) groups[g] = { t:0, a:0, w:0, p:0 };
+      if (!groups[g]) groups[g] = { t:0, a:0, w:0, ar:0, p:0 };
       groups[g].t++;
       const s = getSt(r);
       if (s === 'Audited') groups[g].a++;
       else if (s === 'WIP') groups[g].w++;
+      else if (s === 'Awaiting Response') groups[g].ar++;
       else groups[g].p++;
     });
     const entries = Object.entries(groups).map(([name, d]) => ({ name, ...d }));
     entries.sort((a, b) => sortDesc ? b[metric] - a[metric] : a[metric] - b[metric]);
-    const metricLabel = metric === 'audited' ? 'Siap' : metric === 'wip' ? 'WIP' : 'Tertunda';
+    const metricLabel = metric === 'audited' ? 'Siap' : metric === 'wip' ? 'WIP' : metric === 'awaiting' ? 'Menunggu' : 'Tertunda';
     const direction = sortDesc ? 'terbanyak' : 'tersedikit';
     let out = `<strong>🏆 ${groupLabel} dengan ${metricLabel} ${direction}</strong><br><br>`;
     entries.slice(0, 10).forEach((e, i) => {
@@ -1726,11 +1756,12 @@ function processQuery(q) {
     const byWil = {};
     rows.forEach(r => {
       const w = getVal(r, 'wilayah') || 'Tidak diketahui';
-      if (!byWil[w]) byWil[w] = { t:0, a:0, w:0 };
+      if (!byWil[w]) byWil[w] = { t:0, a:0, w:0, ar:0 };
       byWil[w].t++;
       const s = getSt(r);
       if (s === 'Audited') byWil[w].a++;
       else if (s === 'WIP') byWil[w].w++;
+      else if (s === 'Awaiting Response') byWil[w].ar++;
     });
     let out = `<strong>📍 Pecahan mengikut Wilayah (${yr})</strong><br>`;
     Object.entries(byWil).sort((a, b) => b[1].t - a[1].t).forEach(([name, d]) => {
@@ -1738,6 +1769,8 @@ function processQuery(q) {
     });
     const n = rows.filter(r => getSt(r) === 'WIP').length;
     if (n) out += `<br>🔄 Jumlah WIP: <strong>${n}</strong>`;
+    const nar = rows.filter(r => getSt(r) === 'Awaiting Response').length;
+    if (nar) out += `<br>📨 Menunggu Maklum Balas: <strong>${nar}</strong>`;
     return out;
   }
 
@@ -1785,11 +1818,13 @@ function processQuery(q) {
         if (rows.length) {
           const a = rows.filter(r => getSt(r) === 'Audited').length;
           const w = rows.filter(r => getSt(r) === 'WIP').length;
+          const ar = rows.filter(r => getSt(r) === 'Awaiting Response').length;
           const p = rows.filter(r => getSt(r) === 'Pending').length;
           out += `<strong>⛪ Gereja ${yr}</strong>: ${rows.length} jumlah`;
-          if (statusAudit || !statusWIP && !statusPend) out += ` | ✅ Siap: ${a}`;
-          if (statusWIP || !statusAudit && !statusPend) out += ` | 🔄 WIP: ${w}`;
-          if (statusPend || !statusAudit && !statusWIP) out += ` | ⏳ Tertunda: ${p}`;
+          if (statusAudit || !statusWIP && !statusPend && !statusAwait) out += ` | ✅ Siap: ${a}`;
+          if (statusWIP || !statusAudit && !statusPend && !statusAwait) out += ` | 🔄 WIP: ${w}`;
+          if (statusPend || !statusAudit && !statusWIP && !statusAwait) out += ` | ⏳ Tertunda: ${p}`;
+          if (statusAwait || !statusAudit && !statusWIP && !statusPend) out += ` | 📨 Menunggu: ${ar}`;
           out += '<br>';
         }
       }
@@ -1798,11 +1833,13 @@ function processQuery(q) {
         if (rows.length) {
           const a = rows.filter(r => getSt(r) === 'Audited').length;
           const w = rows.filter(r => getSt(r) === 'WIP').length;
+          const ar = rows.filter(r => getSt(r) === 'Awaiting Response').length;
           const p = rows.filter(r => getSt(r) === 'Pending').length;
           out += `<strong>🏫 Sekolah ${yr}</strong>: ${rows.length} jumlah`;
-          if (statusAudit || !statusWIP && !statusPend) out += ` | ✅ Siap: ${a}`;
-          if (statusWIP || !statusAudit && !statusPend) out += ` | 🔄 WIP: ${w}`;
-          if (statusPend || !statusAudit && !statusWIP) out += ` | ⏳ Tertunda: ${p}`;
+          if (statusAudit || !statusWIP && !statusPend && !statusAwait) out += ` | ✅ Siap: ${a}`;
+          if (statusWIP || !statusAudit && !statusPend && !statusAwait) out += ` | 🔄 WIP: ${w}`;
+          if (statusPend || !statusAudit && !statusWIP && !statusAwait) out += ` | ⏳ Tertunda: ${p}`;
+          if (statusAwait || !statusAudit && !statusWIP && !statusPend) out += ` | 📨 Menunggu: ${ar}`;
           out += '<br>';
         }
       }
@@ -1841,15 +1878,16 @@ function processQuery(q) {
     let filtered = rows;
     if (statusAudit) filtered = filtered.filter(r => getSt(r) === 'Audited');
     else if (statusWIP) filtered = filtered.filter(r => getSt(r) === 'WIP');
+    else if (statusAwait) filtered = filtered.filter(r => getSt(r) === 'Awaiting Response');
     else if (statusPend) filtered = filtered.filter(r => getSt(r) === 'Pending');
     const nameKey = type === 'school' || refSchool ? 'school' : 'gereja';
-    const label = statusAudit ? 'Siap' : statusWIP ? 'WIP' : statusPend ? 'Tertunda' : 'Semua';
+    const label = statusAudit ? 'Siap' : statusWIP ? 'WIP' : statusAwait ? 'Menunggu Maklum Balas' : statusPend ? 'Tertunda' : 'Semua';
     let out = `<strong>${label} (${yr})</strong><br>`;
     filtered.slice(0, 10).forEach(r => {
       const n = getVal(r, nameKey) || getVal(r, 'school') || getVal(r, 'gereja') || 'Tidak diketahui';
       const s = getSt(r);
       const f = getFund(r);
-      out += `• ${n} — ${s === 'WIP' ? 'Dalam Proses' : s === 'Pending' ? 'Tertunda' : 'Siap'}` + (f ? ` (${fRM(f)})` : '') + '<br>';
+      out += `• ${n} — ${s === 'WIP' ? 'Dalam Proses' : s === 'Pending' ? 'Tertunda' : s === 'Awaiting Response' ? 'Menunggu Maklum Balas' : 'Siap'}` + (f ? ` (${fRM(f)})` : '') + '<br>';
     });
     if (filtered.length > 10) out += `<br>… dan ${filtered.length - 10} lagi.`;
     if (!filtered.length) out = `Tiada kemudahan ${label.toLowerCase()} untuk ${yr}.`;
