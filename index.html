@@ -1350,6 +1350,11 @@ function buildAndShowReport() {
   let yearlyData = [];
   let tableRows = '';
   let statusList = { Audited: [], WIP: [], 'Awaiting Response': [], Pending: [] };
+  // Dedupe: same church (name+wilayah) or school (name) across years counts once,
+  // using its record from the latest selected year. selectedYears is ascending,
+  // so later iterations overwrite earlier ones.
+  const normKey = (s) => (s || '').toLowerCase().trim().replace(/\s+/g, ' ');
+  const seenC = {}, seenS = {};
 
   selectedYears.forEach(yr => {
     let yrTotal = 0, yrAudited = 0;
@@ -1358,13 +1363,12 @@ function buildAndShowReport() {
       let cA = 0, cW = 0, cAr = 0, cP = 0;
       rows.forEach(r => {
         const status = getSt(r);
-        if (status === 'Audited') { cA++; agg.audited++; }
-        else if (status === 'WIP') { cW++; agg.wip++; }
-        else if (status === 'Awaiting Response') { cAr++; agg.awaiting++; }
-        else { cP++; agg.pending++; }
-        if (statusList[status] !== undefined) statusList[status].push({ name: getVal(r,'gereja') || '—', wil: getVal(r,'wilayah') || '', daer: getVal(r,'daerah') || '' });
+        if (status === 'Audited') cA++;
+        else if (status === 'WIP') cW++;
+        else if (status === 'Awaiting Response') cAr++;
+        else cP++;
+        seenC[normKey(getVal(r,'gereja')) + '|' + normKey(getVal(r,'wilayah'))] = { name: getVal(r,'gereja') || '—', wil: getVal(r,'wilayah') || '', daer: getVal(r,'daerah') || '', status };
       });
-      agg.total += rows.length;
       yrTotal += rows.length;
       yrAudited += cA;
       if (rows.length > 0)
@@ -1375,12 +1379,12 @@ function buildAndShowReport() {
       let sA = 0, sW = 0, sAr = 0, sP = 0;
       rows.forEach(r => {
         const status = getSt(r);
-        if (status === 'Audited') { sA++; agg.audited++; }
-        else if (status === 'WIP') { sW++; agg.wip++; }
-        else if (status === 'Awaiting Response') { sAr++; agg.awaiting++; }
-        else { sP++; agg.pending++; }
+        if (status === 'Audited') sA++;
+        else if (status === 'WIP') sW++;
+        else if (status === 'Awaiting Response') sAr++;
+        else sP++;
+        seenS[normKey(getVal(r,'school'))] = { status };
       });
-      agg.total += rows.length;
       yrTotal += rows.length;
       yrAudited += sA;
       if (rows.length > 0)
@@ -1389,8 +1393,23 @@ function buildAndShowReport() {
     if (yrTotal > 0) yearlyData.push({ yr, total: yrTotal, audited: yrAudited });
   });
 
+  // KPI totals from UNIQUE churches/schools (latest selected year wins).
+  // Bucket rule preserved: anything not Audited/WIP/Awaiting counts as Pending.
+  const tally = (status) => {
+    agg.total++;
+    if (status === 'Audited') agg.audited++;
+    else if (status === 'WIP') agg.wip++;
+    else if (status === 'Awaiting Response') agg.awaiting++;
+    else agg.pending++;
+  };
+  if (selectedTypes.includes('church')) Object.values(seenC).forEach(e => {
+    tally(e.status);
+    if (statusList[e.status] !== undefined) statusList[e.status].push({ name: e.name, wil: e.wil, daer: e.daer });
+  });
+  if (selectedTypes.includes('school')) Object.values(seenS).forEach(e => tally(e.status));
+
   const overallPct = agg.total ? Math.round((agg.audited / agg.total) * 100) : 0;
-  document.getElementById('rvSubtitle').textContent = `${selectedTypes.join(' & ')} Audits · Years: ${selectedYears.join(', ')}`;
+  document.getElementById('rvSubtitle').textContent = `${selectedTypes.join(' & ')} Audits · Years: ${selectedYears.join(', ')} · ${agg.total} unique`;
   document.getElementById('rvDate').textContent = new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('rvTotFac').textContent = agg.total;
   document.getElementById('rvAudited').textContent = agg.audited;
