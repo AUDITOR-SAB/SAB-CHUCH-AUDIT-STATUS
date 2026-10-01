@@ -350,8 +350,15 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
 .rv-status-empty{padding:20px;text-align:center;font-size:12px;color:#94a3b8;font-weight:600;font-style:italic}
 @media print{
   .rv-status-body{max-height:none;overflow:visible}
-  .rv-status-grid{break-inside:avoid}
-  .rv-status-col{break-inside:avoid}
+  .rv-status-grid{grid-template-columns:1fr;gap:14px}
+  .rv-status-col{break-inside:auto}
+  .rv-status-hdr{break-inside:avoid;break-after:avoid}
+  .rv-card-title{break-after:avoid}
+  .rv-status-body{columns:2;column-gap:16px;column-fill:balance;padding:6px 0}
+  .rv-status-item{break-inside:avoid;font-size:10px;padding:4px 12px;gap:6px}
+  .rv-status-item .st-num{font-size:9px;min-width:16px}
+  .rv-status-item .st-loc{font-size:9px}
+  .rv-status-empty{padding:12px}
   body{background:#fff!important}
   .main-wrap,.report-top-bar,#debugModal,#reportModal{display:none!important}
   #reportOverlay{display:block!important;position:static!important;background:#fff!important;padding:0!important}
@@ -680,7 +687,7 @@ footer{text-align:center;padding:12px;font-size:10px;font-weight:600;color:var(-
       </table>
     </div>
     <div class="rv-card">
-      <div class="rv-card-title">Facility Status List</div>
+      <div class="rv-card-title">Congregation Status List</div>
       <div class="rv-status-grid">
         <div class="rv-status-col">
           <div class="rv-status-hdr st-a"><span>✓ Audited</span><span class="rv-status-cnt" id="rvCntAudited">0</span></div>
